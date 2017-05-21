@@ -8,6 +8,12 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import {Text} from "../pages/text/text";
 import {Tasks} from "../pages/tasks/tasks";
+import {Safha} from "../components/safha/safha";
+import {Hashia} from "../components/hashia/hashia";
+import {Aya} from "../components/aya/aya";
+import {Alama} from "../components/alama/alama";
+import {Shomara} from "../components/shomara/shomara";
+import {Bismillah} from "../components/bismillah/bismillah";
 
 @NgModule({
   declarations: [
@@ -15,6 +21,12 @@ import {Tasks} from "../pages/tasks/tasks";
     HomePage,
     Text,
     Tasks,
+    Safha,
+    Hashia,
+    Aya,
+    Alama,
+    Shomara,
+    Bismillah,
   ],
   imports: [
     BrowserModule,
