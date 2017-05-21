@@ -12,7 +12,7 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
   selector: 'page-tasks',
   templateUrl: 'tasks.html',
 })
-export class TasksPage {
+export class Tasks {
 
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }

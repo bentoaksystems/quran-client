@@ -21,7 +21,7 @@ export class Bismillah {
   private imgflag;
   private nightMode=false;
 
-  constructor(private quranService: QuranServiice) {
+  constructor(private quranService: QuranService) {
   }
 
   ngOnInit() {

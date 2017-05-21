@@ -6,15 +6,15 @@ import { StatusBar } from '@ionic-native/status-bar';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import {TextPage} from "../pages/text/text";
-import {TasksPage} from "../pages/tasks/tasks";
+import {Text} from "../pages/text/text";
+import {Tasks} from "../pages/tasks/tasks";
 
 @NgModule({
   declarations: [
     MyApp,
     HomePage,
-    TextPage,
-    TasksPage,
+    Text,
+    Tasks,
   ],
   imports: [
     BrowserModule,
@@ -24,8 +24,8 @@ import {TasksPage} from "../pages/tasks/tasks";
   entryComponents: [
     MyApp,
     HomePage,
-    TextPage,
-    TasksPage,
+    Text,
+    Tasks,
   ],
   providers: [
     StatusBar,
