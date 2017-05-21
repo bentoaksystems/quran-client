@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 /**
  * Generated class for the Shomara component.
@@ -11,12 +11,27 @@ import { Component } from '@angular/core';
   templateUrl: 'shomara.html'
 })
 export class Shomara {
+  private _an;
+  ayanumberAr: string;
+  @Input()
+  set ayanumber(x){
+    this._an = x;
+    this.ayanumberAr = x.toLocaleString(this.farsiNums?'fa':'ar');
+  }
+  get ayanumber(){
+    return this._an;
+  }
+  @Input() reverse;
+  @Input() fontFamily;
 
-  text: string;
+  get needntBorder(){
+    return this.fontFamily==='quran-uthmanic'||this.fontFamily==='me-quran';
+  };
 
-  constructor() {
-    console.log('Hello Shomara Component');
-    this.text = 'Hello World';
+  get farsiNums(){
+    return this.fontFamily==='qalam';
   }
 
+  constructor() {
+  }
 }

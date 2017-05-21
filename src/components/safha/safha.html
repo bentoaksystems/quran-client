@@ -1,2 +1,19 @@
-<hashia></hashia>
-<aya *ngFor="let aya of ayas" [value]="aya"></aya>
+<div class="pageInfo">
+  <table class="outer-table">
+    <tr class="outer-row">
+      <td>
+<hashia [suraname]="suraName?suraName:''"  [pagenumber]="quranPage" [suraorder]="suraOrder?suraOrder:NaN"></hashia>
+      </td>
+    </tr>
+  </table>
+</div>
+<div class="tapper" [class.clear]="true" [class.explain]="false" [ngStyle]="{'left':'0px','height':pageHeight+'px','width':pageWidth/3+'px','text-align':'right'}" (click)="goForth()" #tapperRight><i style="font-size:30px"  class="fa fa-arrow-left" aria-hidden="true"></i><br>tap/click to the next page</div>
+<div class="tapper" [class.clear]="true" [class.explain]="false" [ngStyle]="{'right':'0px','height':pageHeight+'px','width':pageWidth/3+'px','text-align':'left'}" (click)="goBack()" #tapperLeft><i style="font-size:30px" class="fa fa-arrow-right" aria-hidden="true"></i><br>tap/click to the previous page</div>
+<div *ngIf="loading" class="tapper explain" [ngStyle]="{'left': (explained?0:pageWidth/3)+'px','width': (explained?pageWidth:pageWidth/3)+'px','height':pageHeight+'px'}"><i class="fa fa-spinner fa-spin fa-3x fa-fw"></i><span class="sr-only">Loading...</span></div>
+<div class='overflowContainer' [ngStyle]="{'width':width,'height':height-50+'px'}">
+<div [class.border-day]="!nightMode"  [class.border-night]="nightMode" [ngStyle]="{'width':(pageWidth-10)+'px'}">
+  <div class="internal quran" [ngStyle]="{'margin':(portrait?-20:-40) + 'px','font-family':fontFamily}">
+  <aya *ngFor="let aya of pageAyas" [value]="aya" [fontFamily]="fontFamily"></aya>
+  </div>
+</div>
+</div>

@@ -14,7 +14,7 @@ import {QuranService} from "../../services/quran.service";
 export class Bismillah {
 
   @Input() bismillahText = '';
-  @Input() suraname = '';
+  @Input() sura:number;
   private  suraAyaNumber : number=0;
   private  suraTanzilLocation;
   private  suraArabicName;
@@ -26,11 +26,13 @@ export class Bismillah {
 
   ngOnInit() {
     this.nightMode = this.quranService.nightMode;
-    this.suraAyaNumber = this.quranService.suraAyaNumberCheck(this.suraname,false).a;
-    this.suraTanzilLocation = this.quranService.suraAyaNumberCheck(this.suraname,true).b;
-    this.imgflag = (this.suraTanzilLocation > "Meccan" ? false : true );
-    this.suraTanzilLocation = (this.suraTanzilLocation > "Meccan" ? 'مدنی' : 'مکی' );
-    this.suraArabicName = this.quranService.suraAyaNumberCheck(this.suraname,true).c;
+    let suraStats = this.quranService.suraStats(this.sura);
+    console.log(suraStats);
+    this.suraAyaNumber = suraStats.ayas;
+    this.suraTanzilLocation = suraStats.tanzilLocation;
+    this.imgflag = this.suraTanzilLocation !== "Meccan" ? false : true;
+    this.suraTanzilLocation = this.suraTanzilLocation !== "Meccan" ? 'مدنی' : 'مکی';
+    this.suraArabicName = suraStats.name;
 
     this.quranService.nightMode$
       .subscribe(

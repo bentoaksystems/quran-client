@@ -7,12 +7,12 @@
         </tr>
         <tr class="fontinit">
           <td class="downayat">
-            <!--<app-number-translator style="vertical-align: top" [inputNumber]="suraAyaNumber"></app-number-translator>-->
+            {{suraAyaNumber.toLocaleString('ar')}}
           </td>
         </tr>
       </table>
     </td>
-    <td class="bismillahcol2"  [ngClass]="[nightMode ? 'night-pic-address-col2':'day-pic-address-col2']"> سوره {{suraArabicName}}</td>
+    <td class="bismillahcol2"  [ngClass]="[nightMode ? 'night-pic-address-col2':'day-pic-address-col2']"> سورة {{suraArabicName}}</td>
     <td class="bismillahcol-1-3" [ngClass]="[nightMode ? 'night-pic-address-col-1-3':'day-pic-address-col-1-3']">
       <table class="bismillahrow">
         <tr class="fontinit">

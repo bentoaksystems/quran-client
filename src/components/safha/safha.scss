@@ -1,3 +1,88 @@
 safha {
+  div.border-day{
+    //width: 650px;
+    //height: 866px;
+    border-image: url(../../assets/KadrNormal.svg) repeat;
+    border-width: 80px;
+    border-style: solid;
+    border-image-slice: 100;
+    margin:5px;
+    background-color: #ffffff !important;
+  }
+  div.border-night{
+   // width: 650px;
+    //height: 866px;
+    border-image: url(../../assets/KadrNight.svg) repeat;
+    border-width: 80px;
+    border-style: solid;
+    border-image-slice: 100;
+    margin:5px;
+    background-color: #000000 !important;
 
+  }
+  div.overflowContainer{
+    position: absolute;
+    padding: 0px;
+    display:inline-block;
+    top:50px;
+    overflow: scroll;
+  }
+  div.internal{
+    letter-spacing: 0px;
+    line-height: 130%;
+  }
+
+  div.tapper {
+    position:absolute;
+    top: 50px;
+    z-index:100;
+  }
+
+  div.clear{
+    backgroud-color:transparent;
+    color:transparent;
+  }
+
+  div.explain{
+    background-color: rgba(32, 32, 32, 0.2);
+    color: white;
+    padding: 150px 30px 150px 30px;
+    font-size: 20px;
+  }
+  span{
+    padding:0px;
+    margin:0px;
+    border:0;
+    display: inline;
+  }
+  .bismillah{
+    width:100% !important;
+  }
+  .quran{
+    font-family: quran;
+    text-align: justify;
+    direction: rtl;
+    font-size: 300%;
+  }
+
+  .pageInfo{
+    position: absolute;
+    height: 48px;
+    width: 100%;
+    top:0px;
+    padding-top: -2px;
+    direction: rtl;
+    border: none;
+  }
+
+  .outer-table {
+    height: 100%;
+    width: 100%;
+    border: none;
+  }
+  .outer-row {
+    height: 100%;
+    width: 100%;
+    border: none;
+  }
 }

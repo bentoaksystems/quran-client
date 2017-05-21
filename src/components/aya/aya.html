@@ -1,20 +1,20 @@
-<div ngif="value.bismillah" class="bismillah">
-  <bismillah></bismillah>
+<div *ngIf="value.bismillah" class="bismillah">
+  <bismillah [sura]="value.sura"></bismillah>
 </div>
 <span *ngIf="value.aya && !value.bismillah">
-  <alama *ngIf="sectionCheck(value)"
-         <!--[sign]="'&#x06DE;'"-->
-         <!--[tooltipMessage]="sectionCheck(value)"-->
-         <!--[hizbNumber]="hizbJuzNumberCheck(value).qhizbNum"-->
-  ></alama>
+  <!--<alama *ngIf="sectionCheck(value)"-->
+         <!--&lt;!&ndash;[sign]="'&#x06DE;'"&ndash;&gt;-->
+         <!--&lt;!&ndash;[tooltipMessage]="sectionCheck(value)"&ndash;&gt;-->
+         <!--&lt;!&ndash;[hizbNumber]="hizbJuzNumberCheck(value).qhizbNum"&ndash;&gt;-->
+  <!--&gt;</alama>-->
   {{value.text}}
-  <alama *ngIf = "sajdaCheck(value)"
-         <!--[sign] = "'&#x06E9;'"-->
-         <!--[tooltipMessage] = "sajdaCheck(value)"-->
-  ></alama>
+  <!--<alama *ngIf = "sajdaCheck(value)"-->
+         <!--&lt;!&ndash;[sign] = "'&#x06E9;'"&ndash;&gt;-->
+         <!--&lt;!&ndash;[tooltipMessage] = "sajdaCheck(value)"&ndash;&gt;-->
+  <!--&gt;</alama>-->
   <shomara
-         <!--[ayanumber]="value.aya"-->
-         <!--[fontFamily]="fontFamily"-->
-         <!--[reverse]="reverse"-->
+         [ayanumber]="value.aya"
+         [fontFamily]="fontFamily"
+         [reverse]="false"
   ></shomara>
 </span>

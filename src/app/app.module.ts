@@ -14,6 +14,8 @@ import {Aya} from "../components/aya/aya";
 import {Alama} from "../components/alama/alama";
 import {Shomara} from "../components/shomara/shomara";
 import {Bismillah} from "../components/bismillah/bismillah";
+import {QuranService} from "../services/quran.service";
+import {Http, HttpModule} from "@angular/http";
 
 @NgModule({
   declarations: [
@@ -30,7 +32,8 @@ import {Bismillah} from "../components/bismillah/bismillah";
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    HttpModule,
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -42,7 +45,8 @@ import {Bismillah} from "../components/bismillah/bismillah";
   providers: [
     StatusBar,
     SplashScreen,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    QuranService,
   ]
 })
 export class AppModule {}
