@@ -1,0 +1,9 @@
+<div ngif="value.bismillah" class="bismillah">
+  <bismillah></bismillah>
+</div>
+<span *ngIf="value.aya && !value.bismillah">
+  <alama *ngIf="sectionCheck(value)" [qhizbSajdaSign]="'&#x06DE;'" [tooltipMessage]="sectionCheck(value)" [hizbNumber]="hizbJuzNumberCheck(value).qhizbNum"></alama>
+  {{value.text}}
+  <alama *ngIf = "sajdaCheck(value)" [qhizbSajdaSign] = "'&#x06E9;'" [tooltipMessage] = "sajdaCheck(value)"></alama>
+  <shomara [ayanumber]="value.aya" [fontFamily]="fontFamily" [reverse]="reverse"></shomara>
+</span>

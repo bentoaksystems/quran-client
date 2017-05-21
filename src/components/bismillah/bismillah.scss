@@ -1,0 +1,108 @@
+bismillah {
+  .bismillahtable{
+    direction:rtl;
+    width: 100%;
+    height: 100%;
+    margin: 0px;
+    margin-bottom: -20px;
+  }
+
+  .bismillahrow{
+    width: 100%;
+    height: 100%;
+  }
+
+  .day-pic-address-col-1-3{
+    background-image: url(../../assets/AyatBoxNormal.svg);
+  }
+
+  .night-pic-address-col-1-3{
+    background-image: url(../../assets/AyatBoxNight.svg);
+  }
+
+
+  .bismillahcol-1-3{
+    width:15%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 85% 70%;
+  }
+
+  .fontinit{
+    font-family: quran;
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .day-pic-address-col2{
+    background-image: url(../../assets/SuraNameBoxNormal.svg);
+  }
+  .night-pic-address-col2{
+    background-image: url(../../assets/SuraNameBoxNight.svg);
+  }
+  .topayat{
+    line-height:100%;
+    padding:40px 0px 0px 0px;
+  }
+  .downayat{
+    line-height:100%;
+    padding:0px 0px 40px 0px;
+  }
+  .toptanzil{
+    line-height:100%;
+  }
+  .downtanzil{
+    line-height:100%;
+  }
+  .bismillahcol2{
+    width:70%;
+    height: 100%;
+    text-align:center;
+    font-family: quran;
+    font-size: 80%;
+    font-weight: bold;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100% 75%;
+  }
+
+  .pic-makki-day{
+    background-image: url(../../assets/MakkiFillNormal.svg);
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: 35% 35%;
+    padding-top:10px;
+  }
+  .pic-makki-night{
+    background-image: url(../../assets/MakkiFillNight.svg);
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: 35% 35%;
+    padding-top:10px;
+  }
+
+
+  .pic-madani-day{
+    background-image: url(../../assets/MadaniFillGreenNormal.svg);
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: 35% 35%;
+    padding-top:10px;
+  }
+
+  .pic-madani-night{
+    background-image: url(../../assets/MadaniFillNight.svg);
+    background-repeat: no-repeat;
+    background-position: bottom;
+    background-size: 35% 35%;
+    padding-top:10px;
+  }
+
+  .bismillah{
+    width:100% !important;
+    font-size: 85%;
+    text-align:center;
+  }
+}
