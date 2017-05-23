@@ -1,6 +1,5 @@
 {
   "name": "quran",
   "app_id": "4d9083ef",
-  "v2": true,
-  "typescript": true
+  "type": "ionic-angular"
 }

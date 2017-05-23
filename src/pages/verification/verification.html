@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Verification Code</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+  <ion-label block>The verification code sent to the {{authService.email.getValue()}}</ion-label>
+  <ion-grid>
+    <ion-row>
+      <ion-list>
+        <ion-item>
+          <ion-label fixed>Code</ion-label>
+          <ion-input type="text" maxlength="6" #code></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-row>
+    <ion-row>
+      <ion-col col-6>
+        <button ion-button block color="{{conditionalColoring.secondary}}" (click)="reSend()">Not get mail?</button>
+      </ion-col>
+      <ion-col col-6>
+        <button ion-button block color="primary" (click)="changeMail()">Change mail</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <button ion-button block color="{{conditionalColoring.primary}}" (click)="verify(code.value)">Verify</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>
