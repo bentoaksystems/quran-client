@@ -35,3 +35,133 @@
   font-family: 'me-quran';
   src: url('../assets/me_quran_volt_newmet.ttf')
 }
+
+.day-pic-address-col-1-3{
+  background-image: url(../assets/AyatBoxNormal.svg);
+}
+
+.night-pic-address-col-1-3{
+  background-image: url(../assets/AyatBoxNight.svg);
+}
+
+
+.bismillahcol-1-3{
+  width:15%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 85% 70%;
+}
+
+.fontinit{
+  font-family: quran;
+  font-size: large;
+  font-weight: bold;
+  text-align: center;
+}
+
+.day-pic-address-col2{
+  background-image: url(../assets/SuraNameBoxNormal.svg);
+}
+.night-pic-address-col2{
+  background-image: url(../assets/SuraNameBoxNight.svg);
+}
+.topayat{
+  line-height:100%;
+  padding:40px 0px 0px 0px;
+}
+.downayat{
+  line-height:100%;
+  padding:0px 0px 40px 0px;
+}
+.toptanzil{
+  line-height:100%;
+}
+.downtanzil{
+  line-height:100%;
+}
+.bismillahcol2{
+  width:70%;
+  height: 100%;
+  text-align:center;
+  font-family: quran;
+  font-size: 80%;
+  font-weight: bold;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 75%;
+}
+
+.pic-makki-day{
+  background-image: url(../assets/MakkiFillNormal.svg);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 35% 35%;
+  padding-top:10px;
+}
+.pic-makki-night{
+  background-image: url(../assets/MakkiFillNight.svg);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 35% 35%;
+  padding-top:10px;
+}
+
+
+.pic-madani-day{
+  background-image: url(../assets/MadaniFillGreenNormal.svg);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 35% 35%;
+  padding-top:10px;
+}
+
+.pic-madani-night {
+  background-image: url(../assets/MadaniFillNight.svg);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 35% 35%;
+  padding-top: 10px;
+}
+
+.pic-makki-day{
+  background-image: url(../assets/MakkiFillNormal.svg);
+  background-repeat: no-repeat;
+  background-position: bottom;
+  background-size: 35% 35%;
+  padding-top:10px;
+}
+
+
+.day-pic-address{
+  background-image: url(../assets/PageNumberBoxNormal.svg);
+}
+
+.night-pic-address{
+  background-image: url(../assets/PageNumberBoxNight.svg);
+}
+
+div.border-day{
+  //width: 650px;
+  //height: 866px;
+  border-image-source:  url(../assets/KadrNormal.svg);
+  border-image-repeat: repeat;
+  border-width: 80px;
+  border-style: solid;
+  border-image-slice: 100;
+  margin:5px;
+  background-color: #ffffff !important;
+}
+
+div.border-night{
+  // width: 650px;
+  //height: 866px;
+  border-image-source: url(../assets/KadrNight.svg);
+  border-image-repeat: repeat;
+  border-width: 80px;
+  border-style: solid;
+  border-image-slice: 100;
+  margin:5px;
+  background-color: #000000 !important;
+
+}

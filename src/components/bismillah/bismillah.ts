@@ -12,9 +12,9 @@ import {QuranService} from "../../services/quran.service";
   templateUrl: 'bismillah.html'
 })
 export class Bismillah {
-
+  @Input() margin;
   @Input() bismillahText = '';
-  @Input() sura:number;
+  @Input() value;
   private  suraAyaNumber : number=0;
   private  suraTanzilLocation;
   private  suraArabicName;
@@ -26,12 +26,11 @@ export class Bismillah {
 
   ngOnInit() {
     this.nightMode = this.quranService.nightMode;
-    let suraStats = this.quranService.suraStats(this.sura);
-    console.log(suraStats);
+    let suraStats = this.quranService.suraStats(this.value.sura);
     this.suraAyaNumber = suraStats.ayas;
     this.suraTanzilLocation = suraStats.tanzilLocation;
     this.imgflag = this.suraTanzilLocation !== "Meccan" ? false : true;
-    this.suraTanzilLocation = this.suraTanzilLocation !== "Meccan" ? 'مدنی' : 'مکی';
+    this.suraTanzilLocation = this.suraTanzilLocation !== "Meccan" ? 'مدنية' : 'مکية';
     this.suraArabicName = suraStats.name;
 
     this.quranService.nightMode$

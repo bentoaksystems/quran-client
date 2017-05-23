@@ -1,5 +1,5 @@
 <div *ngIf="value.bismillah" class="bismillah">
-  <bismillah [sura]="value.sura"></bismillah>
+  <bismillah [value]="value" [margin]="margin"></bismillah>
 </div>
 <span *ngIf="value.aya && !value.bismillah">
   <!--<alama *ngIf="sectionCheck(value)"-->

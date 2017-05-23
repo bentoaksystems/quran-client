@@ -14,6 +14,7 @@ import {QuranService} from "../../services/quran.service";
 export class Hashia {
   @Input() suraname;
   private _so;
+  private _pn;
   @Input()
   set suraorder(so) {
     this._so = so;
@@ -22,8 +23,17 @@ export class Hashia {
   get suraorder() {
     return this._so;
   }
-  @Input() pagenumber = 0;
-  private  pageJuzNumber: number=1;
+
+  @Input()
+  set pagenumber(pn) {
+    this._pn = pn;
+    this.pagenumberAr = this.pagenumber?this.pagenumber.toLocaleString('ar'):'';
+  }
+  get pagenumber(){
+    return this._pn;
+  }
+
+  private  pageJuzNumber: number;
   private  nightMode;
   private suraorderAr;
   private pageJuzNumberAr;
@@ -35,12 +45,12 @@ export class Hashia {
     this.nightMode = this.quranService.nightMode;
     this.suraname='';
 
-        this.pageJuzNumber = this.quranService.pageJuzCheck(this.pagenumber);
-          this.suraname +=' ';
-          this.suraname.trim();
 
-        this.pageJuzNumberAr = this.pageJuzNumber?this.pageJuzNumber.toLocaleString('ar'):'';
-        this.pagenumberAr = this.pagenumber?this.pagenumber.toLocaleString('ar'):'';
+    this.suraname +=' ';
+    this.suraname.trim();
+    this.pageJuzNumber = this.quranService.pageJuzCheck(this.pagenumber);
+    this.pageJuzNumberAr = this.pageJuzNumber?this.pageJuzNumber.toLocaleString('ar'):'';
+
 
 
     this.quranService.nightMode$
