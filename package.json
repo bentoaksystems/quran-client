@@ -21,10 +21,12 @@
     "@angular/platform-browser": "4.1.0",
     "@angular/platform-browser-dynamic": "4.1.0",
     "@ionic-native/core": "3.7.0",
+    "@ionic-native/screen-orientation": "^3.10.3",
     "@ionic-native/deeplinks": "^3.10.3",
     "@ionic-native/splash-screen": "3.7.0",
-    "@ionic-native/status-bar": "3.7.0",
+    "@ionic-native/status-bar": "^3.7.0",
     "@ionic/storage": "2.0.1",
+    "cordova-plugin-screen-orientation": "^2.0.1",
     "cordova-android": "^6.2.3",
     "cordova-plugin-console": "^1.0.5",
     "cordova-plugin-device": "^1.1.4",
@@ -63,6 +65,7 @@
   "description": "quran: An Ionic project",
   "cordova": {
     "plugins": {
+      "cordova-plugin-screen-orientation": {},
       "ionic-plugin-deeplinks": {
         "URL_SCHEME": "quranApp",
         "DEEPLINK_SCHEME": "http",

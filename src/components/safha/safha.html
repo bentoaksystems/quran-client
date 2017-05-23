@@ -1,2 +1,16 @@
-<hashia></hashia>
-<aya *ngFor="let aya of ayas" [value]="aya"></aya>
+<div class="pageInfo" [ngStyle]="{'top': (platform.is('ios')?20:0)+ 'px'}">
+  <table class="outer-table">
+    <tr class="outer-row">
+      <td>
+<hashia [suraname]="suraName?suraName:''"  [pagenumber]="quranPage" [suraorder]="suraOrder?suraOrder:NaN"></hashia>
+      </td>
+    </tr>
+  </table>
+</div>
+<ion-content class="overflowContainer" [ngStyle]="{'width':width,'height':height-50+'px','top':(platform.is('ios')?70:50)+ 'px'}" #scrollPage>
+  <div [class.border-day]="!nightMode"  [class.border-night]="nightMode" [ngStyle]="{'width':(pageWidth-10)+'px'}" (swipe)="swipe($event)">
+  <div class="internal quran" [ngStyle]="{'margin':margin + 'px','font-family':fontFamily}">
+  <aya *ngFor="let aya of pageAyas" [value]="aya" [fontFamily]="fontFamily" [margin]="margin"></aya>
+  </div>
+</div>
+</ion-content>

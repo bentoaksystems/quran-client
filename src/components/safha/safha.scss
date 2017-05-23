@@ -1,3 +1,66 @@
 safha {
 
+  .overflowContainer{
+    padding: 0px;
+    border: 1px inset antiquewhite;
+    background: white;
+  }
+  div.internal{
+    letter-spacing: 0px;
+    line-height: 130%;
+  }
+
+  div.tapper {
+    position:fixed;
+    top: 50px;
+    z-index:100;
+    pointer-events:none;
+  }
+
+  div.clear{
+    backgroud-color:rgba(0,0,0,0);
+    color:transparent;
+  }
+
+  div.explain{
+    background-color: rgba(32, 32, 32, 0.2);
+    color: white;
+    padding: 150px 30px 150px 30px;
+    font-size: 20px;
+  }
+  span{
+    padding:0px;
+    margin:0px;
+    border:0;
+    display: inline;
+  }
+  .bismillah{
+    width:100% !important;
+  }
+  .quran{
+    font-family: quran;
+    text-align: justify;
+    direction: rtl;
+    font-size: 300%;
+  }
+
+  .pageInfo{
+    position: absolute;
+    height: 48px;
+    width: 100%;
+    padding-top: -2px;
+    direction: rtl;
+    border: none;
+  }
+
+  .outer-table {
+    height: 100%;
+    width: 100%;
+    border: none;
+  }
+  .outer-row {
+    height: 100%;
+    width: 100%;
+    border: none;
+  }
 }

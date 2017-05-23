@@ -1,4 +1,9 @@
-<!-- Generated template for the Hashia component -->
-<div>
-  {{text}}
-</div>
+<table class="info-table">
+  <tr class="info-row">
+    <td class="info-column1 right-left-text">{{suraorderAr}}. {{suraname}}</td>
+    <td class="info-column2">
+      <span [ngClass]="[nightMode ? 'night-pic-address':'day-pic-address']" class="center-text pic pagenum">{{pagenumberAr}}</span>
+    </td>
+    <td class="info-column3 right-left-text">جزء {{pageJuzNumberAr}}</td>
+  </tr>
+</table>

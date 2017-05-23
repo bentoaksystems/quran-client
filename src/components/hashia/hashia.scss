@@ -1,3 +1,67 @@
 hashia {
+  .info-table{
+    width: 100%;
+    height: 100%;
+    border: none;
+    font-size: 150%;
+    background-color: #ffffff;
+  }
+  .info-row{
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .info-column1{
+    width: 40%;
+    font-family: "quran";
+    text-align: left;
+    border: none;
+    padding-bottom:10px;
+  }
+
+  .info-column2{
+    height: 100%;
+    width: 20%;
+    font-family: "quran";
+    border: none;
+  }
+
+  .pic{
+    background-repeat: no-repeat;
+    background-position: top;
+    background-size: contain;
+    padding-top: 3px;
+  }
+  .center-text{
+    display: inline-block;
+    width: 100%;
+    margin-top: -4px;
+    text-align: center;
+  }
+  .pagenum{
+    margin-right: 1px;
+    font-weight: bold;
+    font-size: 22pt;
+    vertical-align: top;
+    padding: 3px 12px 20px 12px;
+    line-height: 100%;
+  }
+
+  .info-column3{
+    width: 40%;
+    font-family: "quran";
+    text-align: right;
+    border: none;
+    padding-bottom:10px;
+  }
+
+
+  .right-left-text{
+    font-weight: bolder;
+    vertical-align: bottom;
+  }
+
+
 
 }

@@ -65,44 +65,7 @@ export class QuranTelavat{
 }
 
 export class QuranSections extends Array<QuranReference>{
-  getSection(index:number):QuranSection{
-    let ret = new QuranSection();
-    if(index<=this.length){
-      ret.start = this[index-1];
-    }
-    if(index<this.length){
-      ret.end = this[index];
-    }
-    return ret;
-  }
-  filterFunc(ayas, index){
-    var section = this.getSection(index);
-    if(section.start && section.end) {
-      var startIndex = ayas.findIndex(a=>a.sura === section.start.sura && a.aya === section.start.aya);
-      var endIndex = ayas.findIndex(a=>a.sura === section.end.sura && a.aya === section.end.aya);
-      if (section.start.aya === 1 && section.start.sura !== 1) {
-        startIndex--;
-      }
-      if (section.end.aya === 1) {
-        endIndex--;
-      }
-      var ret = ayas.slice(startIndex, endIndex);
-      if(section.start.substrIndex){
-        ret[0] = ret[0].substring(section.start.substrIndex);
-      }
 
-      if(section.end.substrIndex){
-        ret[ret.length-1]
-      }
-      return ret;
-    }
-    else
-      return([]);
-  }
-  findReference(ref:QuranReference):number{
-    var ret = this.findIndex(el=>el.sura>ref.sura||(el.sura===ref.sura&&el.aya>ref.aya));
-    return ret===-1?this.length:ret;
-  }
 }
 
 export class QuranSajda{
@@ -1065,5 +1028,5 @@ tartilInfo.forEach((el)=>{
 });
 
 
-export const QURAN_DATA = quranData;
+export const QURAN_DATA:QuranData = quranData;
 

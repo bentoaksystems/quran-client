@@ -13,11 +13,11 @@ bismillah {
   }
 
   .day-pic-address-col-1-3{
-    background-image: url(../../assets/AyatBoxNormal.svg);
+    background-image: url(../assets/AyatBoxNormal.svg);
   }
 
   .night-pic-address-col-1-3{
-    background-image: url(../../assets/AyatBoxNight.svg);
+    background-image: url(../assets/AyatBoxNight.svg);
   }
 
 
@@ -37,10 +37,10 @@ bismillah {
   }
 
   .day-pic-address-col2{
-    background-image: url(../../assets/SuraNameBoxNormal.svg);
+    background-image: url(../assets/SuraNameBoxNormal.svg);
   }
   .night-pic-address-col2{
-    background-image: url(../../assets/SuraNameBoxNight.svg);
+    background-image: url(../assets/SuraNameBoxNight.svg);
   }
   .topayat{
     line-height:100%;
@@ -65,39 +65,7 @@ bismillah {
     font-weight: bold;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: 100% 75%;
-  }
-
-  .pic-makki-day{
-    background-image: url(../../assets/MakkiFillNormal.svg);
-    background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: 35% 35%;
-    padding-top:10px;
-  }
-  .pic-makki-night{
-    background-image: url(../../assets/MakkiFillNight.svg);
-    background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: 35% 35%;
-    padding-top:10px;
-  }
-
-
-  .pic-madani-day{
-    background-image: url(../../assets/MadaniFillGreenNormal.svg);
-    background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: 35% 35%;
-    padding-top:10px;
-  }
-
-  .pic-madani-night{
-    background-image: url(../../assets/MadaniFillNight.svg);
-    background-repeat: no-repeat;
-    background-position: bottom;
-    background-size: 35% 35%;
-    padding-top:10px;
+    background-size: contain;
   }
 
   .bismillah{

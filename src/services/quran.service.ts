@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from "@angular/http";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/throttleTime';
-import {QURAN_DATA, QuranReference} from '../assets/quran-data';
+import {QURAN_DATA, QuranData, QuranReference, QuranSections, QuranSection} from './quran-data';
 import { Subject } from "rxjs/Subject";
 
 const FONT_PARAMS = {
@@ -30,6 +30,7 @@ export class QuranService {
   private ayaStream = new Subject<QuranReference>();
   private pageStream = new Subject<number>();
   private fontChangeStream = new Subject<number>();
+  private quranData:QuranData = QURAN_DATA;
   contentChanged$ = this.contentChangeStream.asObservable();
   zoomChanged$ = this.zoomChangeStream.asObservable();
   nightMode$ = this.nightModeStream.asObservable();
@@ -51,26 +52,21 @@ export class QuranService {
   }
 
   getPage(pageNum){
-    var page = QURAN_DATA.page.getSection(pageNum);
+    var page = this.getSec('page',pageNum);
     return page;
   }
 
-  getSection(sectionName, sectionNum){
-    var section = QURAN_DATA[sectionName].getSection(sectionNum);
-    return section;
-  }
-
   applySectionFilter(sectionType, ayas, index){
-    return QURAN_DATA[sectionType].filterFunc(ayas,index);
+    return this.filterFunc(sectionType, ayas, index);
   }
 
   getRukus(rukuNum){
-    var ruku = QURAN_DATA.ruku.getSection(rukuNum);
+    var ruku = this.getSec('ruku', rukuNum);
     return ruku;
   }
 
   getSura(suraNum){
-    return QURAN_DATA.suras[suraNum-1];
+    return this.quranData.suras[suraNum-1];
   }
   contentChange(layer){
     this.contentChangeStream.next(layer);
@@ -98,7 +94,7 @@ export class QuranService {
     return FONT_PARAMS[fontFamily]
   }
   sajdaCheck(obj){
-    var ind = QURAN_DATA.sajda.findIndex(qs=>qs.loc.aya===obj.aya&&qs.loc.sura===obj.sura);
+    var ind = this.quranData.sajda.findIndex(qs=>qs.loc.aya===obj.aya&&qs.loc.sura===obj.sura);
     return ind;
   }
   nightModeSwitch() {
@@ -106,7 +102,7 @@ export class QuranService {
     this.nightModeStream.next(this.nightMode);
   }
   qhizbCheck(obj){
-    var ind = QURAN_DATA.qhizb.findIndex(qs=>qs.aya===obj.aya&&qs.sura===obj.sura);
+    var ind = this.quranData.qhizb.findIndex(qs=>qs.aya===obj.aya&&qs.sura===obj.sura);
     return ind;
   }
 
@@ -117,19 +113,19 @@ export class QuranService {
     if(sectionType==='sura')
       s = new QuranReference({sura:sectionNumber,aya:1});
     else {
-      s = this.getSection(sectionType, sectionNumber);
+      s = this.getSec(sectionType, sectionNumber);
       if (s.start)
         s = s.start;
       else
-        return QURAN_DATA.page.length-1;
+        return this.quranData.page.length-1;
     }
     return this.sectionForAya('page',s).num;
   }
   sectionForAya(sectionType,aya:QuranReference):SectionAddress{
     if(sectionType==='sura')
-      return new SectionAddress({num:aya.sura, text: QURAN_DATA.suras[aya.sura-1].name});
+      return new SectionAddress({num:aya.sura, text: this.quranData.suras[aya.sura-1].name});
     else
-      return new SectionAddress({num:QURAN_DATA[sectionType].findReference(aya)});
+      return new SectionAddress({num:this.quranData[sectionType].findReference(aya)});
   }
 
   goForth(sectionType,sectionNumber){
@@ -158,47 +154,60 @@ export class QuranService {
   }
 
   suraNumberCheck(str){
-    var ind = QURAN_DATA.suras.findIndex(qs=>qs.name===str);
+    var ind = this.quranData.suras.findIndex(qs=>qs.name===str);
     if(ind!== -1)
      return ind+1;
   }
   pageJuzCheck(number){
-    return QURAN_DATA.endJuzPage.findIndex(a=>a>= number)+1;
+    return this.quranData.endJuzPage.findIndex(a=>a>= number)+1;
   }
-  suraAyaNumberCheck(str,flag) {
-    var ind = QURAN_DATA.suras.findIndex(qs=>qs.name === str) + 1;
-    if(!flag) {
-      if (ind < 83) {
-        this.temp = '';
-        this.i = 0;
-        this.def = 0;
-        var suraAyaNumber = this.getSura(ind).ayas;
-      }
-      else {
-        var ind1 = QURAN_DATA.suraBismillah.findIndex(x=>x === ind);
-        if (str !== this.temp) {
-          this.i = 0;
-          this.def = QURAN_DATA.suraBismillah[ind1] - QURAN_DATA.suraBismillah[ind1 - 1];
-          this.temp = str;
-        }
-        this.i++;
-        var suraAyaNumber = this.getSura(ind - this.def + this.i).ayas;
-      }
-    }
-    else{
-      if(ind < 83){
-        var suraTanziLocation = this.getSura(ind).tanzilLocation;
-        var suraArabicName = this.getSura(ind).name;
-      }
-      else {
-        var suraTanziLocation = this.getSura(ind - this.def + this.i).tanzilLocation;
-        var suraArabicName  = this.getSura(ind - this.def + this.i).name;
-      }
-    }
-    return { a:suraAyaNumber ,b:suraTanziLocation, c:suraArabicName };
+
+  suraStats(sura:number) {
+    let name, tanzilLocation, ayaCount;
+
+    return this.quranData.suras[sura - 1];
   }
   changeCurAya(aya:QuranReference){
     this.ayaStream.next(aya);
+  }
+
+  getSec(secType:string,index:number):QuranSection{
+    let ret = new QuranSection();
+    if(index<=this.quranData[secType].length){
+      ret.start = this.quranData[secType][index-1];
+    }
+    if(index<this.quranData[secType].length){
+      ret.end = this.quranData[secType][index];
+    }
+    return ret;
+  }
+  filterFunc(secType:string,ayas, index){
+    let section = this.getSec(secType, index);
+    if(section.start && section.end) {
+      let startIndex = ayas.findIndex(a=>a.sura === section.start.sura && a.aya === section.start.aya);
+      let endIndex = ayas.findIndex(a=>a.sura === section.end.sura && a.aya === section.end.aya);
+      if (section.start.aya === 1 && section.start.sura !== 1) {
+        startIndex--;
+      }
+      if (section.end.aya === 1) {
+        endIndex--;
+      }
+      let ret = ayas.slice(startIndex, endIndex);
+      if(section.start.substrIndex){
+        ret[0] = ret[0].substring(section.start.substrIndex);
+      }
+
+      if(section.end.substrIndex){
+        ret[ret.length-1]
+      }
+      return ret;
+    }
+    else
+      return([]);
+  }
+  findReference(secType:string,ref:QuranReference):number{
+    let ret = this.quranData[secType].findIndex(el=>el.sura>ref.sura||(el.sura===ref.sura&&el.aya>ref.aya));
+    return ret===-1?this.quranData[secType].length:ret;
   }
 
 }
