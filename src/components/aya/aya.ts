@@ -14,9 +14,9 @@ import {QuranService} from "../../services/quran.service";
 export class Aya {
   @Input() value;
   @Input() fontFamily;
+  @Input() margin;
 
   constructor(private quranService:QuranService) {
-    console.log(this.value);
   }
 
   sajdaCheck(obj){

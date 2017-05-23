@@ -1,31 +1,9 @@
 safha {
-  div.border-day{
-    //width: 650px;
-    //height: 866px;
-    border-image: url(../../assets/KadrNormal.svg) repeat;
-    border-width: 80px;
-    border-style: solid;
-    border-image-slice: 100;
-    margin:5px;
-    background-color: #ffffff !important;
-  }
-  div.border-night{
-   // width: 650px;
-    //height: 866px;
-    border-image: url(../../assets/KadrNight.svg) repeat;
-    border-width: 80px;
-    border-style: solid;
-    border-image-slice: 100;
-    margin:5px;
-    background-color: #000000 !important;
 
-  }
-  div.overflowContainer{
-    position: absolute;
+  .overflowContainer{
     padding: 0px;
-    display:inline-block;
-    top:50px;
-    overflow: scroll;
+    border: 1px inset antiquewhite;
+    background: white;
   }
   div.internal{
     letter-spacing: 0px;
@@ -33,13 +11,14 @@ safha {
   }
 
   div.tapper {
-    position:absolute;
+    position:fixed;
     top: 50px;
     z-index:100;
+    pointer-events:none;
   }
 
   div.clear{
-    backgroud-color:transparent;
+    backgroud-color:rgba(0,0,0,0);
     color:transparent;
   }
 
@@ -69,7 +48,6 @@ safha {
     position: absolute;
     height: 48px;
     width: 100%;
-    top:0px;
     padding-top: -2px;
     direction: rtl;
     border: none;

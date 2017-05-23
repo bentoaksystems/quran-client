@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
 import {Platform} from "ionic-angular";
 import {Response} from "@angular/http";
+import {ScreenOrientation} from "@ionic-native/screen-orientation";
 const fonts = ['quran','quran-uthmanic', 'quran-uthmanic-bold','qalam','me-quran'];
 
 @Component({
@@ -31,20 +32,29 @@ export class Safha implements OnInit {
   naskhIncompatible=false;
   nigthMode=false;
   portrait;
+  margin;
+  @ViewChild('scrollPage') scrollPage;
 
-  constructor(private quranService:QuranService, private platform:Platform){
-    this.height = this.platform.height();
-    this.width = this.platform.width();
-    this.portrait = this.platform.isPortrait();
+  constructor(private quranService:QuranService, private platform:Platform, private screenOrientation:ScreenOrientation){
     this.naskhIncompatible = this.platform.is('ios');
-    let wDiff = 83;
-    let hDiff = 66;
+    let fitScreen = () => {
+      this.height = this.platform.height() - (this.platform.is('ios') ? 20 : 0);
+      this.width = this.platform.width();
+      this.portrait = this.platform.isPortrait();
+      let wDiff = 83;
+      let hDiff = 66;
 
-    this.pageWidth = this.width;
-    this.pageHeight = this.zoom * this.height * 2;
-    this.textWidth = this.pageWidth - wDiff - 10;
-    this.textHeight = this.pageHeight - hDiff + Math.round(this.pageHeight/40);
-
+      this.pageWidth = this.width;
+      this.pageHeight = this.zoom * this.height * 2;
+      this.textWidth = this.pageWidth - wDiff - 10;
+      this.textHeight = this.pageHeight - hDiff + Math.round(this.pageHeight / 40);
+      this.margin = -55 + Math.round(this.width/18.75);
+      console.log('fitscreen',{height:this.height,widht:this.width,portrait:this.portrait})
+    };
+    this.platform.ready().then(()=>{
+      fitScreen();
+    });
+    this.screenOrientation.onChange().subscribe(()=>{setTimeout(fitScreen,1000)});
     if(!this.naskhIncompatible)
       this.fontFamily='quran-uthmanic';
   }
@@ -119,20 +129,24 @@ export class Safha implements OnInit {
 
     let suraNames = suras.map(e=>e.name);
 
-    let meccan = 'مکي';
-    let medinan = 'مدني';
-    let suraTanzil = suras.map(e=>e.tanzilLocation==='Medinan'?medinan:meccan);
     let suraName = suraNames.pop();
     let suraOrder = suraOrders.pop();
 
     this.pageAyas = ayas;
     this.suraName = suraName;
     this.suraOrder = suraOrder;
-    this.tanzilLocation = suraTanzil.pop();
   }
-
+  swipe(e) {
+    if(Math.abs(e.deltaX)>50) {
+      if (e.deltaX > 0)
+        this.goForth();
+      else
+        this.goBack();
+      this.scrollPage.scrollTo(0,0,0);
+    }
+  }
   goForth() {
-    if (+this.quranPage <= 605) {
+    if (+this.quranPage < 604) {
       this.quranPage = +this.quranPage + 1;
       this.loadPage()
     }

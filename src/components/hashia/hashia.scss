@@ -14,7 +14,7 @@ hashia {
 
   .info-column1{
     width: 40%;
-    font-family: "Arabic Typesetting";
+    font-family: "quran";
     text-align: left;
     border: none;
     padding-bottom:10px;
@@ -23,16 +23,8 @@ hashia {
   .info-column2{
     height: 100%;
     width: 20%;
-    font-family: "Arabic Typesetting";
+    font-family: "quran";
     border: none;
-  }
-
-  .day-pic-address{
-    background-image: url(../../assets/PageNumberBoxNormal.svg);
-  }
-
-  .night-pic-address{
-    background-image: url(../../assets/PageNumberBoxNight.svg);
   }
 
   .pic{
@@ -50,14 +42,15 @@ hashia {
   .pagenum{
     margin-right: 1px;
     font-weight: bold;
-    font-size: x-large;
+    font-size: 22pt;
     vertical-align: top;
-    padding:15px 4px;
+    padding: 3px 12px 20px 12px;
+    line-height: 100%;
   }
 
   .info-column3{
     width: 40%;
-    font-family: "Arabic Typesetting";
+    font-family: "quran";
     text-align: right;
     border: none;
     padding-bottom:10px;

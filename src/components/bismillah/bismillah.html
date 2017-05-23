@@ -1,9 +1,9 @@
-<table class="bismillahtable">
+<table class="bismillahtable" [ngStyle]="{'margin-bottom': margin + 'px'}">
   <tr class="bismillahrow">
     <td class="bismillahcol-1-3" [ngClass]="[nightMode ? 'night-pic-address-col-1-3':'day-pic-address-col-1-3']">
       <table class="bismillahrow">
         <tr class="fontinit">
-          <td class="topayat">آیات</td>
+          <td class="topayat">آياتها</td>
         </tr>
         <tr class="fontinit">
           <td class="downayat">
@@ -16,7 +16,9 @@
     <td class="bismillahcol-1-3" [ngClass]="[nightMode ? 'night-pic-address-col-1-3':'day-pic-address-col-1-3']">
       <table class="bismillahrow">
         <tr class="fontinit">
-          <td class="toptanzil" [class.pic-makki-day]=(imgflag)&&(!nightMode) [class.pic-makki-night]=(imgflag)&&(nightMode)  [class.pic-madani-day]=(!imgflag)&&(!nightMode)  [class.pic-madani-night]=(!imgflag)&&(nightMode)></td>
+          <td class="toptanzil" [class.pic-makki-day]=(imgflag)&&(!nightMode)
+              [class.pic-makki-night]=(imgflag)&&(nightMode) [class.pic-madani-day]=(!imgflag)&&(!nightMode)
+              [class.pic-madani-night]=(!imgflag)&&(nightMode)></td>
         </tr>
         <tr class="fontinit">
           <td class="downtanzil">
@@ -27,4 +29,4 @@
     </td>
   </tr>
 </table>
-<div class="bismillah">{{bismillahText}}</div>
+<div class="bismillah">{{value.text}}</div>
