@@ -48,7 +48,7 @@ export class Safha implements OnInit {
       this.pageHeight = this.zoom * this.height * 2;
       this.textWidth = this.pageWidth - wDiff - 10;
       this.textHeight = this.pageHeight - hDiff + Math.round(this.pageHeight / 40);
-      this.margin = -60 + Math.round(this.width/18.75);
+      this.margin = -55 + Math.round(this.width/18.75);
       console.log('fitscreen',{height:this.height,widht:this.width,portrait:this.portrait})
     };
     this.platform.ready().then(()=>{
