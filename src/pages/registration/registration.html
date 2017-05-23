@@ -6,7 +6,7 @@
 
 
 <ion-content padding [class]="quranService.nightMode ? 'night_background' : 'normal_background'">
-  <ion-list>
+  <ion-list *ngIf="!showVerify">
     <ion-item [color]="conditionalColoring.background">
       <ion-label floating>Email</ion-label>
       <ion-input type="email" [(ngModel)]="email">
@@ -21,13 +21,41 @@
         <ion-input type="text" [(ngModel)]="name"></ion-input>
     </ion-item>
   </ion-list>
-  <ion-grid>
+  <ion-grid *ngIf="!showVerify">
     <ion-row>
       <ion-col col-6>
         <button ion-button block color="{{conditionalColoring.primary}}" (click)="register()" [disabled]="email === '' || reEmail === ''">Register</button>
       </ion-col>
       <ion-col col-6>
         <button ion-button block color="{{conditionalColoring.secondary}}" (click)="skip()">Skip</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <ion-grid *ngIf="showVerify">
+    <ion-row>
+      <ion-col col-12>
+        <ion-label block>The verification code sent to the {{authService.email.getValue()}}</ion-label>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-list>
+        <ion-item>
+          <ion-label fixed>Code</ion-label>
+          <ion-input type="text" maxlength="6" #code></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-row>
+    <ion-row>
+      <ion-col col-6>
+        <button ion-button block color="{{conditionalColoring.secondary}}" (click)="reSend()">Not get mail?</button>
+      </ion-col>
+      <ion-col col-6>
+        <button ion-button block color="primary" (click)="changeMail()">Change mail</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-12>
+        <button ion-button block color="{{conditionalColoring.primary}}" (click)="verify(code.value)">Verify</button>
       </ion-col>
     </ion-row>
   </ion-grid>

@@ -83,29 +83,18 @@ export class AuthService {
       })
   }
 
-  //Get token
-  login(userEmail){
-    // this.httpService.postData('user/exist', {email: userEmail}).subscribe(
-    //   (data) => {
-    //     if(data){
-    //       this.httpService.postData('user/confirmation', {email: userEmail}).subscribe(
-    //         (val) => {
-    //           this.msgService.showMessage('inform', 'The confirmation mail sent to ' +  userEmail, true);
-    //         },
-    //         (error) => {
-    //           this.msgService.showMessage('error', error.message);
-    //         }
-    //       )
-    //     }
-    //     else{
-    //       this.msgService.showMessage('inform', 'This email does not exist');
-    //     }
-    //   },
-    //   (err) => {
-    //     console.log(err.message);
-    //     this.msgService.showMessage('error', err.message);
-    //   }
-    // )
+  removeUser(){
+    this.storage.remove('email');
+    this.email.next(null);
+    this.storage.remove('name');
+    this.name.next(null);
+    this.storage.remove('token');
+    this.token.next(null);
+  }
+
+  logout(){
+    this.removeUser();
+    this.isLoggedIn.next(false);
   }
 
   register(userEmail, userName){
@@ -129,6 +118,7 @@ export class AuthService {
         .subscribe(
           (data) => {
             let token = data.json();
+            this.isLoggedIn.next(true);
             this.saveToken(token);
             this.httpService.deleteData('user/auth', {email: this.email.getValue(), token: token})
               .subscribe(

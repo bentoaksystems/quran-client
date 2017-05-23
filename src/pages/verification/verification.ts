@@ -52,41 +52,4 @@ export class Verification implements OnInit{
         }
     )
   }
-
-  reSend(){
-
-  }
-
-  changeMail(){
-    this.viewCtrl.dismiss();
-  }
-
-  verify(code){
-    if(!this.checkCode(code)){
-      this.msgService.showMessage('warn', 'The verification code should contain 6 digits');
-    }
-    else{
-      this.authService.verify(code)
-        .then(() => {
-          this.navCtrl.popToRoot();
-          this.viewCtrl.dismiss();
-        })
-        .catch((err) => {
-          this.msgService.showMessage('error', err.message);
-        })
-    }
-  }
-
-  checkCode(code){
-    if(code.length > 6 || code.length < 6)
-      return false;
-
-    for(let i=0; i<code.length; i++){
-      console.log(code.charCodeAt(i));
-      if(code.charCodeAt(i) < 48 || code.charCodeAt(i) > 57)
-        return false;
-    }
-
-    return true;
-  }
 }

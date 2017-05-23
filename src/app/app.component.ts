@@ -6,6 +6,7 @@ import { Deeplinks } from '@ionic-native/deeplinks';
 
 import { HomePage } from '../pages/home/home';
 import {MsgService} from "../services/msg.service";
+import {Registration} from "../pages/registration/registration";
 @Component({
   templateUrl: 'app.html'
 })

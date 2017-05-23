@@ -1,5 +1,5 @@
-import {Component, OnInit, isDevMode} from '@angular/core';
-import {IonicPage, NavController, NavParams, ViewController, ModalController} from 'ionic-angular';
+import {Component, OnInit} from '@angular/core';
+import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
 
 import {MsgService} from "../../services/msg.service";
 import {AuthService} from "../../services/auth.service";
@@ -15,6 +15,7 @@ export class Registration implements OnInit{
   email: string = '';
   reEmail: string = '';
   name: string = '';
+  showVerify: boolean = false;
   conditionalColoring: any = {
     background: 'normal_back',
     text: 'noraml_text',
@@ -24,8 +25,7 @@ export class Registration implements OnInit{
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private viewCtrl: ViewController, private msgService: MsgService,
-              private authService: AuthService, private quranService: QuranService,
-              private modalCtrl: ModalController) {
+              private authService: AuthService, private quranService: QuranService) {
   }
 
   ngOnInit(){
@@ -49,7 +49,22 @@ export class Registration implements OnInit{
           this.conditionalColoring.secondary = 'normal_secondary';
         }
       }
-    )
+    );
+
+
+    this.authService.email.subscribe(
+      (email) => {
+        if(email !== null && email !== undefined)
+          this.showVerify = true;
+        else
+          this.showVerify = false;
+      },
+      (err) => {
+        this.showVerify = false;
+      }
+    );
+    this.authService.loadUserData();
+
   }
 
   register(){
@@ -58,7 +73,7 @@ export class Registration implements OnInit{
         //Register user
         this.authService.register(this.email, this.name)
           .then(() => {
-            this.modalCtrl.create(Verification).present();
+            this.showVerify = true;
           })
           .catch((err) => this.msgService.showMessage('error', err))
       }
@@ -76,5 +91,48 @@ export class Registration implements OnInit{
   mailValidation(mail){
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(mail);
+  }
+
+  reSend(){
+    this.authService.register(this.authService.email.getValue(), this.authService.name.getValue())
+      .then((res) => {
+        this.msgService.showMessage('inform', 'The verifiction code sent to the ' + this.authService.email.getValue());
+      })
+      .catch((err) => {
+        this.msgService.showMessage('error', err);
+      });
+  }
+
+  changeMail(){
+    this.authService.removeUser();
+    this.showVerify = false;
+  }
+
+  verify(code){
+    if(!this.checkCode(code)){
+      this.msgService.showMessage('warn', 'The verification code should contain 6 digits');
+    }
+    else{
+      this.authService.verify(code)
+        .then(() => {
+          this.navCtrl.popToRoot();
+        })
+        .catch((err) => {
+          this.msgService.showMessage('error', err.message);
+        })
+    }
+  }
+
+  checkCode(code){
+    if(code.length > 6 || code.length < 6)
+      return false;
+
+    for(let i=0; i<code.length; i++){
+      console.log(code.charCodeAt(i));
+      if(code.charCodeAt(i) < 48 || code.charCodeAt(i) > 57)
+        return false;
+    }
+
+    return true;
   }
 }
