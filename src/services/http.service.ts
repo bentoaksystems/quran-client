@@ -24,6 +24,6 @@ export class HttpService{
   }
 
   deleteData(address, data) : Observable<Response>{
-    return this.http.delete(this.serverAddress + '/' + address, data);
+    return this.http.delete(this.serverAddress + '/' + address);
   }
 }

@@ -61,15 +61,18 @@ export class AuthService {
   }
 
   saveToken(userToken){
-    this.storage.set('token', userToken);
+    this.token.next(userToken);
+    return this.storage.set('token', userToken);
   }
 
   saveEmail(userEmail){
-    this.storage.set('email', userEmail);
+    this.email.next(userEmail);
+    return this.storage.set('email', userEmail);
   }
 
   saveName(userName){
-    this.storage.set('name', userName);
+    this.name.next(userName);
+    return this.storage.set('name', userName);
   }
 
   loadToken(){
@@ -101,9 +104,15 @@ export class AuthService {
     return new Promise((resolve, reject) => {
       this.httpService.putData('user', {email: userEmail, name: userName}).subscribe(
         (data) => {
-          this.saveEmail(userEmail);
-          this.saveName(userName);
-          resolve();
+          this.saveEmail(userEmail)
+            .then(() => {
+              return this.saveName(userName);
+            })
+            .then(() => {
+              console.log('email:' + this.email);
+              console.log('name:' + this.name);
+              resolve();
+            })
         },
         (err) => {
           reject(err);
@@ -114,17 +123,24 @@ export class AuthService {
 
   verify(code){
     return new Promise((resolve, reject) => {
+      // this.msgService.showMessage('inform', this.email.getValue());
+      // console.log(this.email.getValue());
       this.httpService.postData('user/auth', {email: this.email.getValue(), code: code})
         .subscribe(
           (data) => {
-            let token = data.json();
+            let token = data.json().token;
+            console.log(token.token);
             this.isLoggedIn.next(true);
-            this.saveToken(token);
-            this.httpService.deleteData('user/auth', {email: this.email.getValue(), token: token})
-              .subscribe(
-                (res) => resolve(),
-                (er) => reject(er)
-              )
+            this.saveToken(token)
+              .then(() => {
+                console.log('EMAIL:' + this.email.getValue());
+                console.log('TOKEN:' + token);
+                this.httpService.postData('user/auth/delete', {email: this.email.getValue(), token: token})
+                  .subscribe(
+                    (res) => resolve(),
+                    (er) => reject(er)
+                  )
+              })
           },
           (err) => {
             reject(err);

@@ -1,1 +1,7 @@
-<ion-nav [root]="rootPage"></ion-nav>
+<ion-menu side="right" [content]="cnt">
+  <right-menu [isLoggedIn]="isLoggedIn" (switchView)="goToPage($event)"></right-menu>
+</ion-menu>
+<ion-menu side="left" [content]="cnt">
+  <left-menu></left-menu>
+</ion-menu>
+<ion-nav #cnt [root]="rootPage"></ion-nav>
