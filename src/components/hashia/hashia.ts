@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
+import {StylingService} from "../../services/styling";
 
 /**
  * Generated class for the Hashia component.
@@ -28,6 +29,8 @@ export class Hashia {
   set pagenumber(pn) {
     this._pn = pn;
     this.pagenumberAr = this.pagenumber?this.pagenumber.toLocaleString('ar'):'';
+    this.pageJuzNumber = this.quranService.pageJuzCheck(this.pagenumber);
+    this.pageJuzNumberAr = this.pageJuzNumber?this.pageJuzNumber.toLocaleString('ar'):'';
   }
   get pagenumber(){
     return this._pn;
@@ -39,21 +42,12 @@ export class Hashia {
   private pageJuzNumberAr;
   private pagenumberAr;
 
-  constructor(private quranService: QuranService) {
+  constructor(private quranService: QuranService,private stylingService:StylingService) {
   }
   ngOnInit() {
-    this.nightMode = this.quranService.nightMode;
-    this.suraname='';
+    this.nightMode = this.stylingService.nightMode;
 
-
-    this.suraname +=' ';
-    this.suraname.trim();
-    this.pageJuzNumber = this.quranService.pageJuzCheck(this.pagenumber);
-    this.pageJuzNumberAr = this.pageJuzNumber?this.pageJuzNumber.toLocaleString('ar'):'';
-
-
-
-    this.quranService.nightMode$
+    this.stylingService.nightMode$
       .subscribe(
         (m)=>{
           this.nightMode=m;

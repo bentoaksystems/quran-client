@@ -15,8 +15,9 @@ import {Alama} from "../components/alama/alama";
 import {Shomara} from "../components/shomara/shomara";
 import {Bismillah} from "../components/bismillah/bismillah";
 import {QuranService} from "../services/quran.service";
-import {Http, HttpModule} from "@angular/http";
+import {HttpModule} from "@angular/http";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
+import {StylingService} from "../services/styling";
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import {ScreenOrientation} from "@ionic-native/screen-orientation";
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     QuranService,
+    StylingService,
     ScreenOrientation,
   ]
 })
