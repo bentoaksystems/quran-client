@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
-import {Platform} from "ionic-angular";
+import {Platform, NavController} from "ionic-angular";
 import {Response} from "@angular/http";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
 const fonts = ['quran','quran-uthmanic', 'quran-uthmanic-bold','qalam','me-quran'];

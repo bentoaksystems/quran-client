@@ -1,16 +1,30 @@
 <div class="pageInfo" [ngStyle]="{'top': (platform.is('ios')?20:0)+ 'px'}">
   <table class="outer-table">
     <tr class="outer-row">
+      <td class="tdBack">
+        <ion-buttons start>
+          <button ion-button color="light" icon-only menuToggle="right">
+            <ion-icon name="menu" color="normal_primary"></ion-icon>
+          </button>
+        </ion-buttons>
+      </td>
       <td>
-<hashia [suraname]="suraName?suraName:''"  [pagenumber]="quranPage" [suraorder]="suraOrder?suraOrder:NaN"></hashia>
+        <hashia [suraname]="suraName?suraName:''"  [pagenumber]="quranPage" [suraorder]="suraOrder?suraOrder:NaN"></hashia>
+      </td>
+      <td class="tdBack">
+        <ion-buttons end>
+          <button ion-button color="light" icon-only menuToggle="left">
+            <ion-icon name="settings" color="normal_primary"></ion-icon>
+          </button>
+        </ion-buttons>
       </td>
     </tr>
   </table>
 </div>
 <ion-content class="overflowContainer" [ngStyle]="{'width':width,'height':height-50+'px','top':(platform.is('ios')?70:50)+ 'px'}" #scrollPage>
   <div [class.border-day]="!nightMode"  [class.border-night]="nightMode" [ngStyle]="{'width':(pageWidth-10)+'px'}" (swipe)="swipe($event)">
-  <div class="internal quran" [ngStyle]="{'margin':margin + 'px','font-family':fontFamily}">
-  <aya *ngFor="let aya of pageAyas" [value]="aya" [fontFamily]="fontFamily" [margin]="margin"></aya>
+    <div class="internal quran" [ngStyle]="{'margin':margin + 'px','font-family':fontFamily}">
+      <aya *ngFor="let aya of pageAyas" [value]="aya" [fontFamily]="fontFamily" [margin]="margin"></aya>
+    </div>
   </div>
-</div>
 </ion-content>
