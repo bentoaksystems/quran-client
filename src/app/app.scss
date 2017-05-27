@@ -36,6 +36,10 @@
   src: url('../assets/me_quran_volt_newmet.ttf')
 }
 
+.button-ios {
+  margin: 0px !important;
+}
+
 .day-pic-address-col-1-3{
   background-image: url(../assets/AyatBoxNormal.svg);
 }
@@ -166,6 +170,37 @@ div.border-night{
 
 }
 
+.night_background{
+  background-color: #131313;
+}
+
+.night_text{
+  color: #898f8d;
+}
+
+.night_primary{
+  background-color: #95506f;
+}
+
+.night_secondary{
+  background-color: #7b87ad;
+}
+
+.normal_background{
+  background-color: #fbfaf8;
+}
+
+.normal_text{
+  color: #494949;
+}
+
+.normal_primary{
+  background-color: #7ec5a5;
+}
+
+.normal_secondary{
+  background-color: #c5bfb1;
+}
 .alamaToast{
   direction:rtl;
   text-align:center;

@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
-import {Platform, ToastController} from "ionic-angular";
+import {Platform, ToastController, NavController} from "ionic-angular";
 import {Response} from "@angular/http";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {StylingService} from "../../services/styling";

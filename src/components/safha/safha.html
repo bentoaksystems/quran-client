@@ -1,6 +1,13 @@
 <div class="pageInfo" [ngStyle]="{'top': (platform.is('ios')?20:0)+ 'px'}">
   <table class="outer-table">
     <tr class="outer-row">
+      <td class="tdBack">
+        <ion-buttons start>
+          <button ion-button color="light" icon-only menuToggle="right">
+            <ion-icon name="menu" color="normal_primary"></ion-icon>
+          </button>
+        </ion-buttons>
+      </td>
       <td>
 <hashia [suraname]="suraName?suraName:''"  [pagenumber]="quranPage" [suraorder]="suraOrder?suraOrder:NaN"></hashia>
       </td>
