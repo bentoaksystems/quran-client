@@ -5,6 +5,7 @@ import {MsgService} from "../../services/msg.service";
 import {AuthService} from "../../services/auth.service";
 import {QuranService} from "../../services/quran.service";
 import {Verification} from "../verification/verification";
+import {StylingService} from "../../services/styling";
 
 @IonicPage()
 @Component({
@@ -25,16 +26,16 @@ export class Registration implements OnInit{
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private viewCtrl: ViewController, private msgService: MsgService,
-              private authService: AuthService, private quranService: QuranService) {
+              private authService: AuthService, private stylingService: StylingService) {
   }
 
   ngOnInit(){
-    this.conditionalColoring.background = (this.quranService.nightMode) ? 'night_back' : 'normal_back';
-    this.conditionalColoring.text = (this.quranService.nightMode) ? 'night_text' : 'normal_text';
-    this.conditionalColoring.primary = (this.quranService.nightMode) ? 'night_primary' : 'normal_primary';
-    this.conditionalColoring.secondary = (this.quranService.nightMode) ? 'night_secondary' : 'normal_secondary';
+    this.conditionalColoring.background = (this.stylingService.nightMode) ? 'night_back' : 'normal_back';
+    this.conditionalColoring.text = (this.stylingService.nightMode) ? 'night_text' : 'normal_text';
+    this.conditionalColoring.primary = (this.stylingService.nightMode) ? 'night_primary' : 'normal_primary';
+    this.conditionalColoring.secondary = (this.stylingService.nightMode) ? 'night_secondary' : 'normal_secondary';
 
-    this.quranService.nightMode$.subscribe(
+    this.stylingService.nightMode$.subscribe(
       (data) => {
         if(data) {
           this.conditionalColoring.background = 'night_back';

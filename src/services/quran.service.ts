@@ -64,7 +64,7 @@ export class QuranService {
   pageForSection(sectionType,sectionNumber){
     var s;
     if(sectionType === 'page')
-      s = sectionNumber;
+      return(sectionNumber);
     else if(sectionType==='sura')
       s = new QuranReference({sura:sectionNumber,aya:1});
     else {
@@ -80,7 +80,7 @@ export class QuranService {
     if(sectionType==='sura')
       return new SectionAddress({num:aya.sura, text: this.quranData.suras[aya.sura-1].name});
     else
-      return new SectionAddress({num:this.quranData[sectionType].findReference(aya)});
+      return new SectionAddress({num:this.findReference(sectionType,aya)});
   }
 
   goForth(sectionType,sectionNumber){
@@ -139,7 +139,7 @@ export class QuranService {
     let section = this.getSec(secType, index);
     if(section.start) {
       let startIndex = ayas.findIndex(a=>a.sura === section.start.sura && a.aya === section.start.aya);
-      let endIndex = section.end? ayas.findIndex(a=>a.sura === section.end.sura && a.aya === section.end.aya): ayas.length -1;
+      let endIndex = section.end? ayas.findIndex(a=>a.sura === section.end.sura && a.aya === section.end.aya): ayas.length;
       if (section.start.aya === 1 && section.start.sura !== 1) {
         startIndex--;
       }

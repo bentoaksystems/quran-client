@@ -130,12 +130,6 @@ export class Safha implements OnInit {
   }
 
   loadPage() {
-    this.pageAyas = [];
-    this.suraName = [];
-    this.suraOrder = [];
-    this.tanzilLocation = [];
-    this.quranPages = [];
-
     let ayas = this.quranService.applySectionFilter('page', this.ayas, this.quranPage);
 
     let suraOrders = ayas.map(e => e.sura).filter((e, i, v) => v.indexOf(e) === i);

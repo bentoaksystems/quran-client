@@ -18,6 +18,8 @@ hashia {
     text-align: left;
     border: none;
     padding-bottom:10px;
+    padding-left:10px;
+    text-align:left;
   }
 
   .info-column2{
@@ -54,14 +56,73 @@ hashia {
     text-align: right;
     border: none;
     padding-bottom:10px;
+    padding-right:10px;
   }
 
 
   .right-left-text{
     font-weight: bolder;
     vertical-align: bottom;
+    white-space: nowrap;
   }
 
+  .select-ios .select-icon{
+    width:100%;
+    padding:0px;
+  }
 
+  .select-ios{
+    padding:0px;
+  }
 
+  .label-ios{
+    margin:0;
+    padding:0;
+  }
+
+  .item-ios{
+    font-size:100%;
+    padding:0;
+
+  }
+
+  .item-ios.item-block .item-inner {
+    border-bottom:0;
+  }
+
+  //
+  .select-md .select-icon{
+    width:100%;
+    padding:0px;
+  }
+
+  .select-md{
+    padding:0px;
+  }
+
+  .label-md{
+    margin:0;
+    padding:0;
+  }
+
+  .item-md{
+    font-size:100%;
+    padding:0;
+
+  }
+
+  .item-md.item-block .item-inner {
+    border-bottom:0;
+  }
+
+  .select-md >> .select-text {
+    min-width:0
+  }
+
+  .item-input .label-md, .item-select .label-md, .item-datetime .label-md {
+    color:black;
+  }
+  .info-column1 .item{
+    text-align:right;
+  }
 }

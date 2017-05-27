@@ -23,8 +23,6 @@ import {AuthService} from "../services/auth.service";
 import {MsgService} from "../services/msg.service";
 import {HttpService} from "../services/http.service";
 import {QuranService} from "../services/quran.service";
-import {HttpModule} from "@angular/http";
-import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {StylingService} from "../services/styling";
 import { LeftMenuComponent } from '../components/left-menu/left-menu';
 import { RightMenuComponent } from '../components/right-menu/right-menu';

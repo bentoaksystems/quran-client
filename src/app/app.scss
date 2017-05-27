@@ -205,3 +205,15 @@ div.border-night{
   direction:rtl;
   text-align:center;
 }
+
+.input-wrapper {
+  direction: rtl
+}
+.select-text{
+  mins-width:0px;
+  width:0px;
+  text-overflow:none;
+}
+ion-select{
+  width:0px;
+}

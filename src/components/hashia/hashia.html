@@ -1,9 +1,28 @@
 <table class="info-table">
   <tr class="info-row">
-    <td class="info-column1 right-left-text">{{suraorderAr}}. {{suraname}}</td>
-    <td class="info-column2">
-      <span [ngClass]="[nightMode ? 'night-pic-address':'day-pic-address']" class="center-text pic pagenum">{{pagenumberAr}}</span>
+    <td class="info-column1 right-left-text">
+      <ion-item>
+        <ion-label style="text-align:left">{{suraorderAr}}. {{suraname}}</ion-label>
+        <ion-select [(ngModel)]="selectedSura" interface="popover" (ngModelChange)="changeSura()">
+          <ion-option *ngFor="let sura of suras" [value]="sura.number" [selected]="sura.number===suraorder">{{sura.numberAr}}. {{sura.name}}</ion-option>
+        </ion-select>
+      </ion-item>
+
+
     </td>
-    <td class="info-column3 right-left-text">جزء {{pageJuzNumberAr}}</td>
+    <td class="info-column2" (click)="pageNumberToggle()">
+      <span *ngIf="!pageNumberToggled" [ngClass]="[nightMode ? 'night-pic-address':'day-pic-address']" class="center-text pic pagenum">{{pagenumberAr}}</span>
+      <ion-item *ngIf="pageNumberToggled">
+        <ion-input type="number" [(ngModel)]="selectedPage" (keyup)="keyup($event)"></ion-input>
+      </ion-item>
+    </td>
+    <td class="info-column3 right-left-text">
+      <ion-item>
+        <ion-label>جزء {{pageJuzNumberAr}}</ion-label>
+        <ion-select [(ngModel)]="selectedJuz" interface="popover" (ngModelChange)="changeJuz()">
+          <ion-option *ngFor="let juz of juzes" [value]="juz.number" [selected]="juz.number===pageJuzNumber">جزء {{juz.numberAr}}</ion-option>
+        </ion-select>
+      </ion-item>
+    </td>
   </tr>
 </table>
