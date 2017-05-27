@@ -102,21 +102,6 @@ export class Safha implements OnInit {
         }
       );
 
-    this.stylingService.nightMode$
-      .subscribe(
-        (m) => {
-          this.nigthMode = m;
-          if (m) {
-            document.body.style.backgroundColor = '#000';
-            document.body.style.color = '#fff';
-          }
-          else {
-            document.body.style.backgroundColor = '#fff';
-            document.body.style.color = '#000';
-          }
-        }
-      );
-
     this.quranService.page$
       .subscribe(p => {
         this.quranPage = p;
@@ -146,13 +131,11 @@ export class Safha implements OnInit {
   }
 
   swipe(e) {
-    if (Math.abs(e.deltaX) > 50) {
       if (e.deltaX > 0)
         this.goForth();
       else
         this.goBack();
-      this.scrollPage.scrollTo(0, 0, 0);
-    }
+      setTimeout(()=>this.scrollPage.scrollTo(0, 0, 300),200);
   }
 
   pinch(e) {

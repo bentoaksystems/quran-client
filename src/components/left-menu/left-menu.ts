@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {StylingService} from "../../services/styling";
+import {MenuController} from "ionic-angular";
 
 /**
  * Generated class for the LeftMenuComponent component.
@@ -12,11 +14,27 @@ import { Component } from '@angular/core';
 })
 export class LeftMenuComponent {
 
-  text: string;
+  constructor(private stylingService:StylingService,private menuCtrl:MenuController) {
 
-  constructor() {
-    console.log('Hello LeftMenuComponent Component');
-    this.text = 'Hello World';
   }
 
+  zoomIn(){
+    this.stylingService.zoomIn();
+    this.menuCtrl.close();
+  }
+
+  zoomOut(){
+    this.stylingService.zoomOut();
+    this.menuCtrl.close();
+  }
+
+  changeFont(){
+    this.stylingService.fontChange();
+    this.menuCtrl.close();
+  }
+
+  nightMode(){
+    this.stylingService.nightModeSwitch();
+    this.menuCtrl.close();
+  }
 }

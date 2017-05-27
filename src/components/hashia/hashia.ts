@@ -1,6 +1,7 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ViewChild} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
 import {StylingService} from "../../services/styling";
+import {Keyboard} from "ionic-angular";
 
 /**
  * Generated class for the Hashia component.
@@ -53,7 +54,7 @@ export class Hashia {
   selectedJuz = 1;
   selectedPage = 1;
 
-  constructor(private quranService: QuranService, private stylingService: StylingService) {
+  constructor(private quranService: QuranService, private stylingService: StylingService, private keyboard: Keyboard) {
     for (let i = 1; i < 115; i++)
       this.suras.push({name: this.quranService.getSura(i).name, number: i, numberAr: i.toLocaleString(('ar'))});
     for (let i = 1; i < 31; i++)
@@ -92,9 +93,13 @@ export class Hashia {
       this.changePage();
     }
   }
-  pageNumberToggle() {
-    this.pageNumberToggled = ! this.pageNumberToggled;
-    if(!this.pageNumberToggled)
-      this.changePage();
+  pageNumberToggle(val=null) {
+    if(this.pageNumberToggled!==val) {
+      this.pageNumberToggled = !this.pageNumberToggled;
+      if (!this.pageNumberToggled) {
+        this.changePage();
+        this.keyboard.close();
+      }
+    }
   }
 }

@@ -26,7 +26,7 @@ export class Alama {
     if( this.hizbNumber%4===0 )
       this.sectionNumber = this.hizbNumber/4;
     else
-      this.sectionNumber = Math.floor(this.hizbNumber/4)+1 ;
+      this.sectionNumber = Math.floor(this.hizbNumber/4)+2 ;
 
     switch (this.tooltipMessage)
     {

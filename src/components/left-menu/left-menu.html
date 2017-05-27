@@ -1,5 +1,29 @@
-<ion-content>
+
+
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Settings
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
   <ion-list>
-    <button ion-item>Style</button>
+    <button ion-item (click)="nightMode()">
+      <ion-icon [name]="stylingService.nightMode?'eye':'eye-off'" item-left></ion-icon>
+      {{stylingService.nightMode?'Day':'Night'}} Mode
+    </button>
+    <button ion-item (click)="zoomIn()">
+      <ion-icon name="add-circle" item-left></ion-icon>
+      Zoom in
+    </button>
+    <button ion-item (click)="zoomOut()">
+      <ion-icon name="remove-circle" item-left></ion-icon>
+      Zoom Out
+    </button>
+    <button ion-item (click)="changeFont()">
+      Change Font
+    </button>
   </ion-list>
-</ion-content>
+
+

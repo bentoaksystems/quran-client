@@ -4,7 +4,14 @@ hashia {
     height: 100%;
     border: none;
     font-size: 150%;
-    background-color: #ffffff;
+  }
+  .info-day {
+    background-color: white;
+    color:black;
+  }
+  .info-night {
+    background-color: black;
+    color:white
   }
   .info-row{
     width: 100%;

@@ -5,7 +5,7 @@
 </ion-header>
 
 
-<ion-content padding [class]="quranService.nightMode ? 'night_background' : 'normal_background'">
+<ion-content padding [class]="stylingService.nightMode ? 'night_background' : 'normal_background'">
   <ion-list *ngIf="!showVerify">
     <ion-item [color]="conditionalColoring.background">
       <ion-label floating>Email</ion-label>

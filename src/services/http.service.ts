@@ -1,13 +1,14 @@
 /**
  * Created by Ali on 5/21/2017.
  */
-import {Injectable} from "@angular/core";
+import {Injectable, isDevMode} from "@angular/core";
 import {Http, Response} from "@angular/http";
 import {Observable} from "rxjs";
 
 @Injectable()
 export class HttpService{
-  serverAddress: string = 'http://192.168.1.5:3000/api';
+  serverAddress: string = //isDevMode()?'http://192.168.1.5:3000/api':
+     'https://quran-together.herokuapp.com/api';
 
   constructor(private http: Http){}
 

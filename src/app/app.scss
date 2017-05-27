@@ -155,6 +155,7 @@ div.border-day{
   border-image-slice: 100;
   margin:5px;
   background-color: #ffffff !important;
+  color:black;
 }
 
 div.border-night{
@@ -167,7 +168,7 @@ div.border-night{
   border-image-slice: 100;
   margin:5px;
   background-color: #000000 !important;
-
+  color:white;
 }
 
 .night_background{
@@ -216,4 +217,11 @@ div.border-night{
 }
 ion-select{
   width:0px;
+}
+
+.ios .menu-inner {
+  top: 20px;
+}
+.header{
+  position:relative !important;
 }

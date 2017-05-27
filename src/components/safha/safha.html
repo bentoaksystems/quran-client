@@ -1,10 +1,10 @@
 <div class="pageInfo" [ngStyle]="{'top': (platform.is('ios')?20:0)+ 'px'}">
   <table class="outer-table">
-    <tr class="outer-row">
+    <tr class="outer-row" [ngStyle]="{'background':stylingService.nightMode?'black':'white','color':!stylingService.nightMode?'black':'white'}">
       <td class="tdBack">
         <ion-buttons start>
-          <button ion-button color="light" icon-only menuToggle="right">
-            <ion-icon name="menu" color="normal_primary"></ion-icon>
+          <button ion-button [color]="!stylingService.nightMode?'light':'dark'" icon-only menuToggle="right">
+            <ion-icon name="menu" [color]="!stylingService.nightMode?'normal_primary':'night_primary'"></ion-icon>
           </button>
         </ion-buttons>
       </td>
@@ -13,15 +13,15 @@
       </td>
       <td class="tdBack">
                <ion-buttons end>
-                  <button ion-button color="light" icon-only menuToggle="left">
-                    <ion-icon name="settings" color="normal_primary"></ion-icon>
+                  <button ion-button [color]="!stylingService.nightMode?'light':'dark'" icon-only menuToggle="left">
+                    <ion-icon name="settings" [color]="!stylingService.nightMode?'normal_primary':'night_primary'"></ion-icon>
                   </button>
                </ion-buttons>
       </td>
   </table>
 </div>
-<ion-content class="overflowContainer" [ngStyle]="{'width':width,'height':height-50+'px','top':(platform.is('ios')?70:50)+ 'px'}" #scrollPage>
-  <div [class.border-day]="!nightMode"  [class.border-night]="nightMode" [ngStyle]="{'width':(pageWidth-10)+'px','font-size':zoom+'%'}" (swipe)="swipe($event)" (pinch)="pinch($event)">
+<ion-content class="overflowContainer" [ngStyle]="{'width':width,'height':height-50+'px','top':(platform.is('ios')?70:50)+ 'px','background':stylingService.nightMode?'black':'white'}" #scrollPage>
+  <div [class.border-day]="!stylingService.nightMode"  [class.border-night]="stylingService.nightMode" [ngStyle]="{'width':(pageWidth-10)+'px','font-size':zoom+'%'}" (swipe)="swipe($event)" (pinch)="pinch($event)">
   <div class="internal quran" [ngStyle]="{'margin':margin + 'px','font-family':fontFamily}">
   <aya *ngFor="let aya of pageAyas" [value]="aya" [fontFamily]="fontFamily" [margin]="margin"></aya>
   </div>

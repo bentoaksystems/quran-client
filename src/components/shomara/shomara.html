@@ -1,7 +1,7 @@
-<div [ngClass]="['outer', fontFamily]"><span color="normal_primary" *ngIf="!needntBorder">&#x06DD;</span><span *ngIf="needntBorder"> {{ayanumberAr}}</span>
+<div [ngClass]="['outer', fontFamily]"><span *ngIf="!needntBorder">&#x06DD;</span><span *ngIf="needntBorder"> {{ayanumberAr}}</span>
   <span *ngIf="!needntBorder" [ngClass]="['inner', fontFamily]">
       <div class="wrapper">
-          <div class="entry">{{ayanumberAr}}</div>
+          <div class="entry" [ngStyle]="{'font-size':this.fontFamily==='quran'?'33%':'100%'}">{{ayanumberAr}}</div>
       </div>
   </span>
 </div>
