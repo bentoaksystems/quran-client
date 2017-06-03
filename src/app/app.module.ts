@@ -23,8 +23,10 @@ import {AuthService} from "../services/auth.service";
 import {MsgService} from "../services/msg.service";
 import {HttpService} from "../services/http.service";
 import {QuranService} from "../services/quran.service";
+import {StylingService} from "../services/styling";
 import { LeftMenuComponent } from '../components/left-menu/left-menu';
 import { RightMenuComponent } from '../components/right-menu/right-menu';
+import {LanguageService} from "../services/language";
 
 @NgModule({
   declarations: [
@@ -66,7 +68,9 @@ import { RightMenuComponent } from '../components/right-menu/right-menu';
     Deeplinks,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     QuranService,
+    StylingService,
     ScreenOrientation,
+    LanguageService,
   ]
 })
 export class AppModule {}

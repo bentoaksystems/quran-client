@@ -3,6 +3,7 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {Registration} from "../../pages/registration/registration";
 import {HomePage} from "../../pages/home/home";
+import {LanguageService} from "../../services/language";
 
 @Component({
   selector: 'right-menu',
@@ -12,7 +13,9 @@ export class RightMenuComponent {
   @Input() isLoggedIn: boolean;
   @Output() switchView = new EventEmitter<any>();
 
-  constructor(private authService: AuthService) {
+  constructor(private authService: AuthService,
+              private ls:LanguageService,
+             ) {
 
   }
 

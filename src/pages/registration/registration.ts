@@ -4,6 +4,9 @@ import {IonicPage, NavController, NavParams, ViewController, LoadingController} 
 import {MsgService} from "../../services/msg.service";
 import {AuthService} from "../../services/auth.service";
 import {QuranService} from "../../services/quran.service";
+import {Verification} from "../verification/verification";
+import {StylingService} from "../../services/styling";
+import {LanguageService} from "../../services/language";
 
 @IonicPage()
 @Component({
@@ -26,15 +29,16 @@ export class Registration implements OnInit{
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private viewCtrl: ViewController, private msgService: MsgService,
               private authService: AuthService, private quranService: QuranService,
-              private loadingCtrl: LoadingController) {}
+              private ls: LanguageService, private loadingCtrl: LoadingController) {}
+
 
   ngOnInit(){
-    this.conditionalColoring.background = (this.quranService.nightMode) ? 'night_back' : 'normal_back';
-    this.conditionalColoring.text = (this.quranService.nightMode) ? 'night_text' : 'normal_text';
-    this.conditionalColoring.primary = (this.quranService.nightMode) ? 'night_primary' : 'normal_primary';
-    this.conditionalColoring.secondary = (this.quranService.nightMode) ? 'night_secondary' : 'normal_secondary';
+    this.conditionalColoring.background = (this.stylingService.nightMode) ? 'night_back' : 'normal_back';
+    this.conditionalColoring.text = (this.stylingService.nightMode) ? 'night_text' : 'normal_text';
+    this.conditionalColoring.primary = (this.stylingService.nightMode) ? 'night_primary' : 'normal_primary';
+    this.conditionalColoring.secondary = (this.stylingService.nightMode) ? 'night_secondary' : 'normal_secondary';
 
-    this.quranService.nightMode$.subscribe(
+    this.stylingService.nightMode$.subscribe(
       (data) => {
         if(data) {
           this.conditionalColoring.background = 'night_back';
@@ -83,10 +87,10 @@ export class Registration implements OnInit{
           })
       }
       else
-        this.msgService.showMessage('error', 'The repeated email not match');
+        this.msgService.showMessage('error', this.ls.translate('Emails do not match'));
     }
     else
-      this.msgService.showMessage('error', 'The email is not valid');
+      this.msgService.showMessage('error', this.ls.translate('The email address is not valid'));
   }
 
   skip(){
@@ -103,7 +107,7 @@ export class Registration implements OnInit{
     this.authService.register(this.authService.email.getValue(), this.authService.name.getValue())
       .then((res) => {
         this.loading.dismiss();
-        this.msgService.showMessage('inform', 'The verifiction code sent to the ' + this.authService.email.getValue());
+        this.msgService.showMessage('inform', this.ls.translate('The verification code has been sent to ') + this.authService.email.getValue());
       })
       .catch((err) => {
         this.loading.dismiss();
@@ -118,7 +122,7 @@ export class Registration implements OnInit{
 
   verify(code){
     if(!this.checkCode(code)){
-      this.msgService.showMessage('warn', 'The verification code should contain 6 digits');
+      this.msgService.showMessage('warn', this.ls.translate('The verification code consists of 6 digits'));
     }
     else{
       this.authService.verify(code)
