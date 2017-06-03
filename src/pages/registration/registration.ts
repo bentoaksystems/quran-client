@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {IonicPage, NavController, NavParams, ViewController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, ViewController, LoadingController} from 'ionic-angular';
 
 import {MsgService} from "../../services/msg.service";
 import {AuthService} from "../../services/auth.service";
@@ -24,12 +24,13 @@ export class Registration implements OnInit{
     primary: 'normal_primary',
     secondary: 'normal_secondary'
   };
+  loading;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private viewCtrl: ViewController, private msgService: MsgService,
-              private authService: AuthService, private stylingService: StylingService,
-              private ls: LanguageService) {
-  }
+              private authService: AuthService, private quranService: QuranService,
+              private ls: LanguageService, private loadingCtrl: LoadingController) {}
+
 
   ngOnInit(){
     this.conditionalColoring.background = (this.stylingService.nightMode) ? 'night_back' : 'normal_back';
@@ -67,18 +68,23 @@ export class Registration implements OnInit{
       }
     );
     this.authService.loadUserData();
-
   }
 
   register(){
     if(this.mailValidation(this.email)){
       if(this.email.toLowerCase() === this.reEmail.toLowerCase()){
+        this.setLoading();
+
         //Register user
         this.authService.register(this.email, this.name)
           .then(() => {
             this.showVerify = true;
+            this.loading.dismiss();
           })
-          .catch((err) => this.msgService.showMessage('error', err))
+          .catch((err) => {
+            this.loading.dismiss();
+            this.msgService.showMessage('error', err);
+          })
       }
       else
         this.msgService.showMessage('error', this.ls.translate('Emails do not match'));
@@ -97,11 +103,14 @@ export class Registration implements OnInit{
   }
 
   reSend(){
+    this.setLoading();
     this.authService.register(this.authService.email.getValue(), this.authService.name.getValue())
       .then((res) => {
+        this.loading.dismiss();
         this.msgService.showMessage('inform', this.ls.translate('The verification code has been sent to ') + this.authService.email.getValue());
       })
       .catch((err) => {
+        this.loading.dismiss();
         this.msgService.showMessage('error', err);
       });
   }
@@ -137,5 +146,13 @@ export class Registration implements OnInit{
     }
 
     return true;
+  }
+
+  setLoading(){
+    this.loading = this.loadingCtrl.create({
+      content: 'Please wait until send verification code ...'
+    });
+    
+    this.loading.present();
   }
 }
