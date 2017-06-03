@@ -8,6 +8,7 @@ import { HomePage } from '../pages/home/home';
 import {MsgService} from "../services/msg.service";
 import {Registration} from "../pages/registration/registration";
 import {AuthService} from "../services/auth.service";
+import {LanguageService} from "../services/language";
 @Component({
   templateUrl: 'app.html'
 })
@@ -18,28 +19,17 @@ export class MyApp {
   isLoggedIn: boolean = false;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen,
-              deepLinks: Deeplinks, msgService: MsgService, authService: AuthService) {
+              authService: AuthService,
+              private ls:LanguageService) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
       splashScreen.hide();
 
-      deepLinks.routeWithNavController(this.navChild, {
-        '/auth/:hashlink': Registration
-      }).subscribe(
-        (match) => {
-          msgService.showMessage('inform', 'Match:' + match, true);
-        },
-        (noMatch) => {
-          msgService.showMessage('error', 'noMatch ' + noMatch, true);
-        }
-      );
-
       authService.isLoggedIn.subscribe(
         (data) => this.isLoggedIn = data
       );
-
     });
   }
 

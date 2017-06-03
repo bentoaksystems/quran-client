@@ -56,11 +56,11 @@ export class Hashia {
 
   constructor(private quranService: QuranService, private stylingService: StylingService, private keyboard: Keyboard) {
     for (let i = 1; i < 115; i++)
-      this.suras.push({name: this.quranService.getSura(i).name, number: i, numberAr: i.toLocaleString(('ar'))});
+      this.suras.push({name: this.quranService.getSura(i).name, number: i, numberAr: i.toLocaleString('ar')});
     for (let i = 1; i < 31; i++)
-      this.juzes.push({number: i, numberAr: i.toLocaleString(('ar'))});
+      this.juzes.push({number: i, numberAr: i.toLocaleString('ar')});
     for (let i = 1; i < 605; i++)
-      this.pages.push({number: i, numberAr: i.toLocaleString(('ar'))});
+      this.pages.push({number: i, numberAr: i.toLocaleString('ar')});
   }
 
   ngOnInit() {

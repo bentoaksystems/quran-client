@@ -1,52 +1,59 @@
 import {Injectable} from "@angular/core";
-import {Subject} from "rxjs";
-
-const FONT_PARAMS = {
-  quran:                  [.8131, 130, false ],
-  "quran-uthmanic":       [46/67, 150, true ],
-  "quran-uthmanic-bold":  [37/50, 160, true],
-  "qalam":                [34/50, 155, true],
-  "me-quran":             [30/54, 185, true]
-}
+import {ReplaySubject} from "rxjs";
+import {Storage} from "@ionic/storage";
 
 @Injectable()
 export class StylingService {
-  private zoomChangeStream = new Subject<number>();
-  private nightModeStream = new Subject<boolean>();
-  private fontChangeStream = new Subject<number>();
-
-  zoomChanged$ = this.zoomChangeStream.asObservable();
-  nightMode$ = this.nightModeStream.asObservable();
+  constructor(private storage: Storage){
+    ['curZoom','nightMode','fontFamily'].forEach(key=>{
+       this.storage.get(key)
+         .then(val=>{
+           this[key] = val;
+           if(val!==undefined && val!==null)
+             this[key+'Stream'].next(key==='fontFamily'?NaN:val)
+         })
+         .catch(err=>console.log(err));
+    })
+  }
   curZoom = 0;
   nightMode= false;
-  fontChanged$ = this.fontChangeStream.asObservable();
   font = 0;
+  private curZoomStream = new ReplaySubject<number>(1);
+  private nightModeStream = new ReplaySubject<boolean>(1);
+  private fontFamilyStream = new ReplaySubject<number>(1);
+
+  zoomChanged$ = this.curZoomStream.asObservable();
+  nightMode$ = this.nightModeStream.asObservable();
+  fontChanged$ = this.fontFamilyStream.asObservable();
+  fontFamily='quran';
 
   zoomIn(){
     this.curZoom++;
-    this.zoomChangeStream.next(this.curZoom);
+    this.curZoomStream.next(this.curZoom);
+    this.storage.set('curZoom',this.curZoom);
     return this.curZoom;
   }
   zoomOut(){
     this.curZoom--;
-    this.zoomChangeStream.next(this.curZoom);
+    this.curZoomStream.next(this.curZoom);
+    this.storage.set('curZoom',this.curZoom);
     return this.curZoom;
   }
   resetZoom(){
     this.curZoom=0;
-    this.zoomChangeStream.next(0);
+    this.curZoomStream.next(0);
+    this.storage.set('curZoom',this.curZoom);
     return this.curZoom;
   }
   fontChange(){
     this.font++;
-    this.fontChangeStream.next(this.font);
-  }
-  fontParams(fontFamily){
-    return FONT_PARAMS[fontFamily]
+    this.fontFamilyStream.next(this.font);
+    setTimeout(()=>this.storage.set('fontFamily',this.fontFamily),1000);
   }
 
   nightModeSwitch() {
     this.nightMode = !this.nightMode;
     this.nightModeStream.next(this.nightMode);
+    this.storage.set('nightMode',this.nightMode);
   }
 }

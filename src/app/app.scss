@@ -206,9 +206,8 @@ div.border-night{
   direction:rtl;
   text-align:center;
 }
-
-.input-wrapper {
-  direction: rtl
+.select-popover ion-list {
+  direction: rtl !important;
 }
 .select-text{
   mins-width:0px;
@@ -224,4 +223,24 @@ ion-select{
 }
 .header{
   position:relative !important;
+}
+.msg_rtl{
+  direction:rtl
+}
+.msg_ltr{
+  direction:ltr
+}
+.toolbar-ios {
+  padding-top:24px;
+}
+.fa{
+  min-height: 2.8rem;
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.item-label-stacked ion-label, .item-label-floating ion-label
+{
+  margin-right:0px !important;
+  align-self: flex-start;
 }

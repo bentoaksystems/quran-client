@@ -1,29 +1,37 @@
 
-
+<span [ngStyle]="{'direction':ls.direction()}">
 <ion-header>
   <ion-toolbar>
     <ion-title>
-      Settings
+      {{ls.translate('Settings')}}
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
   <ion-list>
-    <button ion-item (click)="nightMode()">
+  <ion-item detail-none (click)="changeFont()">
+        <i class="fa fa-language" aria-hidden="true" item-left></i>
+        <ion-label>{{ls.translate('Change App Language')}}</ion-label>
+        <ion-select [(ngModel)]="ls.lang" interface="action-sheet" (ngModelChange)="changeLanguage()">
+          <ion-option *ngFor="let l of langs" [value]="l.acronym" [selected]="l.acronym===ls.lang">{{l.name}}</ion-option>
+        </ion-select>
+      </ion-item>
+    <button ion-item detail-none (click)="nightMode()">
       <ion-icon [name]="stylingService.nightMode?'eye':'eye-off'" item-left></ion-icon>
-      {{stylingService.nightMode?'Day':'Night'}} Mode
+      {{stylingService.nightMode?ls.translate('Day Mode'):ls.translate('Night Mode')}}
     </button>
-    <button ion-item (click)="zoomIn()">
+    <button ion-item detail-none (click)="zoomIn()">
       <ion-icon name="add-circle" item-left></ion-icon>
-      Zoom in
+      {{ls.translate('Zoom In')}}
     </button>
-    <button ion-item (click)="zoomOut()">
+    <button ion-item detail-none (click)="zoomOut()">
       <ion-icon name="remove-circle" item-left></ion-icon>
-      Zoom Out
+      {{ls.translate('Zoom Out')}}
     </button>
-    <button ion-item (click)="changeFont()">
-      Change Font
+    <button ion-item detail-none (click)="changeFont()">
+      <i class="fa fa-pencil-square-o" aria-hidden="true" item-left></i>
+      {{ls.translate('Change Quran Font')}}
     </button>
   </ion-list>
-
+</span>
 

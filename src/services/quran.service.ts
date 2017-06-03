@@ -34,7 +34,7 @@ export class QuranService {
   }
 
   getPage(pageNum){
-    var page = this.getSec('page',pageNum);
+    let page = this.getSec('page',pageNum);
     return page;
   }
 
@@ -43,7 +43,7 @@ export class QuranService {
   }
 
   getRukus(rukuNum){
-    var ruku = this.getSec('ruku', rukuNum);
+    let ruku = this.getSec('ruku', rukuNum);
     return ruku;
   }
 
@@ -52,17 +52,17 @@ export class QuranService {
   }
 
   sajdaCheck(obj){
-    var ind = this.quranData.sajda.findIndex(qs=>qs.loc.aya===obj.aya&&qs.loc.sura===obj.sura);
+    let ind = this.quranData.sajda.findIndex(qs=>qs.loc.aya===obj.aya&&qs.loc.sura===obj.sura);
     return ind;
   }
 
   qhizbCheck(obj){
-    var ind = this.quranData.qhizb.findIndex(qs=>qs.aya===obj.aya&&qs.sura===obj.sura);
+    let ind = this.quranData.qhizb.findIndex(qs=>qs.aya===obj.aya&&qs.sura===obj.sura);
     return ind;
   }
 
   pageForSection(sectionType,sectionNumber){
-    var s;
+    let s;
     if(sectionType === 'page')
       return(sectionNumber);
     else if(sectionType==='sura')
@@ -84,14 +84,14 @@ export class QuranService {
   }
 
   goForth(sectionType,sectionNumber){
-    var p = this.pageForSection(sectionType,sectionNumber);
+    let p = this.pageForSection(sectionType,sectionNumber);
     if(p<605)
       this.pageStream.next(p);
     else
       this.pageStream.next(1);
   }
   goBack(sectionType,sectionNumber){
-    var p = this.pageForSection(sectionType,sectionNumber);
+    let p = this.pageForSection(sectionType,sectionNumber);
     if(p>0)
       this.pageStream.next(p);
     else
@@ -99,7 +99,7 @@ export class QuranService {
   }
    goTo(sectionType,sectionNumber){
      this.temp = '';
-    var p = this.pageForSection(sectionType,sectionNumber);
+    let p = this.pageForSection(sectionType,sectionNumber);
     if(p>604)
      this.pageStream.next(1);
     else if(p<1)
@@ -109,7 +109,7 @@ export class QuranService {
   }
 
   suraNumberCheck(str){
-    var ind = this.quranData.suras.findIndex(qs=>qs.name===str);
+    let ind = this.quranData.suras.findIndex(qs=>qs.name===str);
     if(ind!== -1)
      return ind+1;
   }

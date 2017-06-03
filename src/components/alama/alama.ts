@@ -21,12 +21,12 @@ export class Alama {
 
   ngOnInit() {
     if(this.hizbNumber%8===0)
-      this.sectionNumber = this.hizbNumber/8;
+      this.sectionNumber = this.hizbNumber/8 + 1;
     else
     if( this.hizbNumber%4===0 )
       this.sectionNumber = this.hizbNumber/4;
     else
-      this.sectionNumber = Math.floor(this.hizbNumber/4)+2 ;
+      this.sectionNumber = Math.floor(this.hizbNumber/4)+1 ;
 
     switch (this.tooltipMessage)
     {

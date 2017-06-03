@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, AfterViewChecked} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
 import {Platform, ToastController, NavController} from "ionic-angular";
 import {Response} from "@angular/http";
@@ -11,7 +11,7 @@ const fonts = ['quran', 'quran-uthmanic', 'quran-uthmanic-bold', 'qalam', 'me-qu
   selector: 'safha',
   templateUrl: 'safha.html'
 })
-export class Safha implements OnInit {
+export class Safha implements OnInit{
   ayas;
   quranPage: number = 1;
   pageAyas;
@@ -35,14 +35,18 @@ export class Safha implements OnInit {
   portrait;
   margin;
   @ViewChild('scrollPage') scrollPage;
+  @ViewChild('border') border;
   private gesture: Gesture;
+  private swiped: boolean;
 
   ionViewDidLoad() {
     //create gesture obj w/ ref to DOM element
-    this.gesture = new Gesture(this.scrollPage.nativeElement);
+    this.gesture = new Gesture(this.border.nativeElement);
 
     //listen for the gesture
     this.gesture.listen();
+
+    this.gesture.on('pinch', e => this.pinch(e));
   }
 
   constructor(private quranService: QuranService, private stylingService: StylingService, private platform: Platform, private screenOrientation: ScreenOrientation,public toastCtrl: ToastController) {
@@ -86,7 +90,6 @@ export class Safha implements OnInit {
       .subscribe(
         (zoom) => {
           this.zoom = 100 * Math.pow(1.25, zoom);
-          console.log(this.zoom);
           this.resize(true);
         }
       );
@@ -94,11 +97,18 @@ export class Safha implements OnInit {
     this.stylingService.fontChanged$
       .subscribe(
         (f) => {
-          do {
-            var tempFont = fonts[f % fonts.length];
-            f++;
-          } while (tempFont === this.fontFamily || (this.naskhIncompatible && this.isUthmanic(tempFont)));
-          this.fontFamily = tempFont;
+          if(f===NaN && this.stylingService.fontFamily){//on initial load
+            this.fontFamily = this.stylingService.fontFamily;
+          }
+          else if(fonts[f % fonts.length]) {
+            let tempFont;
+            do {
+              tempFont = fonts[f % fonts.length];
+              f++;
+            } while (tempFont && tempFont === this.fontFamily || (this.naskhIncompatible && this.isUthmanic(tempFont)));
+            this.fontFamily = tempFont;
+            this.stylingService.fontFamily = tempFont;
+          }
         }
       );
 
@@ -130,12 +140,19 @@ export class Safha implements OnInit {
     this.suraOrder = suraOrder;
   }
 
+  ngAfterViewChecked(){
+    if(this.swiped) {
+      this.scrollPage.scrollTo(0, 0, 0);
+      this.swiped = false;
+    }
+  }
+
   swipe(e) {
       if (e.deltaX > 0)
         this.goForth();
       else
         this.goBack();
-      setTimeout(()=>this.scrollPage.scrollTo(0, 0, 300),200);
+      this.swiped = true;
   }
 
   pinch(e) {
