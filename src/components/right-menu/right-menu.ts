@@ -3,6 +3,7 @@ import {Component, Input, Output, EventEmitter} from '@angular/core';
 import {AuthService} from "../../services/auth.service";
 import {Registration} from "../../pages/registration/registration";
 import {HomePage} from "../../pages/home/home";
+import {CreateKhatmPage} from "../../pages/create-khatm/create-khatm";
 
 @Component({
   selector: 'right-menu',
@@ -18,9 +19,19 @@ export class RightMenuComponent {
 
   openPage(desPage){
     console.log(desPage);
+
+    var target;
+
+    if(desPage === 'register')
+      target = Registration;
+    else if(desPage === 'khatm')
+      target = CreateKhatmPage;
+    else
+      target = HomePage;
+
     var data = {
       isChanged: true,
-      page: (desPage === 'register') ? Registration : HomePage
+      page: target
     };
 
     this.switchView.emit(data);

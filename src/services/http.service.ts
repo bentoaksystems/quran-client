@@ -7,7 +7,7 @@ import {Observable} from "rxjs";
 
 @Injectable()
 export class HttpService{
-  serverAddress: string = 'http://192.168.1.5:3000/api';
+  serverAddress: string = 'http://192.168.1.14:3000/api';
 
   constructor(private http: Http){}
 

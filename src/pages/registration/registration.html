@@ -34,12 +34,12 @@
   <ion-grid *ngIf="showVerify">
     <ion-row>
       <ion-col col-12>
-        <ion-label block>The verification code sent to the {{authService.email.getValue()}}</ion-label>
+        <ion-label>The verification code sent to the {{authService.email.getValue()}}</ion-label>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-list>
-        <ion-item>
+        <ion-item [color]="conditionalColoring.background">
           <ion-label fixed>Code</ion-label>
           <ion-input type="text" maxlength="6" #code></ion-input>
         </ion-item>

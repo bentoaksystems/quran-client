@@ -6,7 +6,7 @@
         <button ion-button menuClose *ngIf="isLoggedIn" block (click)="logout()">Logout</button>
       </ion-col>
       <ion-col col-6>
-        <button ion-button menuClose *ngIf="isLoggedIn" block>Profile</button>
+        <button ion-button menuClose *ngIf="isLoggedIn" block (click)="openPage('khatm')">Create Khatm</button>
       </ion-col>
     </ion-row>
   </ion-grid>

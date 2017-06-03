@@ -25,6 +25,7 @@ import {HttpService} from "../services/http.service";
 import {QuranService} from "../services/quran.service";
 import { LeftMenuComponent } from '../components/left-menu/left-menu';
 import { RightMenuComponent } from '../components/right-menu/right-menu';
+import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { RightMenuComponent } from '../components/right-menu/right-menu';
     Shomara,
     Bismillah,
     Registration,
+    CreateKhatmPage,
     LeftMenuComponent,
     RightMenuComponent,
   ],
@@ -55,6 +57,7 @@ import { RightMenuComponent } from '../components/right-menu/right-menu';
     Text,
     Tasks,
     Registration,
+    CreateKhatmPage,
   ],
   providers: [
     StatusBar,
