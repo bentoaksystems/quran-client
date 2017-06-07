@@ -3,7 +3,6 @@ safha {
   .overflowContainer{
     padding: 0px;
     border: 1px inset antiquewhite;
-    background: white;
   }
   div.internal{
     letter-spacing: 0px;
@@ -41,7 +40,7 @@ safha {
     font-family: quran;
     text-align: justify;
     direction: rtl;
-    font-size: 300%;
+    font-size:300%
   }
 
   .pageInfo{
@@ -65,8 +64,22 @@ safha {
   }
 
   .tdBack{
-    background-color: white;
-    width: 30%;
+    width: 15%;
     height: 48px;
+  }
+  .quranFont{
+    line-height: 130% !important;
+  }
+  .quran-uthmanicFont{
+    line-height: 150% !important;
+  }
+  .quran-uthmanic-boldFont{
+    line-height: 160% !important;
+  }
+  .qalamFont{
+    line-height: 155% !important;
+  }
+  .me-quran{
+    line-height:185% !important;
   }
 }

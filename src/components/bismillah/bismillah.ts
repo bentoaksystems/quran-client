@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
+import {StylingService} from "../../services/styling";
 
 /**
  * Generated class for the Bismillah component.
@@ -21,11 +22,11 @@ export class Bismillah {
   private imgflag;
   private nightMode=false;
 
-  constructor(private quranService: QuranService) {
+  constructor(private quranService: QuranService, private stylingService:StylingService) {
   }
 
   ngOnInit() {
-    this.nightMode = this.quranService.nightMode;
+    this.nightMode = this.stylingService.nightMode;
     let suraStats = this.quranService.suraStats(this.value.sura);
     this.suraAyaNumber = suraStats.ayas;
     this.suraTanzilLocation = suraStats.tanzilLocation;
@@ -33,7 +34,7 @@ export class Bismillah {
     this.suraTanzilLocation = this.suraTanzilLocation !== "Meccan" ? 'مدنية' : 'مکية';
     this.suraArabicName = suraStats.name;
 
-    this.quranService.nightMode$
+    this.stylingService.nightMode$
       .subscribe(
         (m)=>{
           this.nightMode=m;

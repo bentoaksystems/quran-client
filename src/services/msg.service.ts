@@ -3,10 +3,22 @@
  */
 import {Injectable} from "@angular/core";
 import {ToastController} from "ionic-angular";
+import {LanguageService} from "./language";
+const css={
+  warn:'warning',
+  error:'error',
+  inform:'inform',
+};
+const duration={
+  warn:2000,
+  error:3000,
+  inform:200,
+};
 
 @Injectable()
 export class MsgService{
-  constructor(private toastCtrl: ToastController){
+  constructor(private toastCtrl: ToastController,
+              private ls: LanguageService){
 
   }
 
@@ -14,26 +26,12 @@ export class MsgService{
     var tsCtrl = this.toastCtrl.create({
       message: text,
       showCloseButton: hasCloseButton,
-      position: 'bottom'
+      position: 'bottom',
+      cssClass: 'msg_'+this.ls.direction() + ' ' + (css[type]?css[type]:'normal'),
+      duration: duration[type]?duration[type]:2000,
     });
-
-    if(type === 'warn'){
-      tsCtrl.setDuration(2000);
-      tsCtrl.setCssClass('warning');
-    }
-    else if(type === 'error'){
-      tsCtrl.setDuration(3000);
-      tsCtrl.setCssClass('error');
-    }
-    else if(type === 'inform'){
-      tsCtrl.setDuration(2000);
-      tsCtrl.setCssClass('informing');
-    }
-    else{
-      tsCtrl.setDuration(2000);
-      tsCtrl.setCssClass('normal');
-    }
 
     tsCtrl.present();
   }
+
 }

@@ -155,6 +155,7 @@ div.border-day{
   border-image-slice: 100;
   margin:5px;
   background-color: #ffffff !important;
+  color:black;
 }
 
 div.border-night{
@@ -167,7 +168,7 @@ div.border-night{
   border-image-slice: 100;
   margin:5px;
   background-color: #000000 !important;
-
+  color:white;
 }
 
 .night_background{
@@ -200,4 +201,46 @@ div.border-night{
 
 .normal_secondary{
   background-color: #c5bfb1;
+}
+.alamaToast{
+  direction:rtl;
+  text-align:center;
+}
+.select-popover ion-list {
+  direction: rtl !important;
+}
+.select-text{
+  mins-width:0px;
+  width:0px;
+  text-overflow:none;
+}
+ion-select{
+  width:0px;
+}
+
+.ios .menu-inner {
+  top: 20px;
+}
+.header{
+  position:relative !important;
+}
+.msg_rtl{
+  direction:rtl
+}
+.msg_ltr{
+  direction:ltr
+}
+.toolbar-ios {
+  padding-top:24px;
+}
+.fa{
+  min-height: 2.8rem;
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+.item-label-stacked ion-label, .item-label-floating ion-label
+{
+  margin-right:0px !important;
+  align-self: flex-start;
 }

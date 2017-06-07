@@ -17,7 +17,7 @@ export class Shomara implements OnInit{
   @Input()
   set ayanumber(x){
     this._an = x;
-    this.ayanumberAr = x.toLocaleString(this.farsiNums?'fa':'ar');
+    this.ayanumberAr = x.toLocaleString(this.fontFamily==='qalam'?'fa':'ar');
   }
   get ayanumber(){
     return this._an;
@@ -26,6 +26,7 @@ export class Shomara implements OnInit{
   @Input()
   set fontFamily(ff) {
     this._ff=ff;
+    this.ayanumberAr = this.ayanumber.toLocaleString(this.fontFamily==='qalam'?'fa':'ar');
   }
   get fontFamily() {
     return this._ff;
@@ -33,10 +34,6 @@ export class Shomara implements OnInit{
 
   get needntBorder(){
     return this.fontFamily==='quran-uthmanic'||this.fontFamily==='me-quran';
-  }
-
-  get farsiNums(){
-    return this.fontFamily==='qalam';
   }
 
   ngOnInit(){
