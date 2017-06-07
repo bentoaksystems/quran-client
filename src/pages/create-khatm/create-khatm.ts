@@ -40,17 +40,23 @@ export class CreateKhatmPage implements OnInit{
     this.khatm = this.navParams.get('khatm');
 
     if(this.khatm !== null){
-      this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
-      this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
+      // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
+      // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
+      this.startDate = this.ls.convertDate(this.khatm.start_date);
+      this.endDate = this.ls.convertDate(this.khatm.end_date);
     }
+    else{
+      this.startDate = this.currentDate.getFullYear() + '-' +
+          this.getFormattedDate(this.currentDate.getMonth(), true) + '-' +
+          this.getFormattedDate(this.currentDate.getDate(), false);
 
-    this.startDate = this.currentDate.getFullYear() + '-' +
-                     this.getFormattedDate(this.currentDate.getMonth(), true) + '-' +
-                     this.getFormattedDate(this.currentDate.getDate(), false);
+      // this.startDate = this.ls.convertDate(this.startDate);
+    }
   }
 
   submit(){
     this.rangeDisplay = (this.range === 'whole') ? 'Whole Quran' : 'Specific Sura';
+    this.isSubmitted = false;
 
     //Check validation
     if(this.name === null || this.name === '')
@@ -59,10 +65,12 @@ export class CreateKhatmPage implements OnInit{
       this.msgService.showMessage('warn', 'The end date field cannot be empty');
     else if(this.endDate < this.startDate)
       this.msgService.showMessage('warn', 'The start date cannot be later then end date');
-    else
+    else {
       this.isSubmitted = true;
+      this.startDate = this.ls.convertDate(this.startDate);
+      this.endDate = this.ls.convertDate(this.endDate);
+    }
 
-    this.isSubmitted = true;
   }
 
   create(){
@@ -99,13 +107,19 @@ export class CreateKhatmPage implements OnInit{
   checkDisability(){
     if(this.name.trim() === '' || this.name === null)
       this.submitDisability = true;
-    else if(this.description.trim() === '' || this.description === null)
-      this.submitDisability = true;
     else if(this.repeats < 0)
       this.submitDisability = true;
     else if(this.endDate === null || (this.endDate < this.startDate))
       this.submitDisability = true;
     else
       this.submitDisability = false;
+  }
+
+  oppositeDirection(){
+    console.log('oppositeDirection');
+    if(this.ls.direction() === 'rtl')
+      return 'left';
+    else
+      return 'right';
   }
 }

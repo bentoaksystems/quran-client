@@ -8,6 +8,13 @@
       "dom",
       "es2015"
     ],
+    "types": [
+      "node"
+    ],
+    "typeRoots": [
+      // add path to @types
+      "node_modules/@types"
+    ],
     "module": "es2015",
     "moduleResolution": "node",
     "sourceMap": true,

@@ -1,5 +1,7 @@
 import {Injectable} from "@angular/core";
 import {Storage} from "@ionic/storage";
+import * as moment from 'moment';
+import * as momentJalali from 'jalali-moment';
 
 const translations = {
   registration: {
@@ -134,5 +136,17 @@ export class LanguageService {
       return 'rtl';
     else
       return 'ltr';
+  }
+
+  convertDate(date){
+    if(this._lang === 'fa'){
+      return momentJalali(date).format('jYYYY-jMMM-jD');
+    }
+    else if(this._lang === 'ar'){
+      var hijri = require('./date-convertor');
+      return hijri.convertToHijri(date);
+    }
+
+    return moment(date).format('YYYY-MMM-DD');
   }
 }
