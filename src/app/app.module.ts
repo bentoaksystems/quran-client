@@ -28,6 +28,7 @@ import { LeftMenuComponent } from '../components/left-menu/left-menu';
 import { RightMenuComponent } from '../components/right-menu/right-menu';
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {LanguageService} from "../services/language";
+import {KhatmService} from "../services/khatm.service";
 
 @NgModule({
   declarations: [
@@ -74,6 +75,7 @@ import {LanguageService} from "../services/language";
     StylingService,
     ScreenOrientation,
     LanguageService,
+    KhatmService,
   ]
 })
 export class AppModule {}

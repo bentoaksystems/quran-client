@@ -1,31 +1,104 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>Khatm</ion-title>
-  </ion-navbar>
-</ion-header>
-
-<ion-content padding>
-  <ion-list>
-    <ion-item>
-      <ion-label floating>Title</ion-label>
-      <ion-input type="text"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label floating>Description (Optional)</ion-label>
-      <ion-textarea></ion-textarea>
-    </ion-item>
-    <ion-item>
-      <ion-label floating>Range</ion-label>
-      <ion-select [(ngModel)]="range">
-        <ion-option value="whole">Whole Quran</ion-option>
-        <ion-option value="sura">Specific Sura</ion-option>
-      </ion-select>
-    </ion-item>
-    <ion-item *ngIf="range === 'sura'">
-      <ion-label floatin>Choose the sura</ion-label>
-      <ion-select [(ngModel)]="suraNumber">
-        <ion-option *ngFor=""></ion-option>
-      </ion-select>
-    </ion-item>
-  </ion-list>
-</ion-content>
+<span [ngStyle]="{'direction': ls.direction()}">
+  <ion-header>
+    <ion-navbar>
+      <ion-title>{{ls.translate('Khatm')}}</ion-title>
+    </ion-navbar>
+  </ion-header>
+  <ion-content padding *ngIf="!isSubmitted && isNew">
+    <ion-list>
+      <ion-item>
+        <ion-label>{{ls.translate('Title')}}</ion-label>
+        <ion-input type="text" [(ngModel)]="name"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('Description')}}</ion-label>
+        <ion-textarea [(ngModel)]="description" (ngModelChange)="checkDisability()"></ion-textarea>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate("Show owner's details to others")}}</ion-label>
+        <ion-checkbox [(ngModel)]="ownerShown"></ion-checkbox>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('Range')}}</ion-label>
+        <ion-select [(ngModel)]="range">
+          <ion-option value="whole">{{ls.translate('Whole Quran')}}</ion-option>
+          <ion-option value="sura">{{ls.translate('Specific Sura')}}</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item *ngIf="range === 'sura'">
+        <ion-label>{{ls.translate('Sura')}}</ion-label>
+        <ion-select [(ngModel)]="suraNumber">
+          <ion-option *ngFor="let sura of suras" value="sura.number">{{sura.name}}</ion-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('Repeat')}}</ion-label>
+        <ion-input type="number" min="1" [(ngModel)]="repeats"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('Start Date')}}</ion-label>
+        <ion-datetime [min]="currentDate.getFullYear()"
+                      [max]="currentDate.getFullYear() + 1"
+                      displayFormat="DD/MMM/YYYY" [(ngModel)]="startDate"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('End Date')}}</ion-label>
+        <ion-datetime [min]="currentDate.getFullYear()"
+                      [max]="currentDate.getFullYear() + 50" displayFormat="DD/MMM/YYYY" [(ngModel)]="endDate"></ion-datetime>
+      </ion-item>
+    </ion-list>
+    <button ion-button block (click)="submit()" [disabled]="submitDisability">
+      {{ls.translate('Submit')}}
+    </button>
+  </ion-content>
+  <ion-content padding *ngIf="isSubmitted && isNew">
+    <ion-list>
+      <ion-item>
+        <ion-label>{{ls.translate('Title')}}: {{name}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('Description')}}: {{description}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('Range')}}: {{rangeDisplay}}</ion-label>
+      </ion-item>
+      <ion-item *ngIf="range === 'sura'">
+        <ion-label>{{ls.translate('Sura')}}: {{quranService.getSura(suraNumber)}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('Repeatts')}}: {{repeats}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('Start Date')}}: {{startDate}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('End Date')}}: {{endDate}}</ion-label>
+      </ion-item>
+    </ion-list>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-6>
+          <button ion-button block (click)="create()">{{ls.translate('Create Khatm')}}</button>
+        </ion-col>
+        <ion-col col-6>
+          <button ion-button block (click)="isSubmitted = false">{{ls.translate('Edit')}}</button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-content>
+  <ion-content padding *ngIf="!isNew">
+    <ion-list>
+      <ion-list-header>{{ls.translate('Khatm information')}}</ion-list-header>
+      <ion-item>
+        <ion-label start>{{ls.translate('Name')}}: </ion-label><ion-label end>{{khatm.name}}</ion-label>
+      </ion-item>
+      <ion-item *ngIf="khatm.creator_shown">
+        <ion-label>{{ls.translate('Owner')}}: {{khatm.ownername}}</ion-label>
+      </ion-item>
+      <ion-item>
+        <ion-label>{{ls.translate('End Date')}}: {{endDate}}</ion-label>
+      </ion-item>
+    </ion-list>
+    <button ion-button block (click)="navCtrl.popToRoot()">Close</button>
+  </ion-content>
+</span>
