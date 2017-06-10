@@ -24,10 +24,14 @@ export class CreateKhatmPage implements OnInit{
   repeats: number = 1;
   currentDate = new Date();
   startDate;
+  startDateDisplay: string;
   endDate;
+  endDateDisplay: string;
   isNew: boolean = false;
   khatm: any;
   submitDisability: boolean = true;
+  duration;
+  lastFocus: string = 'start';
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
@@ -58,6 +62,8 @@ export class CreateKhatmPage implements OnInit{
     this.rangeDisplay = (this.range === 'whole') ? 'Whole Quran' : 'Specific Sura';
     this.isSubmitted = false;
 
+    console.log('NUMBER: ' + this.suraNumber);
+
     //Check validation
     if(this.name === null || this.name === '')
       this.msgService.showMessage('warn', 'The khatm should have a name');
@@ -65,10 +71,23 @@ export class CreateKhatmPage implements OnInit{
       this.msgService.showMessage('warn', 'The end date field cannot be empty');
     else if(this.endDate < this.startDate)
       this.msgService.showMessage('warn', 'The start date cannot be later then end date');
+    else if(this.range === 'sura' && (this.suraNumber === null || this.suraNumber === 0))
+      this.msgService.showMessage('warn', 'Please choose sura');
     else {
       this.isSubmitted = true;
-      this.startDate = this.ls.convertDate(this.startDate);
-      this.endDate = this.ls.convertDate(this.endDate);
+
+      if(this.ls.lang === 'fa'){
+        this.startDateDisplay = this.ls.convertDate(this.startDate).toLocaleString('fa');
+        this.endDateDisplay = this.ls.convertDate(this.endDate).toLocaleString('fa');
+      }
+      else if(this.ls.lang === 'ar'){
+        this.startDateDisplay = this.ls.convertDate(this.startDate).toLocaleString('ar');
+        this.endDateDisplay = this.ls.convertDate(this.endDate).toLocaleString('ar');
+      }
+      else{
+        this.startDateDisplay = this.ls.convertDate(this.startDate);
+        this.endDateDisplay = this.ls.convertDate(this.endDate);
+      }
     }
 
   }
@@ -109,14 +128,135 @@ export class CreateKhatmPage implements OnInit{
       this.submitDisability = true;
     else if(this.repeats < 0)
       this.submitDisability = true;
-    else if(this.endDate === null || (this.endDate < this.startDate))
+    else if(this.endDate === undefined || this.endDate === null || (this.endDate < this.startDate))
       this.submitDisability = true;
     else
       this.submitDisability = false;
   }
 
+  changeDuration(currentFocus){
+    var mDate = moment(this.currentDate);
+
+    if(currentFocus === 'end' && this.endDate < this.startDate){
+      this.msgService.showMessage('warn', 'Please choose correct date');
+      this.startDate = this.castDate(mDate);
+      this.duration = null;
+      this.endDate = null;
+      return;
+    }
+
+    if(this.lastFocus === 'start'){
+      if(currentFocus === 'end'){
+        this.duration = this.getDate(this.startDate, null, this.endDate);
+        this.lastFocus = currentFocus;
+        console.log(this.duration);
+      }
+      else if(currentFocus === 'duration' || currentFocus === 'start'){
+        if(this.duration === null || this.duration === 0)
+          return;
+
+        var e = this.getDate(this.startDate, this.duration, null);
+        if(e > mDate.add(10, 'years')) {
+          this.msgService.showMessage('warn', 'The end date cannot great than 10 year later');
+          this.duration = this.getDate(this.startDate, null, this.endDate);
+        }
+        else{
+          this.endDate = this.castDate(e);
+          this.lastFocus = currentFocus;
+          console.log(this.endDate);
+        }
+      }
+    }
+    else if(this.lastFocus === 'duration'){
+      if(currentFocus === 'start' || currentFocus === 'duration'){
+        if(currentFocus === 'duration' && (this.duration === null || this.duration === 0))
+          return;
+
+        var e = this.getDate(this.startDate, this.duration, null);
+        if(e > mDate.add(10, 'years')) {
+          this.msgService.showMessage('warn', 'The end date cannot great than 10 year later');
+          this.duration = this.getDate(this.startDate, null, this.endDate);
+        }
+        else {
+          this.endDate = this.castDate(e);
+          this.lastFocus = currentFocus;
+          console.log(this.endDate);
+        }
+      }
+      else if(currentFocus === 'end'){
+        var s = this.getDate(null, this.duration, this.endDate);
+        if(s < mDate) {
+          this.msgService.showMessage('warn', 'The start date cannot less than current date');
+          this.duration = this.getDate(this.startDate, null, this.endDate);
+        }
+        else if(s > mDate.add(1, 'years')) {
+          this.msgService.showMessage('warn', 'The start date cannot great than 1 year later');
+          this.duration = this.getDate(this.startDate, null, this.endDate);
+        }
+        else {
+          this.startDate = this.castDate(s);
+          this.lastFocus = currentFocus;
+          console.log(this.startDate);
+        }
+      }
+    }
+    else if(this.lastFocus === 'end'){
+      if(currentFocus === 'start'){
+        this.duration = this.getDate(this.startDate, null, this.endDate);
+        this.lastFocus = currentFocus;
+        console.log(this.duration);
+      }
+      else if(currentFocus === 'duration' || currentFocus === 'end'){
+        if(this.duration === null || this.duration === 0)
+          return;
+
+        var s = this.getDate(null, this.duration, this.endDate);
+        if(s < mDate) {
+          this.msgService.showMessage('warn', 'The start date cannot less than current date');
+          this.duration = this.getDate(this.startDate, null, this.endDate);
+        }
+        else if(s > mDate.add(1, 'years')) {
+          this.msgService.showMessage('warn', 'The start date cannot great than 1 year later');
+          this.duration = this.getDate(this.startDate, null, this.endDate);
+        }
+        else {
+          this.startDate = this.castDate(s);
+          this.lastFocus = currentFocus;
+          console.log(this.startDate);
+        }
+      }
+    }
+
+    this.checkDisability();
+  }
+
+  getDate(startDate, duration, endDate){
+    if(startDate === null){
+      var e = moment(endDate);
+      var s = e.subtract(duration, 'days');
+      return s;
+    }
+    else if(duration === null){
+      var s = moment(startDate);
+      var e = moment(endDate);
+      return e.diff(s, 'days');
+    }
+    else if(endDate === null){
+      var s = moment(startDate);
+      var e = s.add(duration, 'days');
+      return e;
+    }
+
+    return null;
+  }
+
+  castDate(a){
+    let date = new Date(a.toObject().years, a.toObject().months, a.toObject().date);
+
+    return date.getFullYear() + '-' + this.getFormattedDate(date.getMonth(), true) + '-' + this.getFormattedDate(date.getDate(), false);
+  }
+
   oppositeDirection(){
-    console.log('oppositeDirection');
     if(this.ls.direction() === 'rtl')
       return 'left';
     else

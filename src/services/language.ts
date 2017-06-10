@@ -140,7 +140,8 @@ export class LanguageService {
 
   convertDate(date){
     if(this._lang === 'fa'){
-      return momentJalali(date).format('jYYYY-jMMM-jD');
+      momentJalali.loadPersian();
+      return momentJalali(date).format('jYYYY-jMMMM-jD');
     }
     else if(this._lang === 'ar'){
       var hijri = require('./date-convertor');
