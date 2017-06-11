@@ -36,8 +36,7 @@ export class MyApp {
   goToPage(event){
     console.log(event);
     if(event.isChanged){
-      // if(event.page === 'register')
-      this.navChild.push(event.page);
+      this.navChild.push(event.page, event.params);
     }
   }
 }

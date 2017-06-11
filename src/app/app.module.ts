@@ -26,7 +26,9 @@ import {QuranService} from "../services/quran.service";
 import {StylingService} from "../services/styling";
 import { LeftMenuComponent } from '../components/left-menu/left-menu';
 import { RightMenuComponent } from '../components/right-menu/right-menu';
+import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {LanguageService} from "../services/language";
+import {KhatmService} from "../services/khatm.service";
 
 @NgModule({
   declarations: [
@@ -41,6 +43,7 @@ import {LanguageService} from "../services/language";
     Shomara,
     Bismillah,
     Registration,
+    CreateKhatmPage,
     LeftMenuComponent,
     RightMenuComponent,
   ],
@@ -57,6 +60,7 @@ import {LanguageService} from "../services/language";
     Text,
     Tasks,
     Registration,
+    CreateKhatmPage,
   ],
   providers: [
     StatusBar,
@@ -71,6 +75,7 @@ import {LanguageService} from "../services/language";
     StylingService,
     ScreenOrientation,
     LanguageService,
+    KhatmService,
   ]
 })
 export class AppModule {}
