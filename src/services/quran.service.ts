@@ -158,4 +158,12 @@ export class QuranService {
     return ret===-1?this.quranData[secType].length:ret;
   }
 
+  getAllSura(){
+    let suraList = [];
+
+    for (let i = 1; i < 115; i++)
+      suraList.push({name: this.getSura(i).name, number: i, numberAr: i.toLocaleString('ar')});
+
+    return suraList;
+  }
 }

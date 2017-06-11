@@ -29,7 +29,8 @@ export class Registration implements OnInit{
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private viewCtrl: ViewController, private msgService: MsgService,
               private authService: AuthService, private quranService: QuranService,
-              private ls: LanguageService, private loadingCtrl: LoadingController) {}
+              private ls: LanguageService, private loadingCtrl: LoadingController,
+              private stylingService: StylingService) {}
 
 
   ngOnInit(){
@@ -55,10 +56,9 @@ export class Registration implements OnInit{
       }
     );
 
-
-    this.authService.email.subscribe(
-      (email) => {
-        if(email !== null && email !== undefined)
+    this.authService.user.subscribe(
+      (data) => {
+        if(data !== null && data.email !== null && data.email !== undefined)
           this.showVerify = true;
         else
           this.showVerify = false;
@@ -67,7 +67,9 @@ export class Registration implements OnInit{
         this.showVerify = false;
       }
     );
-    this.authService.loadUserData();
+
+
+    this.authService.loadUser();
   }
 
   register(){
@@ -104,10 +106,10 @@ export class Registration implements OnInit{
 
   reSend(){
     this.setLoading();
-    this.authService.register(this.authService.email.getValue(), this.authService.name.getValue())
+    this.authService.register(this.authService.user.getValue().email, this.authService.user.getValue().name)
       .then((res) => {
         this.loading.dismiss();
-        this.msgService.showMessage('inform', this.ls.translate('The verification code has been sent to ') + this.authService.email.getValue());
+        this.msgService.showMessage('inform', this.ls.translate('The verification code has been sent to ') + this.authService.user.getValue().email);
       })
       .catch((err) => {
         this.loading.dismiss();
