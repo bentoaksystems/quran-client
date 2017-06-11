@@ -121,6 +121,7 @@ export class QuranService {
   suraStats(sura:number) {
     return this.quranData.suras[sura - 1];
   }
+
   changeCurAya(aya:QuranReference){
     this.ayaStream.next(aya);
   }
