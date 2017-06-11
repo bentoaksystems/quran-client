@@ -7,8 +7,7 @@ import {Observable} from "rxjs";
 
 @Injectable()
 export class HttpService{
-  serverAddress: string = isDevMode()?'http://localhost:3000/api':
-     'https://quran-together.herokuapp.com/api';
+  serverAddress: string = isDevMode()?'http://localhost:3000/api':'https://read.quran.parts/api';
 
   constructor(private http: Http){}
 
