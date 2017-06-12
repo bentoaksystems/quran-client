@@ -5,14 +5,12 @@ import {Injectable} from "@angular/core";
 import {BehaviorSubject} from "rxjs";
 import {Storage} from '@ionic/storage';
 import {HttpService} from "./http.service";
-import {MsgService} from "./msg.service";
 
 @Injectable()
 export class AuthService {
   isLoggedIn : BehaviorSubject<boolean> = new BehaviorSubject(false);
   user: BehaviorSubject<any> = new BehaviorSubject(null);
-  constructor(private storage: Storage, private httpService: HttpService,
-              private msgService: MsgService) {
+  constructor(private storage: Storage, private httpService: HttpService) {
     this.user.subscribe(
       (data) => {
         if(data === null || data.email === null || data.token === null)

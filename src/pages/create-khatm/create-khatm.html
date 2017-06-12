@@ -109,18 +109,48 @@
     <ion-list>
       <ion-list-header>{{ls.translate('Khatm information')}}</ion-list-header>
       <ion-item>
-        <ion-label>{{ls.translate('Name')}}: </ion-label>
-        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.name}}</ion-label>
+        <h2>{{ls.translate('Name')}}</h2>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.khatm_name}}</p>
       </ion-item>
       <ion-item *ngIf="khatm.creator_shown">
-        <ion-label>{{ls.translate('Owner')}}: </ion-label>
-        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.ownername}}</ion-label>
+        <h2>{{ls.translate('Owner')}}</h2>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.owner_name}}</p>
       </ion-item>
       <ion-item>
-        <ion-label>{{ls.translate('End Date')}}: </ion-label>
-        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{endDate}}</ion-label>
+        <h2>{{ls.translate('Description')}}</h2>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.description}}</p>
+      </ion-item>
+      <ion-item>
+        <h2>{{ls.translate('Read pages')}}</h2>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.read_pages}}</p>
+      </ion-item>
+      <ion-item>
+        <h2>{{ls.translate('Participating numbers')}}</h2>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.participatings}}</p>
+      </ion-item>
+      <ion-item>
+        <h2>{{ls.translate('End Date')}}: </h2>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{endDateDisplay}}</p>
+      </ion-item>
+      <ion-item>
+        <h2>{{ls.translate('Rest Days')}}</h2>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.rest_days}}</p>
       </ion-item>
     </ion-list>
-    <button ion-button block (click)="navCtrl.popToRoot()">Close</button>
+    <ion-grid>
+      <ion-row *ngIf="khatmIsStarted">
+        <ion-col col6>
+          <button ion-button block (click)="copyLink()">Copy Link</button>
+        </ion-col>
+        <ion-col col6>
+          <button ion-button block (click)="shareVia()">Share Via</button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col col-12>
+          <button ion-button block (click)="navCtrl.popToRoot()">Close</button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </ion-content>
 </span>

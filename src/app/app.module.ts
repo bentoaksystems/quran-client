@@ -7,6 +7,7 @@ import { Deeplinks } from '@ionic-native/deeplinks';
 import { IonicStorageModule } from '@ionic/storage';
 import {HttpModule} from "@angular/http";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
+import {Clipboard} from "@ionic-native/clipboard";
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -29,6 +30,7 @@ import { RightMenuComponent } from '../components/right-menu/right-menu';
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {LanguageService} from "../services/language";
 import {KhatmService} from "../services/khatm.service";
+import {SocialSharing} from "@ionic-native/social-sharing";
 
 @NgModule({
   declarations: [
@@ -76,6 +78,8 @@ import {KhatmService} from "../services/khatm.service";
     ScreenOrientation,
     LanguageService,
     KhatmService,
+    SocialSharing,
+    Clipboard,
   ]
 })
 export class AppModule {}
