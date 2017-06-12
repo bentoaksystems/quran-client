@@ -5,10 +5,9 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { Deeplinks } from '@ionic-native/deeplinks';
 
 import { HomePage } from '../pages/home/home';
-import {MsgService} from "../services/msg.service";
-import {Registration} from "../pages/registration/registration";
 import {AuthService} from "../services/auth.service";
 import {LanguageService} from "../services/language";
+import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 @Component({
   templateUrl: 'app.html'
 })
@@ -19,13 +18,25 @@ export class MyApp {
   isLoggedIn: boolean = false;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen,
-              authService: AuthService,
-              private ls:LanguageService) {
+              authService: AuthService, private ls:LanguageService,
+              private deeplinks: Deeplinks) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
       splashScreen.hide();
+
+      deeplinks.routeWithNavController(this.navChild, {
+        '/khatm': CreateKhatmPage
+      })
+          .subscribe(
+              (match) => {
+                console.log('Successfully match: ',  match);
+              },
+              (noMatch) => {
+                console.log('Cannot match: ', noMatch);
+              }
+          );
 
       authService.isLoggedIn.subscribe(
         (data) => this.isLoggedIn = data

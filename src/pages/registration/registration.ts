@@ -4,7 +4,6 @@ import {IonicPage, NavController, NavParams, ViewController, LoadingController} 
 import {MsgService} from "../../services/msg.service";
 import {AuthService} from "../../services/auth.service";
 import {QuranService} from "../../services/quran.service";
-import {Verification} from "../verification/verification";
 import {StylingService} from "../../services/styling";
 import {LanguageService} from "../../services/language";
 

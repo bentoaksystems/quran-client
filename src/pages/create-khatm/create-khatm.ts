@@ -1,5 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {SocialSharing} from '@ionic-native/social-sharing';
+import {Clipboard} from "@ionic-native/clipboard";
 import * as moment from 'moment-timezone';
 
 import {QuranService} from "../../services/quran.service";
@@ -13,6 +15,8 @@ import {MsgService} from "../../services/msg.service";
   templateUrl: 'create-khatm.html',
 })
 export class CreateKhatmPage implements OnInit{
+  basicShareLink: string = 'home/khatm/';
+  khatmIsStarted: boolean = true;
   isSubmitted: boolean = false;
   name: string = '';
   description: string = '';
@@ -35,7 +39,8 @@ export class CreateKhatmPage implements OnInit{
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
-              private khatmService: KhatmService, private msgService: MsgService) {
+              private khatmService: KhatmService, private msgService: MsgService,
+              private socialSharing: SocialSharing, private clipboard: Clipboard) {
     this.suras = this.quranService.getAllSura();
   }
 
@@ -46,8 +51,14 @@ export class CreateKhatmPage implements OnInit{
     if(this.khatm !== null){
       // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
       // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
-      this.startDate = this.ls.convertDate(this.khatm.start_date);
-      this.endDate = this.ls.convertDate(this.khatm.end_date);
+      this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
+      this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+
+      let mDate = moment(this.currentDate);
+      if(this.khatm.start_date > mDate)
+        this.khatmIsStarted = false;
+      else
+        this.khatmIsStarted = true;
     }
     else{
       this.startDate = this.currentDate.getFullYear() + '-' +
@@ -77,8 +88,8 @@ export class CreateKhatmPage implements OnInit{
       this.isSubmitted = true;
 
       if(this.ls.lang === 'fa'){
-        this.startDateDisplay = this.ls.convertDate(this.startDate).toLocaleString('fa');
-        this.endDateDisplay = this.ls.convertDate(this.endDate).toLocaleString('fa');
+        this.startDateDisplay = this.convertNumbers(this.ls.convertDate(this.startDate),'fa');
+        this.endDateDisplay = this.convertNumbers(this.ls.convertDate(this.endDate),'fa');
       }
       else if(this.ls.lang === 'ar'){
         this.startDateDisplay = this.ls.convertDate(this.startDate).toLocaleString('ar');
@@ -90,6 +101,15 @@ export class CreateKhatmPage implements OnInit{
       }
     }
 
+  }
+
+  convertNumbers(str, region){
+    return str.split('').map(c=>{
+      if(!isNaN(+c)){
+        return (+c).toLocaleString(region);
+      }
+      else return c;
+    }).join('');
   }
 
   create(){
@@ -261,5 +281,24 @@ export class CreateKhatmPage implements OnInit{
       return 'left';
     else
       return 'right';
+  }
+
+  copyLink(){
+    let link: string = 'http://quranApp/' + this.basicShareLink + this.khatm.share_link;
+    this.clipboard.copy(link);
+  }
+
+  shareVia(){
+    let message: string = 'Join to this khatm\n';
+    let link: string = 'quranApp://' + this.basicShareLink + this.khatm.share_link;
+    let tlink: string = '<html><head></head><body><a>'+this.basicShareLink + this.khatm.share_link+'</a></body></html>';
+
+    this.socialSharing.share(message + '\n' + link, 'Khatm share link', null, tlink)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
   }
 }
