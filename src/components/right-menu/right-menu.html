@@ -12,10 +12,10 @@
       </ion-row>
     </ion-grid>
     <hr/>
-    <ion-list *ngIf="isLoggedIn">
+    <ion-list *ngIf="isLoggedIn && khatms.length > 0">
       <ion-list-header>{{ls.translate('My Khatms')}}</ion-list-header>
       <button *ngFor="let khatm of khatms" menuClose ion-item (click)="openPage('khatm', khatm)">
-        {{khatm.name}}
+        {{khatm.khatm_name}}
       </button>
     </ion-list>
   </ion-content>
