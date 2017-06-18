@@ -138,10 +138,10 @@ export class Safha implements OnInit, AfterViewInit {
   }
 
   swipe(e) {
+    this.scrollPage.scrollTo(0,0,0);
     if (e.deltaX > 0) {
       this.goForth();
     }
-
     else {
       this.goBack();
     }
