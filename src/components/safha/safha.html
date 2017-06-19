@@ -11,7 +11,7 @@
       </td>
       <td style="width:70%">
         <hashia [suraname]="suraName?suraName:''" [pagenumber]="quranPage"
-                [suraorder]="suraOrder?suraOrder:NaN"></hashia>
+                [suraorder]="suraOrder?suraOrder:NaN" [disabled]="khatmActive"></hashia>
       </td>
       <td class="tdBack">
         <ion-buttons end>
@@ -24,13 +24,16 @@
 </div>
 <ion-content class="overflowContainer"
              [ngStyle]="{'width':width,'height':height-50+'px','top':(platform.is('ios')?70:50)+ 'px','background':stylingService.nightMode?'black':'white'}"
-             #scrollPage>
-  <div [class.border-day]="!stylingService.nightMode" [class.border-night]="stylingService.nightMode"
-       [ngStyle]="{'width':(pageWidth-10)+'px','font-size':zoom+'%'}" (swipe)="swipe($event)" (pinch)="pinch($event)"
-       #border>
-    <div class="internal quran" [ngClass]="[fontFamily+'Font']"
-         [ngStyle]="{'margin':margin + 'px','font-family':fontFamily}">
-      <aya *ngFor="let aya of pageAyas" [value]="aya" [fontFamily]="fontFamily" [margin]="margin"></aya>
+             #scrollPage (ionScroll)="onScroll($event)">
+  <div *ngFor='let layer of layers'>
+    <div [class.border-day]="!stylingService.nightMode" [class.border-night]="stylingService.nightMode"
+         [ngStyle]="{'width':(pageWidth-10)+'px','font-size':zoom+'%'}" (swipe)="swipe($event)" (pinch)="pinch($event)"
+         #border [id]="layer">
+      <div class="internal quran" [ngClass]="[fontFamily+'Font']"
+           [ngStyle]="{'margin':margin + 'px','font-family':fontFamily}">
+        <aya *ngFor="let aya of pageAyas[layer]" [value]="aya" [fontFamily]="fontFamily" [margin]="margin"></aya>
+      </div>
     </div>
+    <hr [class.khatmActive]="khatmActive" [class.regular]="!khatmActive">
   </div>
 </ion-content>

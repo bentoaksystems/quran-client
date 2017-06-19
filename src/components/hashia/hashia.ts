@@ -9,6 +9,7 @@ import {Keyboard} from "ionic-angular";
 })
 export class Hashia {
   @Input() suraname;
+  @Input() disabled = false;
   private _so;
   private _pn;
   private pageNumberToggled=false;
@@ -85,11 +86,11 @@ export class Hashia {
     if(e.keyCode===13){
       this.pageNumberToggled=false;
       this.changePage();
-      this.keyboard.close();
+      setTimeout(()=>this.keyboard.close(),100);
     }
   }
   pageNumberToggle(val=null) {
-    if(this.pageNumberToggled!==val) {
+    if(!this.disabled && this.pageNumberToggled!==val) {
       this.pageNumberToggled = !this.pageNumberToggled;
       if (!this.pageNumberToggled) {
         this.changePage();
