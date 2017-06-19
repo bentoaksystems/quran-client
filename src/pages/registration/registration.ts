@@ -6,6 +6,7 @@ import {AuthService} from "../../services/auth.service";
 import {QuranService} from "../../services/quran.service";
 import {StylingService} from "../../services/styling";
 import {LanguageService} from "../../services/language";
+import {KhatmService} from "../../services/khatm.service";
 
 @IonicPage()
 @Component({
@@ -29,7 +30,7 @@ export class Registration implements OnInit{
               private viewCtrl: ViewController, private msgService: MsgService,
               private authService: AuthService, private quranService: QuranService,
               private ls: LanguageService, private loadingCtrl: LoadingController,
-              private stylingService: StylingService) {}
+              private stylingService: StylingService, private khatmService: KhatmService) {}
 
 
   ngOnInit(){
@@ -128,6 +129,8 @@ export class Registration implements OnInit{
     else{
       this.authService.verify(code)
         .then(() => {
+          // this.khatmService.loadKhatm(this.authService.user.getValue().email);
+          // this.khatmService.loadAllCommitments();
           this.navCtrl.popToRoot();
         })
         .catch((err) => {
@@ -151,7 +154,7 @@ export class Registration implements OnInit{
 
   setLoading(){
     this.loading = this.loadingCtrl.create({
-      content: 'Please wait until send verification code ...'
+      content: 'Please wait until we send you verification code ...'
     });
     
     this.loading.present();

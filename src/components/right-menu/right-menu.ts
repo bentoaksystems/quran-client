@@ -48,6 +48,7 @@ export class RightMenuComponent implements OnInit{
       target = HomePage;
 
     var data = {
+      shouldClose: true,
       isChanged: true,
       page: target,
       params: params
@@ -69,17 +70,22 @@ export class RightMenuComponent implements OnInit{
         }
     );
 
-    this.authService.user.subscribe(
-        (data) => {
-            if(data !== null)
-              this.khatmService.loadKhatm(data.email)
-        },
-        (err) => console.log(err.message)
-    );
+    // this.authService.isLoggedIn.subscribe(
+    //   (data) => {
+    //     if(data)
+    //       this.khatmService.loadKhatm(this.authService.user.getValue().email)
+    //   },
+    //   (err) => console.log(err.message)
+    // );
   }
 
   logout(){
     this.authService.logout();
+    this.khatmService.clearStorage();
   }
 
+  start_stop_khatm(khatm){
+    this.switchView.emit({shouldClose: true});
+    this.khatmService.start_stop_Khatm(khatm);
+  }
 }

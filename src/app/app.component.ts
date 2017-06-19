@@ -8,18 +8,21 @@ import { HomePage } from '../pages/home/home';
 import {AuthService} from "../services/auth.service";
 import {LanguageService} from "../services/language";
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
+import {KhatmService} from "../services/khatm.service";
+
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
   @ViewChild(Nav) navChild: Nav;
+  @ViewChild('rightMenu') rightMenu;
 
   rootPage:any = HomePage;
   isLoggedIn: boolean = false;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen,
               authService: AuthService, private ls:LanguageService,
-              private deeplinks: Deeplinks) {
+              private deeplinks: Deeplinks, private khatmService: KhatmService) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -39,16 +42,26 @@ export class MyApp {
           );
 
       authService.isLoggedIn.subscribe(
-        (data) => this.isLoggedIn = data
-      );
+        (data) => this.isLoggedIn = data);
+
+      authService.user.subscribe(
+        (u) => {
+          if(u !== null && u.token !== null && u.token !== undefined){
+            this.khatmService.loadKhatm(u.email);
+            this.khatmService.loadAllCommitments();
+          }
+        }
+      )
     });
   }
 
   goToPage(event){
     console.log(event);
-    if(event.isChanged){
+    if(event.shouldClose)
+      this.rightMenu.close();
+
+    if(event.isChanged)
       this.navChild.push(event.page, event.params);
-    }
   }
 }
 

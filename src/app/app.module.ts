@@ -31,6 +31,8 @@ import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {LanguageService} from "../services/language";
 import {KhatmService} from "../services/khatm.service";
 import {SocialSharing} from "@ionic-native/social-sharing";
+import {Network} from "@ionic-native/network";
+import {CommitmentPage} from "../pages/commitment/commitment";
 
 @NgModule({
   declarations: [
@@ -48,6 +50,7 @@ import {SocialSharing} from "@ionic-native/social-sharing";
     CreateKhatmPage,
     LeftMenuComponent,
     RightMenuComponent,
+    CommitmentPage,
   ],
   imports: [
     BrowserModule,
@@ -63,6 +66,7 @@ import {SocialSharing} from "@ionic-native/social-sharing";
     Tasks,
     Registration,
     CreateKhatmPage,
+    CommitmentPage,
   ],
   providers: [
     StatusBar,
@@ -80,6 +84,7 @@ import {SocialSharing} from "@ionic-native/social-sharing";
     KhatmService,
     SocialSharing,
     Clipboard,
+    Network,
   ]
 })
 export class AppModule {}
