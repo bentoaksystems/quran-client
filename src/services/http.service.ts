@@ -10,7 +10,7 @@ export class HttpService{
   // serverAddress: string = isDevMode()?'http://192.168.1.10:3000/api':
   //    'https://quran-together.herokuapp.com/api';
 
-  serverAddress: string = 'http://192.168.1.10:3000/api';
+  serverAddress: string = 'http://localhost:3000/api';
 
   constructor(private http: Http){}
 
