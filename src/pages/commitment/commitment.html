@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>{{ls.translate('commitment')}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <div *ngIf="!isSelect">
+    <ion-grid>
+      <ion-row *ngFor="let rp of rowPages">
+        <ion-col col-2 *ngFor="let p of rp">
+          <button ion-button block>{{p}}</button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+  <div *ngIf="isSelect">
+
+  </div>
+</ion-content>

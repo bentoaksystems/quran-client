@@ -14,7 +14,9 @@
     <hr/>
     <ion-list *ngIf="isLoggedIn && khatms.length > 0">
       <ion-list-header>{{ls.translate('My Khatms')}}</ion-list-header>
-      <button *ngFor="let khatm of khatms" menuClose ion-item (click)="openPage('khatm', khatm)">
+      <button *ngFor="let khatm of khatms" ion-item
+              (press)="start_stop_khatm(khatm)" (click)="openPage('khatm', khatm)"
+              [ngClass]="{active: khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid}">
         {{khatm.khatm_name}}
       </button>
     </ion-list>

@@ -4,8 +4,9 @@
       <ion-title>{{ls.translate('Khatm')}}</ion-title>
     </ion-navbar>
   </ion-header>
-  <ion-content padding *ngIf="!isSubmitted && isNew">
-    <ion-list>
+  <ion-content padding>
+    <div *ngIf="!isSubmitted && isNew">
+      <ion-list>
       <ion-item-divider color="light">General Specification</ion-item-divider>
       <ion-item>
         <ion-label fixed>{{ls.translate('Title')}}</ion-label>
@@ -21,17 +22,18 @@
       </ion-item>
       <ion-item>
         <ion-label>{{ls.translate('Range')}}</ion-label>
-        <ion-select [(ngModel)]="range">
-          <ion-option value="whole">{{ls.translate('Whole Quran')}}</ion-option>
-          <ion-option value="sura">{{ls.translate('Specific Sura')}}</ion-option>
-        </ion-select>
+        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{ls.translate('Whole Quran')}}</ion-label>
+        <!--<ion-select [(ngModel)]="range">-->
+          <!--<ion-option value="whole">{{ls.translate('Whole Quran')}}</ion-option>-->
+          <!--<ion-option value="sura">{{ls.translate('Specific Sura')}}</ion-option>-->
+        <!--</ion-select>-->
       </ion-item>
-      <ion-item *ngIf="range === 'sura'">
-        <ion-label>{{ls.translate('Sura')}}</ion-label>
-        <ion-select [(ngModel)]="suraNumber">
-          <ion-option *ngFor="let sura of suras" [value]="sura.number">{{sura.name}}</ion-option>
-        </ion-select>
-      </ion-item>
+      <!--<ion-item *ngIf="range === 'sura'">-->
+        <!--<ion-label>{{ls.translate('Sura')}}</ion-label>-->
+        <!--<ion-select [(ngModel)]="suraNumber">-->
+          <!--<ion-option *ngFor="let sura of suras" [value]="sura.number">{{sura.name}}</ion-option>-->
+        <!--</ion-select>-->
+      <!--</ion-item>-->
       <ion-item>
         <ion-label>{{ls.translate('Repeat')}}</ion-label>
         <ion-input type="number" min="1" [(ngModel)]="repeats"
@@ -59,12 +61,12 @@
                       (ngModelChange)="changeDuration('end')"></ion-datetime>
       </ion-item>
     </ion-list>
-    <button ion-button block (click)="submit()" [disabled]="submitDisability">
+      <button ion-button block (click)="submit()" [disabled]="submitDisability">
       {{ls.translate('Submit')}}
     </button>
-  </ion-content>
-  <ion-content padding *ngIf="isSubmitted && isNew">
-    <ion-list>
+    </div>
+    <div *ngIf="isSubmitted && isNew">
+      <ion-list>
       <ion-item>
         <ion-label>{{ls.translate('Title')}}: </ion-label>
         <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{name}}</ion-label>
@@ -94,7 +96,7 @@
         <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{endDateDisplay}}</ion-label>
       </ion-item>
     </ion-list>
-    <ion-grid>
+      <ion-grid>
       <ion-row>
         <ion-col col-6>
           <button ion-button block (click)="create()">{{ls.translate('Create Khatm')}}</button>
@@ -104,9 +106,9 @@
         </ion-col>
       </ion-row>
     </ion-grid>
-  </ion-content>
-  <ion-content padding *ngIf="!isNew">
-    <ion-list>
+    </div>
+    <div *ngIf="!isNew">
+      <ion-list>
       <ion-list-header>{{ls.translate('Khatm information')}}</ion-list-header>
       <ion-item>
         <h2>{{ls.translate('Name')}}</h2>
@@ -134,23 +136,68 @@
       </ion-item>
       <ion-item>
         <h2>{{ls.translate('Rest Days')}}</h2>
-        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.rest_days}}</p>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{rest_days}}</p>
+      </ion-item>
+      <ion-item *ngIf="khatm.you_read !== null && khatm.you_unread !== null">
+        <h2>{{ls.translate('You Read')}}</h2>
+        <p>{{khatm.you_read}}</p>
+      </ion-item>
+      <ion-item *ngIf="khatm.you_read !== null && khatm.you_unread !== null">
+        <h2>{{ls.translate('Remain of your commitments')}}</h2>
+        <p>{{khatm.you_unread}}</p>
       </ion-item>
     </ion-list>
-    <ion-grid>
-      <ion-row *ngIf="khatmIsStarted">
+      <ion-grid>
+        <ion-row *ngIf="khatmIsStarted">
         <ion-col col6>
-          <button ion-button block (click)="copyLink()">Copy Link</button>
+          <button ion-button block (click)="copyLink()">{{ls.translate('Copy Link')}}</button>
         </ion-col>
         <ion-col col6>
-          <button ion-button block (click)="shareVia()">Share Via</button>
+          <button ion-button block (click)="shareVia()">{{ls.translate('Share Via')}}</button>
         </ion-col>
       </ion-row>
-      <ion-row>
+        <ion-row *ngIf="khatmIsStarted">
+        <ion-col col-6>
+          <ion-label>Commit Pages</ion-label>
+        </ion-col>
+        <ion-col col-6>
+          <ion-input type="number" placeholder="Your Pages"
+                     [ngModel]="remainPages"
+                     (blur)="changeCommitPages($event)"></ion-input>
+        </ion-col>
+      </ion-row>
+        <ion-row *ngIf="!khatmIsStarted">
+          <ion-col col-12>
+            <ion-label style="text-align: center">{{ls.translate('This khatm is not startted yet')}}</ion-label>
+          </ion-col>
+        </ion-row>
+        <!--<ion-row *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null">-->
+          <!--<ion-col col-3></ion-col>-->
+          <!--<ion-col col-6>-->
+            <!--<button ion-button block (click)="goToCommitment(false)">{{ls.translate('Commit Pages')}}</button>-->
+          <!--</ion-col>-->
+          <!--<ion-col col-3></ion-col>-->
+        <!--</ion-row>-->
+        <ion-row *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null">
+          <ion-col col-3></ion-col>
+          <ion-col col-6>
+            <button ion-button block (click)="start_stop_Khatm()"
+                    *ngIf="khatmService.activeKhatm.getValue() === null || (khatmService.activeKhatm.getValue().khid !== khatm.khid)">
+              {{ls.translate('Reading Khatm')}}
+            </button>
+            <button ion-button block (click)="start_stop_Khatm()"
+                    *ngIf="khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid">
+              {{ls.translate('Stop Khatm')}}
+            </button>
+          </ion-col>
+          <ion-col col-3></ion-col>
+        </ion-row>
+        <ion-row>
         <ion-col col-12>
-          <button ion-button block (click)="navCtrl.popToRoot()">Close</button>
+          <button ion-button block (click)="navCtrl.popToRoot()">{{ls.translate('Close')}}</button>
         </ion-col>
       </ion-row>
     </ion-grid>
+    </div>
   </ion-content>
 </span>

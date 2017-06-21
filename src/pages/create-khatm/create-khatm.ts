@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {IonicPage, NavController, NavParams, LoadingController} from 'ionic-angular';
 import {SocialSharing} from '@ionic-native/social-sharing';
 import {Clipboard} from "@ionic-native/clipboard";
 import * as moment from 'moment-timezone';
@@ -8,6 +8,7 @@ import {QuranService} from "../../services/quran.service";
 import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {MsgService} from "../../services/msg.service";
+import {CommitmentPage} from "../commitment/commitment";
 
 @IonicPage()
 @Component({
@@ -36,11 +37,14 @@ export class CreateKhatmPage implements OnInit{
   submitDisability: boolean = true;
   duration;
   lastFocus: string = 'start';
+  remainPages: number = null;
+  rest_days: number = null;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
-              private socialSharing: SocialSharing, private clipboard: Clipboard) {
+              private socialSharing: SocialSharing, private clipboard: Clipboard,
+              private loadingCtrl: LoadingController) {
     this.suras = this.quranService.getAllSura();
   }
 
@@ -55,10 +59,13 @@ export class CreateKhatmPage implements OnInit{
       this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
 
       let mDate = moment(this.currentDate);
-      if(this.khatm.start_date > mDate)
+      if(moment(this.khatm.start_date) > mDate)
         this.khatmIsStarted = false;
       else
         this.khatmIsStarted = true;
+
+      this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
+      this.remainPages = this.khatm.you_unread;
     }
     else{
       this.startDate = this.currentDate.getFullYear() + '-' +
@@ -300,5 +307,46 @@ export class CreateKhatmPage implements OnInit{
         .catch((err) => {
           console.log(err.message);
         });
+  }
+
+  changeCommitPages(data){
+    let newVal = data.target.value;
+    if(newVal !== null && newVal !== undefined && newVal.toString() !== '' && newVal !== this.remainPages){
+      //Start loading controller
+      let loading = this.loadingCtrl.create({
+        content: 'Please wait until save changes ...'
+      });
+
+      //update commit page for khatm
+      let type = (newVal < this.remainPages) ? 'delete' : 'add';
+      this.khatmService.getPages(newVal, this.khatm.khid, type)
+          .then((res) => {
+            this.khatm.you_unread = (newVal === 0) ? null : newVal;
+            this.remainPages = newVal;
+            this.khatm.you_read = (this.khatm.you_read === null) ? 0 : this.khatm.you_read;
+
+            //Stop loading controller
+            loading.dismiss();
+
+            this.msgService.showMessage('inform', 'The requested pages assigned to you');
+          })
+          .catch((err) => {
+            //Stop loading controller
+            loading.dismiss();
+            
+            console.log(err.message);
+          });
+    }
+  }
+
+  goToCommitment(isSelect){
+    this.navCtrl.push(CommitmentPage, {khatm: this.khatm, isSelect: isSelect});
+  }
+
+  start_stop_Khatm(){
+    this.khatmService.start_stop_Khatm(this.khatm);
+
+    if(this.khatmService.activeKhatm.getValue() !== null)
+      this.navCtrl.popToRoot();
   }
 }

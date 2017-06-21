@@ -76,7 +76,7 @@ export class AuthService {
 
   register(userEmail, userName){
     return new Promise((resolve, reject) => {
-      this.httpService.putData('user', {email: userEmail, name: userName}, false).subscribe(
+      this.httpService.putData('user', {email: userEmail, name: userName}, false, false).subscribe(
         (data) => {
           this.saveUser(userEmail, userName, null)
             .then(() => {
@@ -94,7 +94,7 @@ export class AuthService {
 
   verify(code){
     return new Promise((resolve, reject) => {
-      this.httpService.postData('user/auth', {email: this.user.getValue().email, code: code}, false)
+      this.httpService.postData('user/auth', {email: this.user.getValue().email, code: code}, false, false)
         .subscribe(
           (data) => {
             let token = data.json().token;
@@ -103,7 +103,7 @@ export class AuthService {
               .then(() => {
                 console.log('EMAIL:' + this.user.getValue().email);
                 console.log('TOKEN:' + token);
-                this.httpService.deleteData('user/auth', true, this.user.getValue().email, token)
+                this.httpService.deleteData('user/auth', true, false, this.user.getValue().email, token)
                   .subscribe(
                     (res) => resolve(),
                     (er) => reject(er)
@@ -111,7 +111,7 @@ export class AuthService {
               })
           },
           (err) => {
-            reject(err);
+            reject({message: err._body});
           }
         );
     });
