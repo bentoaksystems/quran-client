@@ -32,16 +32,23 @@ export class CommitmentPage implements OnInit{
 
   createRows(allCommitPages){
     let rowUpperBound = 6;
-    let rowCounter = 0;
+    let columnCounter = 0;
     let tempRow = [];
 
-    allCommitPages.map(el => el.page_number).sort().forEach(el => {
-      rowCounter++;
-      if(rowCounter <= rowUpperBound){
+    allCommitPages.sort((a, b) => {
+      if(a.page_number > b.page_number)
+        return 1;
+      else if(a.page_number < b.page_number)
+        return -1;
+      else
+        return 0;
+    }).forEach(el => {
+      columnCounter++;
+      if(columnCounter <= rowUpperBound){
         tempRow.push(el);
       }
       else{
-        rowCounter=0;
+        columnCounter = 0;
         this.rowPages.push(tempRow.slice(0, 7));
         tempRow = [];
       }

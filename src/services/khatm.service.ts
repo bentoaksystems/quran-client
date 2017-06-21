@@ -15,7 +15,11 @@ export class KhatmService{
   activeKhatm: BehaviorSubject<any> = new BehaviorSubject(null);
 
   constructor(private httpService: HttpService, private authService: AuthService,
-              private storage: Storage){}
+              private storage: Storage){
+      // this.storage.remove('khatms');
+      // this.storage.remove('khatm_35');
+      // this.storage.remove('khatm_40');
+  }
 
   createKhatm(data){
     return new Promise((resolve, reject) => {
@@ -74,7 +78,8 @@ export class KhatmService{
                   console.log('DATACommitments:', data);
 
                   let promiseList = [];
-                  data.forEach(el => promiseList.push(this.storeKhatmPages(el.khid, el.pages, 'add')));
+                  // data.forEach(el => promiseList.push(this.storeKhatmPages(el.khid, el.pages, 'add')));
+                  data.forEach(el => promiseList.push(this.commitmentsReconciliation(el.khid, el.pages)));
 
                   Promise.all(promiseList)
                       .then((res) => resolve())
@@ -133,6 +138,11 @@ export class KhatmService{
             else if(type === 'delete'){
               let pNumbers = pages.map(el => el.page_number);
               value = value.filter(el => pNumbers.findIndex(i => i === el.page_number) === -1);
+            }
+            else if(type === 'update'){
+              let pNumbers = pages.map(el => el.page_number);
+              value = value.filter(el => pNumbers.findIndex(i => i === el.page_number) === -1);
+              value = value.concat(pages);
             }
           }
           else{
@@ -235,5 +245,80 @@ export class KhatmService{
       });
 
     this.activeKhatm.next(null);
+  }
+
+  commitmentsReconciliation(khatm_id, pages){
+    return new Promise((resolve, reject) => {
+      this.storage.get('khatm_' + khatm_id)
+          .then(values => {
+              let updateServer_List = [];
+              let updateLocal_List = [];
+
+              if(values === null){
+                  pages.forEach(el => {
+                      updateLocal_List.push({type: 'add', page: el});
+                  })
+              }
+              else if(values.length > pages.length){
+                  for(let index = 0; index < pages.length; index++){
+                      if(values.findIndex(el => el.cid === pages[index].cid) === -1){
+                          updateLocal_List.push({type: 'add', page: pages[index]});
+                      }
+                      else if(values.find(el => el.cid === pages[index].cid).isread !== pages[index].isread){
+                          updateLocal_List.push({type: 'update', page: pages[index]});
+                      }
+                  }
+
+                  values.forEach(el => {
+                      if(pages.find(i => i.cid === el.cid) === undefined){
+                          updateServer_List.push({type: 'add', page: el});
+                      }
+                  })
+              }
+              else{
+                  for(let index = 0; index < values.length; index++){
+                      if(pages.findIndex(el => el.cid === values[index].cid) === -1){
+                          updateServer_List.push({type: 'add', page: values[index]});
+                      }
+                      else if(pages.find(el => el.cid === values[index].cid).isread !== values[index].isread){
+                          updateServer_List.push({type: 'update', page: values[index]});
+                      }
+                  }
+
+                  pages.forEach(el => {
+                      if(values.find(i => i.cid === el.cid) === undefined){
+                          updateLocal_List.push({type: 'add', page: el});
+                      }
+                  })
+              }
+
+              //Update server
+              let readPages = updateServer_List.filter(el => el.page.isread === true).map(el => el.page);
+              let unreadPages = updateServer_List.filter(el => el.page.isread === false).map(el => el.page);
+              if(readPages.length > 0)
+                this.commitPages(khatm_id, readPages, true);
+              if(unreadPages.length > 0)
+                this.commitPages(khatm_id, unreadPages, false);
+
+              //Update local
+              let addPages = updateLocal_List.filter(el => el.type === 'add').map(el => el.page);
+              let updatePages = updateLocal_List.filter(el => el.type === 'update').map(el => el.page);
+
+              let promiseList = [];
+              promiseList.push(Promise.resolve());
+              if(addPages.length > 0)
+                promiseList.push(this.storeKhatmPages(khatm_id, addPages, 'add'));
+              if(updatePages.length > 0)
+                promiseList.push(this.storeKhatmPages(khatm_id, updatePages, 'update'));
+
+              Promise.all(promiseList)
+                  .then(res => resolve())
+                  .catch(err => reject())
+          })
+          .catch(err => {
+              console.log(err);
+              reject(err);
+          });
+    });
   }
 }

@@ -334,19 +334,23 @@ export class CreateKhatmPage implements OnInit{
   }
 
   changeCommitPages(data){
-    let newVal = parseInt(data.target.value);
-    if(newVal !== null && newVal !== undefined && newVal.toString() !== '' && newVal !== this.remainPages){
+    let newVal = data.target.value;
+    let newValNum = parseInt(newVal);
+    if(newVal.toString() === '')
+      newValNum = 0;
+
+    if(newVal !== null && newVal !== undefined && newValNum !== this.remainPages){
       //Start loading controller
       let loading = this.loadingCtrl.create({
         content: 'Please wait until save changes ...'
       });
 
       //update commit page for khatm
-      let type = (newVal < this.remainPages) ? 'delete' : 'add';
-      this.khatmService.getPages(newVal, this.khatm.khid, type)
+      let type = (newValNum < this.remainPages) ? 'delete' : 'add';
+      this.khatmService.getPages(newValNum, this.khatm.khid, type)
           .then((res) => {
-            this.khatm.you_unread = (newVal === 0) ? null : newVal;
-            this.remainPages = newVal;
+            this.khatm.you_unread = (newValNum === 0) ? null : newValNum;
+            this.remainPages = newValNum;
             this.khatm.you_read = (this.khatm.you_read === null) ? 0 : this.khatm.you_read;
 
             //Stop loading controller
