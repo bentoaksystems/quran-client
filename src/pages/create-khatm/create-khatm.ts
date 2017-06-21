@@ -334,7 +334,7 @@ export class CreateKhatmPage implements OnInit{
   }
 
   changeCommitPages(data){
-    let newVal = data.target.value;
+    let newVal = parseInt(data.target.value);
     if(newVal !== null && newVal !== undefined && newVal.toString() !== '' && newVal !== this.remainPages){
       //Start loading controller
       let loading = this.loadingCtrl.create({

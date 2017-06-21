@@ -172,6 +172,7 @@
                      [style.color]="stylingService.nightMode ? '#898f8d' : '#494949' "
                      type="number" placeholder="Your Pages"
                      [ngModel]="remainPages"
+                     [disabled]="khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid"
                      (blur)="changeCommitPages($event)"></ion-input>
         </ion-col>
       </ion-row>

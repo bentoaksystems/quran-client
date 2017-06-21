@@ -4,6 +4,7 @@
 import {Injectable} from "@angular/core";
 import {BehaviorSubject} from "rxjs";
 import {Storage} from '@ionic/storage';
+import * as moment from 'moment-timezone';
 
 import {HttpService} from "./http.service";
 import {AuthService} from "./auth.service";
@@ -41,10 +42,14 @@ export class KhatmService{
                       .subscribe(
                           (res) => {
                               let data = res.json();
-                              console.log('data:', data);
+                              // console.log('data:', data);
+                              let mDate = moment(new Date());
+
                               let tempList = [];
                               for (let item of data) {
-                                  tempList.push(item);
+                                  //Check rest days of khatm
+                                  if(moment(item.end_date).diff(mDate, 'days') >= 0)
+                                    tempList.push(item);
                               }
                               this.storeKhatms(tempList);
                               this.khatms.next(tempList);
@@ -169,7 +174,9 @@ export class KhatmService{
   }
 
   start_stop_Khatm(khatm){
-    if(this.activeKhatm.getValue() === null || this.activeKhatm.getValue().khid !== khatm.khid) {
+    if(khatm.you_read === null || khatm.you_unread === null)
+        this.activeKhatm.next(null);
+    else if(this.activeKhatm.getValue() === null || this.activeKhatm.getValue().khid !== khatm.khid) {
       let actKhatm = Object.assign({}, khatm);
       this.getKhatmPages(khatm.khid)
         .then((value) => {
@@ -177,17 +184,17 @@ export class KhatmService{
             actKhatm.pages = value;
 
           this.activeKhatm.next(actKhatm);
-          console.log('Active khatm is: ', this.activeKhatm.getValue());
+          // console.log('Active khatm is: ', this.activeKhatm.getValue());
         })
         .catch((err) => {
           console.log(err);
           this.activeKhatm.next(null);
-          console.log('Active khatm is: ', this.activeKhatm.getValue());
+          // console.log('Active khatm is: ', this.activeKhatm.getValue());
         });
     }
     else if(this.activeKhatm.getValue().khid === khatm.khid) {
       this.activeKhatm.next(null);
-      console.log('Active khatm is: ', this.activeKhatm.getValue());
+      // console.log('Active khatm is: ', this.activeKhatm.getValue());
     }
   }
 
