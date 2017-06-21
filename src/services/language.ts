@@ -140,7 +140,8 @@ export class LanguageService {
 
   convertDate(date){
     if(this._lang === 'fa'){
-      momentJalali.loadPersian(true);
+      // momentJalali.loadPersian(true);
+      momentJalali.loadPersian();
       return momentJalali(date).format('jYYYY-jMMMM-jD');
     }
     else if(this._lang === 'ar'){

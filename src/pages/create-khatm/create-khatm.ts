@@ -9,6 +9,7 @@ import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {MsgService} from "../../services/msg.service";
 import {CommitmentPage} from "../commitment/commitment";
+import {StylingService} from "../../services/styling";
 
 @IonicPage()
 @Component({
@@ -39,12 +40,18 @@ export class CreateKhatmPage implements OnInit{
   lastFocus: string = 'start';
   remainPages: number = null;
   rest_days: number = null;
+  conditionalColoring: any = {
+    background: 'normal_back',
+    text: 'noraml_text',
+    primary: 'normal_primary',
+    secondary: 'normal_secondary'
+  };
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
               private socialSharing: SocialSharing, private clipboard: Clipboard,
-              private loadingCtrl: LoadingController) {
+              private loadingCtrl: LoadingController, private stylingService: StylingService) {
     this.suras = this.quranService.getAllSura();
   }
 
@@ -74,6 +81,23 @@ export class CreateKhatmPage implements OnInit{
 
       // this.startDate = this.ls.convertDate(this.startDate);
     }
+
+    this.stylingService.nightMode$.subscribe(
+      (data) => {
+        if(data) {
+          this.conditionalColoring.background = 'night_back';
+          this.conditionalColoring.text = 'night_text';
+          this.conditionalColoring.primary = 'night_primary';
+          this.conditionalColoring.secondary = 'night_secondary';
+        }
+        else{
+          this.conditionalColoring.background = 'normal_back';
+          this.conditionalColoring.text = 'normal_text';
+          this.conditionalColoring.primary = 'normal_primary';
+          this.conditionalColoring.secondary = 'normal_secondary';
+        }
+      }
+    );
   }
 
   submit(){
@@ -311,18 +335,22 @@ export class CreateKhatmPage implements OnInit{
 
   changeCommitPages(data){
     let newVal = data.target.value;
-    if(newVal !== null && newVal !== undefined && newVal.toString() !== '' && newVal !== this.remainPages){
+    let newValNum = parseInt(newVal);
+    if(newVal.toString() === '')
+      newValNum = 0;
+
+    if(newVal !== null && newVal !== undefined && newValNum !== this.remainPages){
       //Start loading controller
       let loading = this.loadingCtrl.create({
         content: 'Please wait until save changes ...'
       });
 
       //update commit page for khatm
-      let type = (newVal < this.remainPages) ? 'delete' : 'add';
-      this.khatmService.getPages(newVal, this.khatm.khid, type)
+      let type = (newValNum < this.remainPages) ? 'delete' : 'add';
+      this.khatmService.getPages(newValNum, this.khatm.khid, type)
           .then((res) => {
-            this.khatm.you_unread = (newVal === 0) ? null : newVal;
-            this.remainPages = newVal;
+            this.khatm.you_unread = (newValNum === 0) ? null : newValNum;
+            this.remainPages = newValNum;
             this.khatm.you_read = (this.khatm.you_read === null) ? 0 : this.khatm.you_read;
 
             //Stop loading controller
