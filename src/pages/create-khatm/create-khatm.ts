@@ -38,7 +38,6 @@ export class CreateKhatmPage implements OnInit{
   submitDisability: boolean = true;
   duration;
   lastFocus: string = 'start';
-  remainPages: number = null;
   rest_days: number = null;
   conditionalColoring: any = {
     background: 'normal_back',
@@ -72,7 +71,8 @@ export class CreateKhatmPage implements OnInit{
         this.khatmIsStarted = true;
 
       this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
-      this.remainPages = this.khatm.you_unread;
+      if(this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
+        this.rest_days++;
     }
     else{
       this.startDate = this.currentDate.getFullYear() + '-' +
@@ -339,18 +339,17 @@ export class CreateKhatmPage implements OnInit{
     if(newVal.toString() === '')
       newValNum = 0;
 
-    if(newVal !== null && newVal !== undefined && newValNum !== this.remainPages){
+    if(newVal !== null && newVal !== undefined && newValNum !== this.khatm.you_unread){
       //Start loading controller
       let loading = this.loadingCtrl.create({
         content: 'Please wait until save changes ...'
       });
 
       //update commit page for khatm
-      let type = (newValNum < this.remainPages) ? 'delete' : 'add';
+      let type = (newValNum < (this.khatm.you_unread === null ? 0 : this.khatm.you_unread)) ? 'delete' : 'add';
       this.khatmService.getPages(newValNum, this.khatm.khid, type)
           .then((res) => {
             this.khatm.you_unread = (newValNum === 0) ? null : newValNum;
-            this.remainPages = newValNum;
             this.khatm.you_read = (this.khatm.you_read === null) ? 0 : this.khatm.you_read;
 
             //Stop loading controller

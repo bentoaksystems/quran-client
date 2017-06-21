@@ -6,6 +6,7 @@ import {Http, Response, Headers} from "@angular/http";
 import {Observable} from "rxjs";
 import {Network} from "@ionic-native/network";
 import {Storage} from "@ionic/storage";
+import {PromiseObservable} from "rxjs/observable/PromiseObservable";
 
 @Injectable()
 export class HttpService{
@@ -41,8 +42,10 @@ export class HttpService{
       headers: headers
     });
 
-    if(canBuffer && this.isDisconnected)
+    if(canBuffer && this.isDisconnected) {
       this.bufferingRequest({type: 'post', address: address, data: data, headers: headers});
+      return PromiseObservable.create(Promise.resolve(null));
+    }
     else
       return request;
   }
@@ -58,8 +61,10 @@ export class HttpService{
       headers: headers
     });
 
-    if(canBuffer && this.isDisconnected)
+    if(canBuffer && this.isDisconnected) {
       this.bufferingRequest({type: 'put', address: address, data: data, headers: headers});
+      return PromiseObservable.create(Promise.resolve(null));
+    }
     else
       return request;
   }
@@ -75,8 +80,10 @@ export class HttpService{
       headers: headers
     });
 
-    if(canBuffer && this.isDisconnected)
+    if(canBuffer && this.isDisconnected) {
       this.bufferingRequest({type: 'get', address: address, data: null, headers: headers});
+      return PromiseObservable.create(Promise.resolve(null));
+    }
     else
       return request;
   }
@@ -92,8 +99,10 @@ export class HttpService{
       headers: headers
     });
 
-    if(canBuffer && this.isDisconnected)
+    if(canBuffer && this.isDisconnected) {
       this.bufferingRequest({type: 'delete', address: address, data: null, headers: headers});
+      return PromiseObservable.create(Promise.resolve(null));
+    }
     else
       return request;
   }
