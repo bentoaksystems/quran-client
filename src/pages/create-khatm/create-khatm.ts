@@ -9,6 +9,7 @@ import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {MsgService} from "../../services/msg.service";
 import {CommitmentPage} from "../commitment/commitment";
+import {StylingService} from "../../services/styling";
 
 @IonicPage()
 @Component({
@@ -39,12 +40,18 @@ export class CreateKhatmPage implements OnInit{
   lastFocus: string = 'start';
   remainPages: number = null;
   rest_days: number = null;
+  conditionalColoring: any = {
+    background: 'normal_back',
+    text: 'noraml_text',
+    primary: 'normal_primary',
+    secondary: 'normal_secondary'
+  };
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
               private socialSharing: SocialSharing, private clipboard: Clipboard,
-              private loadingCtrl: LoadingController) {
+              private loadingCtrl: LoadingController, private stylingService: StylingService) {
     this.suras = this.quranService.getAllSura();
   }
 
@@ -74,6 +81,23 @@ export class CreateKhatmPage implements OnInit{
 
       // this.startDate = this.ls.convertDate(this.startDate);
     }
+
+    this.stylingService.nightMode$.subscribe(
+      (data) => {
+        if(data) {
+          this.conditionalColoring.background = 'night_back';
+          this.conditionalColoring.text = 'night_text';
+          this.conditionalColoring.primary = 'night_primary';
+          this.conditionalColoring.secondary = 'night_secondary';
+        }
+        else{
+          this.conditionalColoring.background = 'normal_back';
+          this.conditionalColoring.text = 'normal_text';
+          this.conditionalColoring.primary = 'normal_primary';
+          this.conditionalColoring.secondary = 'normal_secondary';
+        }
+      }
+    );
   }
 
   submit(){

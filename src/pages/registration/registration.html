@@ -35,8 +35,8 @@
   <ion-grid *ngIf="showVerify">
     <ion-row>
       <ion-col col-12 style="text-align: center">
-        <ion-label block>{{ls.translate('The verification code has been sent to ')}}</ion-label>
-        <ion-label block>{{authService.user.getValue().email}}</ion-label>
+        <ion-label block [color]="conditionalColoring.text">{{ls.translate('The verification code has been sent to ')}}</ion-label>
+        <ion-label block [color]="conditionalColoring.text">{{authService.user.getValue().email}}</ion-label>
       </ion-col>
     </ion-row>
     <ion-row>
