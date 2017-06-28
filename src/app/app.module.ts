@@ -8,6 +8,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import {HttpModule} from "@angular/http";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {Clipboard} from "@ionic-native/clipboard";
+import {Network} from "@ionic-native/network";
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -31,7 +32,6 @@ import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {LanguageService} from "../services/language";
 import {KhatmService} from "../services/khatm.service";
 import {SocialSharing} from "@ionic-native/social-sharing";
-import {Network} from "@ionic-native/network";
 import {CommitmentPage} from "../pages/commitment/commitment";
 
 @NgModule({

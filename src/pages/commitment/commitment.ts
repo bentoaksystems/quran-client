@@ -101,6 +101,8 @@ export class CommitmentPage implements OnInit{
   }
 
   selectRange(page){
+    let swapDates: boolean = false;
+
     if(this.startRange === null) {
       page.isread = true;
       this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
@@ -116,12 +118,14 @@ export class CommitmentPage implements OnInit{
         let tmp = this.startRange;
         this.startRange = this.endRange;
         this.endRange = tmp;
+        swapDates = true;
       }
       else if(this.startRange.page_number === this.endRange.page_number){
         if(this.startRange.repeat_number > this.endRange.repeat_number){
           let tmp = this.startRange;
           this.startRange = this.endRange;
           this.endRange = tmp;
+          swapDates = true;
         }
       }
 
@@ -133,7 +137,8 @@ export class CommitmentPage implements OnInit{
            (el.page_number === this.startRange.page_number && el.repeat_number > this.startRange.repeat_number)) &&
            (el.page_number < this.endRange.page_number ||
            (el.page_number === this.endRange.page_number && el.repeat_number <= this.endRange.repeat_number))){
-            el.isread = !el.isread;
+            if(el.page_number !== this.endRange.page_number || el.repeat_number !== this.endRange.repeat_number || !swapDates)
+                el.isread = !el.isread;
             this.khatm.you_read = (el.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
             this.khatm.you_unread = (el.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
             pages.push(el);

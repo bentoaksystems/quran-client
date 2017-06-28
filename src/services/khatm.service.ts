@@ -16,9 +16,9 @@ export class KhatmService{
 
   constructor(private httpService: HttpService, private authService: AuthService,
               private storage: Storage){
-      // this.storage.remove('khatms');
-      // this.storage.remove('khatm_35');
-      // this.storage.remove('khatm_40');
+      this.storage.remove('khatms');
+      this.storage.remove('khatm_35');
+      this.storage.remove('khatm_40');
   }
 
   createKhatm(data){
