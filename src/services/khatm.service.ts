@@ -215,6 +215,9 @@ export class KhatmService{
                                 this.authService.user.getValue().email, this.authService.user.getValue().token)
       .subscribe(
         (data) => {
+          //Remove khatm commitments from storage
+          if(is_read)
+            this.storeKhatmPages(khatm_id, pages, 'delete');
           console.log(data);
         },
         (err) => {

@@ -1,20 +1,29 @@
-<ion-header>
-  <ion-navbar>
-    <ion-title>{{ls.translate('commitment')}}</ion-title>
-  </ion-navbar>
-</ion-header>
+<span [ngStyle]="{'direction': ls.direction()}">
+  <ion-header>
+    <ion-navbar>
+      <ion-title>{{ls.translate('commitment')}}</ion-title>
+    </ion-navbar>
+  </ion-header>
 
-<ion-content padding>
-  <div *ngIf="!isSelect">
-    <ion-grid>
-      <ion-row *ngFor="let rp of rowPages">
-        <ion-col col-2 *ngFor="let p of rp">
-          <button ion-button block>{{p}}</button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </div>
-  <div *ngIf="isSelect">
+  <ion-content padding>
+    <div *ngIf="!isSelect">
+      <ion-grid>
+        <ion-row *ngFor="let rp of rowPages">
+          <ion-col col-2 *ngFor="let p of rp">
+            <button ion-button block
+                    *ngIf="p.isread"
+                    [style.background-color]="stylingService.nightMode ? '#7b87ad' : '#c5bfb1' "
+                    (tap)="commit(p)" (press)="selectRange(p)">{{p.page_number}}</button>
+            <button ion-button block
+                    *ngIf="!p.isread"
+                    [style.background-color]="stylingService.nightMode ? '#95506f' : '#7ec5a5' "
+                    (tap)="commit(p)" (press)="selectRange(p)">{{p.page_number}}</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div *ngIf="isSelect">
 
-  </div>
-</ion-content>
+    </div>
+  </ion-content>
+</span>
