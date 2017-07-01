@@ -126,20 +126,19 @@ export class KhatmService{
     return this.storage.get('khatms');
   }
 
-  storeKhatmPages(khatm_id, pages, type){
+  storeKhatmPages(khatm_id, pages, action){
     return new Promise((resolve, reject) => {
       this.storage.get('khatm_' + khatm_id)
         .then((value) => {
           if(value != null){
-            console.log('VALUE:', value);
-            if(type === 'add'){
+            if(action === 'add'){
               value = value.concat(pages);
             }
-            else if(type === 'delete'){
+            else if(action === 'delete'){
               let pNumbers = pages.map(el => el.page_number);
               value = value.filter(el => pNumbers.findIndex(i => i === el.page_number) === -1);
             }
-            else if(type === 'update'){
+            else if(action === 'update'){
               let pNumbers = pages.map(el => el.page_number);
               value = value.filter(el => pNumbers.findIndex(i => i === el.page_number) === -1);
               value = value.concat(pages);
@@ -209,21 +208,33 @@ export class KhatmService{
   }
 
   commitPages(khatm_id, pages, is_read){
-    let cids = pages.map(el => el.cid);
+    return new Promise((resolve, reject) => {
+      let cids = pages.map(el => el.cid);
 
-    this.httpService.postData('khatm/commitment/commit', {cids: cids, isread: is_read}, true, true,
-                                this.authService.user.getValue().email, this.authService.user.getValue().token)
-      .subscribe(
-        (data) => {
-          //Remove khatm commitments from storage
-          if(is_read)
-            this.storeKhatmPages(khatm_id, pages, 'delete');
-          console.log(data);
-        },
-        (err) => {
-          console.log(err);
-        }
-      )
+      if(pages === null || pages === undefined || pages.length === 0)
+        resolve();
+      else{
+        this.httpService.postData('khatm/commitment/commit', {cids: cids, isread: is_read}, true, true,
+                                  this.authService.user.getValue().email, this.authService.user.getValue().token)
+            .subscribe(
+              (data) => {
+                //Remove khatm commitments from storage
+                if(is_read)
+                  this.storeKhatmPages(khatm_id, pages, 'delete')
+                    .then((res) => resolve(res))
+                    .catch((err) => reject(err));
+                else
+                  this.storeKhatmPages(khatm_id, pages, 'add')
+                    .then((res) => resolve(res))
+                    .catch((err) => reject(err));
+              },
+              (err) => {
+                console.log(err);
+                reject(err);
+              }
+            )
+      }
+    })
   }
 
   clearStorage(){

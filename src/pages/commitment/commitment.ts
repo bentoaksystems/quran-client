@@ -116,12 +116,16 @@ export class CommitmentPage implements OnInit{
         let tmp = this.startRange;
         this.startRange = this.endRange;
         this.endRange = tmp;
+        this.endRange.isread = false;
+        this.startRange.isread = true;
       }
       else if(this.startRange.page_number === this.endRange.page_number){
         if(this.startRange.repeat_number > this.endRange.repeat_number){
           let tmp = this.startRange;
           this.startRange = this.endRange;
           this.endRange = tmp;
+          this.endRange.isread = false;
+          this.startRange.isread = true;
         }
       }
 
@@ -143,10 +147,9 @@ export class CommitmentPage implements OnInit{
       let readPages = pages.filter(el => el.isread === true);
       let unreadPages = pages.filter(el => el.isread === false);
 
-      if(readPages.length > 0)
-        this.khatmService.commitPages(this.khatm.khid, readPages, true);
-      if(unreadPages.length > 0)
-        this.khatmService.commitPages(this.khatm.khid, unreadPages, false);
+      this.khatmService.commitPages(this.khatm.khid, readPages, true)
+          .then((res) => this.khatmService.commitPages(this.khatm.khid, unreadPages, false))
+          .catch((err) => console.log(err));
 
       this.startRange = null;
       this.endRange = null;
