@@ -45,20 +45,21 @@
         <ion-datetime [min]="currentDate.getFullYear()"
                       [max]="currentDate.getFullYear() + 1"
                       displayFormat="DD/MMM/YYYY" [(ngModel)]="startDate"
-                      (ngModelChange)="changeDuration('start')"></ion-datetime>
+                      (ngModelChange)="changeDuration('start', $event)"></ion-datetime>
       </ion-item>
       <ion-item [color]="conditionalColoring.background">
         <ion-label>{{ls.translate('Duration')}}</ion-label>
         <ion-input type="number" min="1" [(ngModel)]="duration"
                    [ngClass]="[oppositeDirection()]"
-                   (ngModelChange)="changeDuration('duration')"></ion-input>
+                   (blur)="setDuration()"
+                   (ngModelChange)="changeDuration('duration', null)"></ion-input>
       </ion-item>
       <ion-item [color]="conditionalColoring.background">
         <ion-label>{{ls.translate('End Date')}}</ion-label>
         <ion-datetime [min]="currentDate.getFullYear()"
                       [max]="currentDate.getFullYear() + 10"
                       displayFormat="DD/MMM/YYYY" [(ngModel)]="endDate"
-                      (ngModelChange)="changeDuration('end')"></ion-datetime>
+                      (ngModelChange)="changeDuration('end', $event)"></ion-datetime>
       </ion-item>
     </ion-list>
       <button ion-button block (click)="submit()" [disabled]="submitDisability"
