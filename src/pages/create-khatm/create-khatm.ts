@@ -45,6 +45,7 @@ export class CreateKhatmPage implements OnInit{
     primary: 'normal_primary',
     secondary: 'normal_secondary'
   };
+  isChangingCommitments: boolean =  false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
@@ -408,16 +409,21 @@ export class CreateKhatmPage implements OnInit{
 
             //Stop loading controller
             loading.dismiss();
+            this.isChangingCommitments = false;
 
             this.msgService.showMessage('inform', 'The requested pages assigned to you');
           })
           .catch((err) => {
             //Stop loading controller
             loading.dismiss();
+            this.isChangingCommitments = false;
 
             console.log(err.message);
+            this.msgService.showMessage('warn', 'Cannot assing you requested pages');
           });
     }
+    else
+      this.isChangingCommitments = false;
   }
 
   goToCommitment(isSelect){

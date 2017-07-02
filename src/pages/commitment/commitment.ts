@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {IonicPage, NavController, NavParams, Navbar} from 'ionic-angular';
 import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {StylingService} from "../../services/styling";
@@ -10,6 +10,7 @@ import {StylingService} from "../../services/styling";
   templateUrl: 'commitment.html',
 })
 export class CommitmentPage implements OnInit{
+  @ViewChild(Navbar) navBar: Navbar;
   khatm: any;
   isSelect: boolean = true;
   rowPages = [];
@@ -68,6 +69,17 @@ export class CommitmentPage implements OnInit{
         this.createRows();
       })
       .catch((err) => console.log(err));
+
+
+    this.navBar.backButtonClick = (e:UIEvent) => {
+      console.log('Back button overriden');
+      if(this.startRange !== null && this.endRange === null){
+        //Submit startRange commitment
+        this.khatmService.commitPages(this.khatm.khid, [this.startRange], this.startRange.isread);
+      }
+
+      this.navCtrl.pop();
+    }
   }
 
   createRows(){
@@ -106,6 +118,7 @@ export class CommitmentPage implements OnInit{
       page.isread = true;
       this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
       this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
+      this.khatm.read_pages = (page.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
       this.startRange = page;
     }
     else if(this.endRange === null)

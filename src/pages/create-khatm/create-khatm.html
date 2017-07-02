@@ -174,7 +174,8 @@
                      type="number" placeholder="Your Pages"
                      [ngModel]="khatm.you_unread"
                      [disabled]="khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid"
-                     (blur)="changeCommitPages($event)"></ion-input>
+                     (blur)="changeCommitPages($event)"
+                     (ngModelChange)="isChangingCommitments = true"></ion-input>
         </ion-col>
       </ion-row>
         <ion-row *ngIf="!khatmIsStarted">
@@ -188,6 +189,7 @@
           <ion-col col-6>
             <button ion-button block
                     *ngIf="khatm.you_unread !== null && khatm.you_unread > 0"
+                    [disabled]="isChangingCommitments || (khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid)"
                     (click)="goToCommitment(false)">{{ls.translate('Commit Pages')}}</button>
           </ion-col>
           <ion-col col-3></ion-col>
