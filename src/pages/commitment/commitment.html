@@ -13,11 +13,11 @@
             <button ion-button block
                     *ngIf="p.isread"
                     [style.background-color]="stylingService.nightMode ? '#7b87ad' : '#c5bfb1' "
-                    (tap)="commit(p)" (press)="selectRange(p)">{{p.page_number}}</button>
+                    (click)="commit(p)" (press)="selectRange(p)">{{p.page_number}}</button>
             <button ion-button block
                     *ngIf="!p.isread"
                     [style.background-color]="stylingService.nightMode ? '#95506f' : '#7ec5a5' "
-                    (tap)="commit(p)" (press)="selectRange(p)">{{p.page_number}}</button>
+                    (click)="commit(p)" (press)="selectRange(p)">{{p.page_number}}</button>
           </ion-col>
         </ion-row>
       </ion-grid>
