@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+/**/import {Component, OnInit} from '@angular/core';
 import {IonicPage, NavController, NavParams, LoadingController} from 'ionic-angular';
 import {SocialSharing} from '@ionic-native/social-sharing';
 import {Clipboard} from "@ionic-native/clipboard";
@@ -360,7 +360,7 @@ export class CreateKhatmPage implements OnInit{
           .catch((err) => {
             //Stop loading controller
             loading.dismiss();
-            
+
             console.log(err.message);
           });
     }
