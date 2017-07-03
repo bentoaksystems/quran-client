@@ -29,6 +29,8 @@ export class CommitmentPage implements OnInit{
               private stylingService: StylingService) {}
 
   ngOnInit(){
+    this.navBar.setBackButtonText(this.ls.translate('Back'));
+
     this.stylingService.nightMode$.subscribe(
       (data) => {
         if(data) {
