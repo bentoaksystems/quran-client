@@ -72,7 +72,6 @@ export class CommitmentPage implements OnInit{
 
 
     this.navBar.backButtonClick = (e:UIEvent) => {
-      console.log('Back button overriden');
       if(this.startRange !== null && this.endRange === null){
         //Submit startRange commitment
         this.khatmService.commitPages(this.khatm.khid, [this.startRange], this.startRange.isread);

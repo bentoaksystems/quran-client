@@ -175,13 +175,13 @@
                      [ngModel]="khatm.you_unread"
                      [disabled]="khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid"
                      (blur)="changeCommitPages($event)"
-                     (ngModelChange)="isChangingCommitments = true"></ion-input>
+                     (ngModelChange)="limitClick()"></ion-input>
         </ion-col>
       </ion-row>
         <ion-row *ngIf="!khatmIsStarted">
           <ion-col col-12>
             <ion-label style="text-align: center"
-                       [color]="conditionalColoring.text">{{ls.translate('This khatm is not startted yet')}}</ion-label>
+                       [color]="conditionalColoring.text">{{ls.translate('This khatm is not started yet')}}</ion-label>
           </ion-col>
         </ion-row>
         <ion-row *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null">
@@ -199,11 +199,13 @@
           <ion-col col-6>
             <button ion-button block (click)="start_stop_Khatm()"
                     [color]="conditionalColoring.primary"
+                    [disabled]="isChangingCommitments"
                     *ngIf="khatmService.activeKhatm.getValue() === null || (khatmService.activeKhatm.getValue().khid !== khatm.khid)">
               {{ls.translate('Reading Khatm')}}
             </button>
             <button ion-button block (click)="start_stop_Khatm()"
                     [color]="conditionalColoring.secondary"
+                    [disabled]="isChangingCommitments"
                     *ngIf="khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid">
               {{ls.translate('Stop Khatm')}}
             </button>
