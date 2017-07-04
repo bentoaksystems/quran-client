@@ -1,11 +1,12 @@
-import {Component, OnInit} from '@angular/core';
-import {IonicPage, NavController, NavParams, ViewController, LoadingController} from 'ionic-angular';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {IonicPage, NavController, NavParams, ViewController, LoadingController, Navbar} from 'ionic-angular';
 
 import {MsgService} from "../../services/msg.service";
 import {AuthService} from "../../services/auth.service";
 import {QuranService} from "../../services/quran.service";
 import {StylingService} from "../../services/styling";
 import {LanguageService} from "../../services/language";
+import {KhatmService} from "../../services/khatm.service";
 
 @IonicPage()
 @Component({
@@ -13,6 +14,7 @@ import {LanguageService} from "../../services/language";
   templateUrl: 'registration.html',
 })
 export class Registration implements OnInit{
+  @ViewChild(Navbar) navBar: Navbar;
   email: string = '';
   reEmail: string = '';
   name: string = '';
@@ -29,10 +31,12 @@ export class Registration implements OnInit{
               private viewCtrl: ViewController, private msgService: MsgService,
               private authService: AuthService, private quranService: QuranService,
               private ls: LanguageService, private loadingCtrl: LoadingController,
-              private stylingService: StylingService) {}
+              private stylingService: StylingService, private khatmService: KhatmService) {}
 
 
   ngOnInit(){
+    this.navBar.setBackButtonText(this.ls.translate('Back'));
+
     this.conditionalColoring.background = (this.stylingService.nightMode) ? 'night_back' : 'normal_back';
     this.conditionalColoring.text = (this.stylingService.nightMode) ? 'night_text' : 'normal_text';
     this.conditionalColoring.primary = (this.stylingService.nightMode) ? 'night_primary' : 'normal_primary';
@@ -128,6 +132,8 @@ export class Registration implements OnInit{
     else{
       this.authService.verify(code)
         .then(() => {
+          // this.khatmService.loadKhatm(this.authService.user.getValue().email);
+          // this.khatmService.loadAllCommitments();
           this.navCtrl.popToRoot();
         })
         .catch((err) => {
@@ -151,9 +157,9 @@ export class Registration implements OnInit{
 
   setLoading(){
     this.loading = this.loadingCtrl.create({
-      content: 'Please wait until send verification code ...'
+      content: 'Please wait until we send you verification code ...'
     });
-    
+
     this.loading.present();
   }
 }

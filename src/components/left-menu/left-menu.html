@@ -17,7 +17,7 @@
         </ion-select>
       </ion-item>
     <button ion-item detail-none (click)="nightMode()">
-      <ion-icon [name]="stylingService.nightMode?'eye':'eye-off'" item-left></ion-icon>
+      <ion-icon [name]="stylingService.nightMode ? 'sunny' : 'moon'" item-left></ion-icon>
       {{stylingService.nightMode?ls.translate('Day Mode'):ls.translate('Night Mode')}}
     </button>
     <button ion-item detail-none (click)="zoomIn()">

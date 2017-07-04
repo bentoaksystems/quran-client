@@ -1,4 +1,4 @@
-<ion-menu side="right" [content]="cnt" [swipeEnabled]="false" >
+<ion-menu side="right" [content]="cnt" [swipeEnabled]="false" #rightMenu>
   <right-menu [isLoggedIn]="isLoggedIn" (switchView)="goToPage($event)"></right-menu>
 </ion-menu>
 <ion-menu side="left" [content]="cnt" [swipeEnabled]="false">
