@@ -445,4 +445,8 @@ export class CreateKhatmPage implements OnInit{
     if(this.duration === null || this.duration === '')
       this.duration = this.getDate(moment(this.startDate), null, moment(this.endDate));
   }
+
+  limitClick(){
+    this.isChangingCommitments = true
+  }
 }

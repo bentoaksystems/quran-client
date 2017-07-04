@@ -175,7 +175,7 @@
                      [ngModel]="khatm.you_unread"
                      [disabled]="khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid"
                      (blur)="changeCommitPages($event)"
-                     (ngModelChange)="isChangingCommitments = true"></ion-input>
+                     (ngModelChange)="limitClick()"></ion-input>
         </ion-col>
       </ion-row>
         <ion-row *ngIf="!khatmIsStarted">
