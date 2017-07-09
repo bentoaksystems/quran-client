@@ -3,10 +3,11 @@
     <ion-grid>
       <ion-row>
         <ion-col col-6>
-          <button [color]="conditionalColoring.primary" ion-button menuClose *ngIf="!isLoggedIn" block (click)="openPage('register')">{{ls.translate('Register')}}</button>
+          <button [color]="conditionalColoring.primary" ion-button menuClose *ngIf="!isLoggedIn" block (click)="openPage('register', null, 'register')">{{ls.translate('Register')}}</button>
           <button [color]="conditionalColoring.primary" ion-button menuClose *ngIf="isLoggedIn" block (click)="logout()">{{ls.translate('Logout')}}</button>
         </ion-col>
         <ion-col col-6>
+          <button [color]="conditionalColoring.primary" ion-button menuClose *ngIf="!isLoggedIn" block (click)="openPage('register', null, 'signIn')">{{ls.translate('Sign in')}}</button>
           <button [color]="conditionalColoring.primary" ion-button menuClose *ngIf="isLoggedIn" block (click)="openPage('khatm')">{{ls.translate('Create Khatm')}}</button>
         </ion-col>
       </ion-row>

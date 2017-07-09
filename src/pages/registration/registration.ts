@@ -26,6 +26,7 @@ export class Registration implements OnInit{
     secondary: 'normal_secondary'
   };
   loading;
+  isRegistration: boolean = true;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private viewCtrl: ViewController, private msgService: MsgService,
@@ -35,6 +36,7 @@ export class Registration implements OnInit{
 
 
   ngOnInit(){
+    this.isRegistration = this.navParams['data'].fromButton === 'register';
     this.navBar.setBackButtonText(this.ls.translate('Back'));
 
     this.conditionalColoring.background = (this.stylingService.nightMode) ? 'night_back' : 'normal_back';
@@ -81,7 +83,7 @@ export class Registration implements OnInit{
         this.setLoading();
 
         //Register user
-        this.authService.register(this.email, this.name)
+        this.authService.register(this.email, this.name, this.isRegistration)
           .then(() => {
             this.showVerify = true;
             this.loading.dismiss();
@@ -109,7 +111,7 @@ export class Registration implements OnInit{
 
   reSend(){
     this.setLoading();
-    this.authService.register(this.authService.user.getValue().email, this.authService.user.getValue().name)
+    this.authService.register(this.authService.user.getValue().email, this.authService.user.getValue().name, this.isRegistration)
       .then((res) => {
         this.loading.dismiss();
         this.msgService.showMessage('inform', this.ls.translate('The verification code has been sent to ') + this.authService.user.getValue().email);
@@ -135,6 +137,7 @@ export class Registration implements OnInit{
           // this.khatmService.loadKhatm(this.authService.user.getValue().email);
           // this.khatmService.loadAllCommitments();
           this.navCtrl.popToRoot();
+          this.authService.loadUser();
         })
         .catch((err) => {
           this.msgService.showMessage('error', err.message);
@@ -157,7 +160,7 @@ export class Registration implements OnInit{
 
   setLoading(){
     this.loading = this.loadingCtrl.create({
-      content: 'Please wait until we send you verification code ...'
+      content: (this.isRegistration) ? 'Please wait until we send you verification code...' : 'Please wait...'
     });
 
     this.loading.present();

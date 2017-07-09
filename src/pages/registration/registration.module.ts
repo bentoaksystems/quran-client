@@ -4,13 +4,13 @@ import { Registration } from './registration';
 
 @NgModule({
   declarations: [
-    Registration,
+    // Registration,
   ],
   imports: [
-    IonicPageModule.forChild(Registration),
+    // IonicPageModule.forChild(Registration),
   ],
   exports: [
-    Registration
+    // Registration
   ]
 })
 export class RegistrationModule {}

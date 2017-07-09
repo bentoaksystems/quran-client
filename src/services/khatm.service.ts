@@ -37,35 +37,27 @@ export class KhatmService {
     });
   }
 
-  loadKhatm(userEmail) {
-    console.log('UserEmail:' + userEmail);
-    this.authService.user.subscribe(
-      (data) => {
-        if (data !== null)
-          this.httpService.getData('khatm', true, true, userEmail, data.token)
-            .subscribe(
-              (res) => {
-                let data = res.json();
-                // console.log('data:', data);
-                let mDate = moment(new Date());
+  loadKhatm(user) {
+    this.httpService.getData('khatm', true, true, user.email, user.token)
+      .subscribe(
+        (res) => {
+          let data = res.json();
+          let mDate = moment(new Date());
 
-                let tempList = [];
-                for (let item of data) {
-                  //Check rest days of khatm
-                  if (moment(item.end_date).diff(mDate, 'days') >= 0)
-                    tempList.push(item);
-                }
-                this.storeKhatms(tempList);
-                this.khatms.next(tempList);
-              },
-              (err) => {
-                console.log(err.message);
-                this.khatms.next([]);
-              }
-            )
-      },
-      (err) => console.log(err.message)
-    );
+          let tempList = [];
+          for (let item of data) {
+            //Check rest days of khatm
+            if (moment(item.end_date).diff(mDate, 'days') >= 0)
+              tempList.push(item);
+          }
+          this.storeKhatms(tempList);
+          this.khatms.next(tempList);
+        },
+        (err) => {
+          console.log(err.message);
+          this.khatms.next([]);
+        }
+      )
   }
 
   loadAllCommitments() {
@@ -75,7 +67,6 @@ export class KhatmService {
         .subscribe(
           (res) => {
             let data = res.json();
-            console.log('DATACommitments:', data);
 
             let promiseList = [];
             // data.forEach(el => promiseList.push(this.storeKhatmPages(el.khid, el.pages, 'add')));
@@ -171,7 +162,7 @@ export class KhatmService {
       this.storage.get('khatms')
         .then((res) => {
           let data = res.find(el => el.khid === khatm_id);
-          console.log(data);
+          // console.log(data);
           data.you_unread = page_numbers;
           return this.storage.set('khatms', res);
         })
@@ -249,7 +240,7 @@ export class KhatmService {
       promiseList.push(Promise.resolve());
 
     this.storage.remove('khatms')
-      .then(value => console.log(value)).catch(err => console.log(err));
+      .then(/*console.log(value)*/).catch(err => console.log(err));
 
     Promise.all(promiseList)
       .then(value => this.khatms.next(null))
