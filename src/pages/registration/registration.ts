@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {IonicPage, NavController, NavParams, ViewController, LoadingController} from 'ionic-angular';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {IonicPage, NavController, NavParams, ViewController, LoadingController, Navbar} from 'ionic-angular';
 
 import {MsgService} from "../../services/msg.service";
 import {AuthService} from "../../services/auth.service";
@@ -14,6 +14,7 @@ import {KhatmService} from "../../services/khatm.service";
   templateUrl: 'registration.html',
 })
 export class Registration implements OnInit{
+  @ViewChild(Navbar) navBar: Navbar;
   email: string = '';
   reEmail: string = '';
   name: string = '';
@@ -34,6 +35,8 @@ export class Registration implements OnInit{
 
 
   ngOnInit(){
+    this.navBar.setBackButtonText(this.ls.translate('Back'));
+
     this.conditionalColoring.background = (this.stylingService.nightMode) ? 'night_back' : 'normal_back';
     this.conditionalColoring.text = (this.stylingService.nightMode) ? 'night_text' : 'normal_text';
     this.conditionalColoring.primary = (this.stylingService.nightMode) ? 'night_primary' : 'normal_primary';
@@ -156,7 +159,7 @@ export class Registration implements OnInit{
     this.loading = this.loadingCtrl.create({
       content: 'Please wait until we send you verification code ...'
     });
-    
+
     this.loading.present();
   }
 }

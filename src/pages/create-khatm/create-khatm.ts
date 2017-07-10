@@ -1,5 +1,5 @@
-/**/import {Component, OnInit} from '@angular/core';
-import {IonicPage, NavController, NavParams, LoadingController} from 'ionic-angular';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {IonicPage, NavController, NavParams, LoadingController, Navbar} from 'ionic-angular';
 import {SocialSharing} from '@ionic-native/social-sharing';
 import {Clipboard} from "@ionic-native/clipboard";
 import * as moment from 'moment-timezone';
@@ -17,6 +17,7 @@ import {StylingService} from "../../services/styling";
   templateUrl: 'create-khatm.html',
 })
 export class CreateKhatmPage implements OnInit{
+  @ViewChild(Navbar) navBar: Navbar;
   basicShareLink: string = 'home/khatm/';
   khatmIsStarted: boolean = true;
   isSubmitted: boolean = false;
@@ -56,6 +57,8 @@ export class CreateKhatmPage implements OnInit{
   }
 
   ngOnInit(){
+    this.navBar.setBackButtonText(this.ls.translate('Back'));
+
     this.isNew = this.navParams.get('isNew');
     this.khatm = this.navParams.get('khatm');
 
@@ -447,6 +450,6 @@ export class CreateKhatmPage implements OnInit{
   }
 
   limitClick(){
-    this.isChangingCommitments = true
+    this.isChangingCommitments = true;
   }
 }
