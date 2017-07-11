@@ -4,13 +4,13 @@ import { Text } from './text';
 
 @NgModule({
   declarations: [
-    Text,
+    // Text,
   ],
   imports: [
-    IonicPageModule.forChild(Text),
+    // IonicPageModule.forChild(Text),
   ],
   exports: [
-    Text
+    // Text
   ]
 })
 export class TextModule {}

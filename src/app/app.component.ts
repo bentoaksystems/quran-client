@@ -47,7 +47,7 @@ export class MyApp {
       authService.user.subscribe(
         (u) => {
           if(u !== null && u.token !== null && u.token !== undefined){
-            this.khatmService.loadKhatm(u.email);
+            this.khatmService.loadKhatm(u);
             this.khatmService.loadAllCommitments();
           }
         }

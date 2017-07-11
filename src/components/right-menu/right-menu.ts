@@ -28,14 +28,14 @@ export class RightMenuComponent implements OnInit{
               private khatmService: KhatmService, private msgService: MsgService,
               private stylingService: StylingService) {}
 
-  openPage(desPage, viewKhatm = null){
-    console.log(desPage);
-
+  openPage(desPage, viewKhatm = null, fromButton = null){
     var target;
     var params;
 
-    if(desPage === 'register')
+    if(desPage === 'register'){
       target = Registration;
+      params = {fromButton: fromButton};
+    }
     else if(desPage === 'khatm') {
       target = CreateKhatmPage;
 
@@ -69,8 +69,9 @@ export class RightMenuComponent implements OnInit{
     this.khatmService.khatms.subscribe(
       (data) => {
           this.khatms = [];
-          for(let item of data)
-            this.khatms.push(item);
+          if(data !== null)
+            for(let item of data)
+              this.khatms.push(item);
         },
       (err) => {
           console.log(err.message);

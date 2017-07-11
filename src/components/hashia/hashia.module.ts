@@ -4,13 +4,13 @@ import { Hashia } from './hashia';
 
 @NgModule({
   declarations: [
-    Hashia,
+    // Hashia,
   ],
   imports: [
-    IonicPageModule.forChild(Hashia),
+    // IonicPageModule.forChild(Hashia),
   ],
   exports: [
-    Hashia
+    // Hashia
   ]
 })
 export class HashiaModule {}

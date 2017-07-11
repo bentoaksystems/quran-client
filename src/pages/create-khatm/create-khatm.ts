@@ -374,7 +374,13 @@ export class CreateKhatmPage implements OnInit{
 
   copyLink(){
     let link: string = 'http://quranApp/' + this.basicShareLink + this.khatm.share_link;
-    this.clipboard.copy(link);
+    this.clipboard.copy(link)
+      .then(res => {
+        this.msgService.showMessage('inform', res);
+      })
+      .catch(err => {
+        this.msgService.showMessage('error', err);
+      })
   }
 
   shareVia(){
