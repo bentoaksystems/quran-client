@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams, LoadingController, Navbar} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, LoadingController, Navbar, AlertController} from 'ionic-angular';
 import {SocialSharing} from '@ionic-native/social-sharing';
 import {Clipboard} from "@ionic-native/clipboard";
 import * as moment from 'moment-timezone';
@@ -18,6 +18,7 @@ import {StylingService} from "../../services/styling";
 })
 export class CreateKhatmPage implements OnInit{
   @ViewChild(Navbar) navBar: Navbar;
+  @ViewChild('commitPageInput') commitPageInput: HTMLFormElement;
   basicShareLink: string = 'home/khatm/';
   khatmIsStarted: boolean = true;
   isSubmitted: boolean = false;
@@ -47,43 +48,69 @@ export class CreateKhatmPage implements OnInit{
     secondary: 'normal_secondary'
   };
   isChangingCommitments: boolean =  false;
+  isMember: boolean = false;
+  isCommit: boolean = false;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
               private socialSharing: SocialSharing, private clipboard: Clipboard,
-              private loadingCtrl: LoadingController, private stylingService: StylingService) {
+              private loadingCtrl: LoadingController, private stylingService: StylingService,
+              private alertCtrl: AlertController) {
     this.suras = this.quranService.getAllSura();
   }
 
   ngOnInit(){
     this.navBar.setBackButtonText(this.ls.translate('Back'));
 
-    this.isNew = this.navParams.get('isNew');
-    this.khatm = this.navParams.get('khatm');
+    let link = this.navParams.get('link');
 
-    if(this.khatm !== null){
-      // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
-      // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
-      this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
-      this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+    if(link === undefined || link === null){
+      this.isNew = this.navParams.get('isNew');
+      this.khatm = this.navParams.get('khatm');
+      this.isMember = this.navParams.get('isMember');
 
-      let mDate = moment(this.currentDate);
-      if(moment(this.khatm.start_date) > mDate)
-        this.khatmIsStarted = false;
-      else
-        this.khatmIsStarted = true;
+      if(this.khatm !== null){
+        // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
+        // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
+        this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
+        this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
 
-      this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
-      if(this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
-        this.rest_days++;
-    }
-    else{
-      this.startDate = this.currentDate.getFullYear() + '-' +
+        let mDate = moment(this.currentDate);
+        if(moment(this.khatm.start_date) > mDate)
+          this.khatmIsStarted = false;
+        else
+          this.khatmIsStarted = true;
+
+        this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
+        if(this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
+          this.rest_days++;
+      }
+      else{
+        this.startDate = this.currentDate.getFullYear() + '-' +
           this.getFormattedDate(this.currentDate.getMonth(), true) + '-' +
           this.getFormattedDate(this.currentDate.getDate(), false);
 
-      // this.startDate = this.ls.convertDate(this.startDate);
+        // this.startDate = this.ls.convertDate(this.startDate);
+      }
+    }
+    else{
+      this.msgService.showMessage('inform', 'Ok with deeplink');
+
+      this.isNew = false;
+      this.khatm = null;
+      this.isMember = false;
+
+      this.khatmService.getKhatm(link)
+        .then(res => {
+          this.khatm = res;
+        })
+        .catch(err => {
+          if(err === 'expired')
+            this.msgService.showMessage('error', 'The khatm end date is passed.');
+          else
+            this.msgService.showMessage('error', 'Cannot get khatm details');
+        });
     }
 
     this.stylingService.nightMode$.subscribe(
@@ -102,6 +129,10 @@ export class CreateKhatmPage implements OnInit{
         }
       }
     );
+
+    this.navBar.backButtonClick = (e:UIEvent) => {
+      this.checkOnLeft();
+    }
   }
 
   submit(){
@@ -384,11 +415,12 @@ export class CreateKhatmPage implements OnInit{
   }
 
   shareVia(){
-    let message: string = 'Join to this khatm\n';
-    let link: string = 'quranApp://' + this.basicShareLink + this.khatm.share_link;
-    let tlink: string = '<html><head></head><body><a>'+this.basicShareLink + this.khatm.share_link+'</a></body></html>';
+    let message: string = (this.khatm.creator_shown) ? this.khatm.owner_name + " invite you" : "You invited";
+    message += " to join to '" + this.khatm.khatm_name + "' khatm";
 
-    this.socialSharing.share(message + '\n' + link, 'Khatm share link', null, tlink)
+    let link: any = this.basicShareLink + this.khatm.share_link;
+
+    this.socialSharing.share(message, "Join to kahtm", null, link)
         .then((res) => {
           console.log(res);
         })
@@ -398,7 +430,8 @@ export class CreateKhatmPage implements OnInit{
   }
 
   changeCommitPages(data){
-    let newVal = data.target.value;
+    // let newVal = data.target.value;
+    let newVal = data;
     let newValNum = parseInt(newVal);
     if(newVal.toString() === '')
       newValNum = 0;
@@ -413,14 +446,20 @@ export class CreateKhatmPage implements OnInit{
       let type = (newValNum < (this.khatm.you_unread === null ? 0 : this.khatm.you_unread)) ? 'delete' : 'add';
       this.khatmService.getPages(newValNum, this.khatm.khid, type)
           .then((res) => {
-            this.khatm.you_unread = (newValNum === 0) ? null : newValNum;
             this.khatm.you_read = (this.khatm.you_read === null) ? 0 : this.khatm.you_read;
+
+            if(res !== null && res === newValNum){
+              this.khatm.you_unread = (newValNum === 0) ? null : newValNum;
+              this.msgService.showMessage('inform', 'The requested pages assigned to you');
+            }
+            else if(res !== null && res !== newValNum) {
+              this.khatm.you_unread = (newValNum === 0) ? null : res;
+              this.msgService.showMessage('inform', res + ' number of pages assigned to you');
+            }
 
             //Stop loading controller
             loading.dismiss();
             this.isChangingCommitments = false;
-
-            this.msgService.showMessage('inform', 'The requested pages assigned to you');
           })
           .catch((err) => {
             //Stop loading controller
@@ -428,7 +467,7 @@ export class CreateKhatmPage implements OnInit{
             this.isChangingCommitments = false;
 
             console.log(err.message);
-            this.msgService.showMessage('warn', 'Cannot assing you requested pages');
+            this.msgService.showMessage('warn', 'Cannot assign you requested pages');
           });
     }
     else
@@ -455,7 +494,63 @@ export class CreateKhatmPage implements OnInit{
       this.duration = this.getDate(moment(this.startDate), null, moment(this.endDate));
   }
 
-  limitClick(){
-    this.isChangingCommitments = true;
+  limitClick(value){
+    if(value !== null || value !== undefined){
+      let data: number = (value.toString() === '') ? 0 : parseInt(value);
+
+      this.isChangingCommitments = (data !== parseInt(this.khatm.you_unread));
+    }
+    else
+      this.isChangingCommitments = false;
+  }
+
+  checkOnLeft(){
+    if((this.isChangingCommitments && !this.isCommit) || (!this.isMember && !this.isChangingCommitments && !this.isCommit)){
+      if(this.isMember){
+        this.alertCtrl.create({
+          title: this.ls.translate('Confirm Commit Pages'),
+          message: this.ls.translate('Do you want to save your changes on commit pages?'),
+          buttons: [
+            {
+              text: this.ls.translate('Cancel'),
+              role: 'cancel'
+            },
+            {
+              text: this.ls.translate('No'),
+              handler: () => {
+                this.navCtrl.pop();
+              }
+            },
+            {
+              text: this.ls.translate('Yes'),
+              handler: () => {
+                console.log(this.commitPageInput);
+                this.changeCommitPages(this.commitPageInput.value);
+              }
+            }
+          ]
+        }).present();
+      }
+      else{
+        this.alertCtrl.create({
+          title: this.ls.translate('Confirm Commit Pages'),
+          message: this.ls.translate('You cannot join to this khatm unless commit some pages. Do you want to join this khatm?'),
+          buttons: [
+            {
+              text: this.ls.translate('Interested To Join'),
+              role: 'cancel'
+            },
+            {
+              text: this.ls.translate('Uninterested To Join'),
+              handler: () => {
+                this.navCtrl.pop();
+              }
+            }
+          ]
+        })
+      }
+    }
+    else
+      this.navCtrl.pop();
   }
 }

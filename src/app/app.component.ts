@@ -9,6 +9,7 @@ import {AuthService} from "../services/auth.service";
 import {LanguageService} from "../services/language";
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {KhatmService} from "../services/khatm.service";
+import {MsgService} from "../services/msg.service";
 
 @Component({
   templateUrl: 'app.html'
@@ -19,18 +20,20 @@ export class MyApp {
 
   rootPage:any = HomePage;
   isLoggedIn: boolean = false;
+  khatmInfoPage: CreateKhatmPage;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen,
               authService: AuthService, private ls:LanguageService,
-              private deeplinks: Deeplinks, private khatmService: KhatmService) {
+              private deeplinks: Deeplinks, private khatmService: KhatmService,
+              private msgService: MsgService) {
     platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       statusBar.styleDefault();
       splashScreen.hide();
 
-      deeplinks.routeWithNavController(this.navChild, {
-        '/khatm': CreateKhatmPage
+      deeplinks.route({
+        '/khatm/:link': CreateKhatmPage
       })
           .subscribe(
               (match) => {
@@ -47,8 +50,7 @@ export class MyApp {
       authService.user.subscribe(
         (u) => {
           if(u !== null && u.token !== null && u.token !== undefined){
-            this.khatmService.loadKhatm(u);
-            this.khatmService.loadAllCommitments();
+            this.khatmService.loadKhatms(u);
           }
         }
       )

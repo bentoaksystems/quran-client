@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams, Navbar} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, Navbar, AlertController} from 'ionic-angular';
 import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {StylingService} from "../../services/styling";
@@ -26,7 +26,7 @@ export class CommitmentPage implements OnInit{
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private ls: LanguageService, private khatmService: KhatmService,
-              private stylingService: StylingService) {}
+              private stylingService: StylingService, private alertCtrl: AlertController) {}
 
   ngOnInit(){
     this.navBar.setBackButtonText(this.ls.translate('Back'));
@@ -79,7 +79,22 @@ export class CommitmentPage implements OnInit{
         this.khatmService.commitPages(this.khatm.khid, [this.startRange], this.startRange.isread);
       }
 
-      this.navCtrl.pop();
+      this.alertCtrl.create({
+        title: this.ls.translate('Commit Pages Confirmation'),
+        message: this.ls.translate('All changes will be irreversible after you exit. Do you sure to exit?'),
+        buttons: [
+          {
+            text: this.ls.translate('Yes'),
+            handler: () => {
+              this.navCtrl.pop();
+            }
+          },
+          {
+            text: this.ls.translate('No'),
+            role: 'cancel'
+          }
+        ]
+      }).present();
     }
   }
 
@@ -116,11 +131,17 @@ export class CommitmentPage implements OnInit{
 
   selectRange(page){
     if(this.startRange === null) {
-      page.isread = true;
-      this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
-      this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
-      this.khatm.read_pages = (page.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
-      this.startRange = page;
+      if(page.isread) {
+        this.startRange = null;
+        this.commit(page);
+      }
+      else {
+        page.isread = true;
+        this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
+        this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
+        this.khatm.read_pages = (page.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
+        this.startRange = page;
+      }
     }
     else if(this.endRange === null)
       this.endRange = page;
