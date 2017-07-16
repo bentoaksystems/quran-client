@@ -1,6 +1,6 @@
 import {
   Component, OnInit, ViewChild, AfterViewInit, Input, Output, EventEmitter, ViewChildren,
-  AfterViewChecked, ChangeDetectorRef, NgZone
+  AfterViewChecked, NgZone
 } from '@angular/core';
 import {QuranService} from "../../services/quran.service";
 import {Platform, ToastController} from "ionic-angular";
@@ -17,43 +17,18 @@ const fonts = ['quran', 'quran-uthmanic', 'quran-uthmanic-bold', 'qalam', 'me-qu
   templateUrl: 'safha.html',
 })
 export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
-  scrollEnabled: any;
-  private to: any;
+  repeatIndex: any[] = [];
+  scrollLock: boolean = false;
   private _pageIndex = 0;
-  layerHeight = {
-    minus: null,
-    active: null,
-    plus: null,
-  };
+  layerHeights: any = {};
   layerElements = [];
-  private _pages: number[] = [];
-  layers = ['minus', 'active', 'plus'];
+  shownPages: any = {};
+  private _pages: any = [];
   pinchObservable: Observable<any>;
   ayas;
   private khatmActive: boolean = false;
-
-  get quranPage(): number {
-    return this._pages[this._pageIndex];
-  }
-
-  set quranPage(p: number) {
-    if (p === null) {
-      this._pageIndex = Math.ceil(Math.random() * this.selectedPages.length);
-    }
-    else {
-      let ind = this._pages.findIndex(r => r === p);
-      if (ind !== -1) {
-        this._pageIndex = ind;
-      }
-    }
-  }
-
-  pageAyas = {
-    minus: [],
-    active: [],
-    plus: [],
-  };
-;
+  pageAyas: any = {};
+  repeat: any = {};
   height;
   width;
   pageWidth;
@@ -71,6 +46,27 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   margin;
   @ViewChild('scrollPage') scrollPage;
   @ViewChildren('border') borders;
+  private layerIndices: string[] = [];
+
+  get quranPage(): number {
+    return this._pages[this._pageIndex];
+  }
+
+  set quranPage(p: number) {
+    if (p === null) {
+      this._pageIndex = Math.ceil(Math.random() * this.selectedPages.length);
+    }
+    else {
+      this.shownPages = {};
+      this.layerHeights = {};
+      this.layerElements = [];
+      let ind = this._pages.findIndex(r => r === p);
+      if (ind !== -1) {
+        this._pageIndex = ind;
+        this.specifyPage([0, 1]);
+      }
+    }
+  }
 
   @Input()
   set selectedPages(pages: number[]) {
@@ -83,7 +79,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       this._pages = pages;
       this.khatmActive = true;
     }
-    this.ngOnInit();
+    this.getQuran();
   }
 
   get selectedPages(): number[] {
@@ -93,7 +89,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   @Output() pageIsRead = new EventEmitter<number>();
   private gesture: Gesture;
 
-  constructor(public zone: NgZone, private quranService: QuranService, private stylingService: StylingService, private platform: Platform, private screenOrientation: ScreenOrientation, public toastCtrl: ToastController) {
+  constructor(public zone: NgZone, private quranService: QuranService, private stylingService: StylingService, private platform: Platform, private screenOrientation: ScreenOrientation) {
     if (!this._pages.length)
       this.selectedPages = [];
 
@@ -125,25 +121,18 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   ngOnInit() {
-    this.quranService.getQuran()
-      .subscribe(
-        data => {
-          this.ayas = data;
-          this.loadLayers();
-        },
-        (err: Response) => console.log("Error loading quran: ", err)
-      );
+    this.getQuran();
     this.stylingService.zoomChanged$
       .subscribe(
         (zoom) => {
           this.zoom = 100 * Math.pow(1.125, zoom);
-          this.resize(true);
         }
       );
 
     this.stylingService.fontChanged$
       .subscribe(
         (f) => {
+          console.log(f);
           if (isNaN(f) && this.stylingService.fontFamily) {//on initial load
             this.fontFamily = this.stylingService.fontFamily;
           }
@@ -151,10 +140,13 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
             let tempFont;
             do {
               tempFont = fonts[f % fonts.length];
+              console.log(f, tempFont);
               f++;
             } while (tempFont && tempFont === this.fontFamily || (this.naskhIncompatible && this.isUthmanic(tempFont)));
-            this.fontFamily = tempFont;
-            this.stylingService.fontFamily = tempFont;
+            if (tempFont !== this.fontFamily) {
+              this.fontFamily = tempFont;
+              this.stylingService.fontFamily = tempFont;
+            }
           }
         }
       );
@@ -162,77 +154,99 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     this.quranService.page$
       .subscribe(p => {
         this.quranPage = p;
-        this.loadLayers();
       });
 
   }
 
-  resize(zoom = false) {
-
+  private getQuran() {
+    this.quranService.getQuran()
+      .subscribe(
+        data => {
+          this.ayas = data;
+          this.repeat = {};
+          this.repeatIndex = [];
+          this.selectedPages.forEach(page => {
+            let ayas = this.quranService.applySectionFilter('page', this.ayas, page);
+            this.pageAyas[page] = ayas;
+            this.repeat[page] = this.repeat[page] ? this.repeat[page] + 1 : 1;
+            this.repeatIndex.push(this.repeat[page]);
+          });
+          this.specifyPage();
+        },
+        (err: Response) => console.log("Error loading quran: ", err)
+      );
   }
 
-  loadPage(page, layer) {
-    let ayas = this.quranService.applySectionFilter('page', this.ayas, page);
+  specifyPage(pages = [-1, 0, 1]) {
+    let range = [];
+    pages.forEach(i => range.push(this.pageIndexPlus(i)));
+    range.forEach(p => {
+        if (!this.shownPages[p]) {
+          this.shownPages[p] = true;
+        }
+      }
+    );
 
-    let suraOrders = ayas.map(e => e.sura).filter((e, i, v) => v.indexOf(e) === i);
+    if (Object.keys(this.shownPages).length > 20) {
+      let sumHeight = 0;
+      for (let key in this.layerHeights) {
+        if (!range.includes(+key))
+          sumHeight += this.layerHeights[key];
+      }
+      let st = this.scrollPage.getContentDimensions().scrollTop - sumHeight;
+      if (st >= 0) {
+        this.scrollLock = true;
+        setTimeout(() => this.scrollPage.scrollTo(0, st, 0, () => console.log('scrolled to', st)), 100);
+        for (let key in this.shownPages) {
+          if (!range.includes(+key))
+            delete this.shownPages[key];
+        }
+      }
+    }
+
+    let suraOrders = this.pageAyas[this._pages[this._pageIndex]].map(e => e.sura).filter((e, i, v) => v.indexOf(e) === i);
     let suras = suraOrders.map(e => this.quranService.getSura(e));
 
     let suraNames = suras.map(e => e.name);
 
     let suraName = suraNames.pop();
     let suraOrder = suraOrders.pop();
-
-    this.pageAyas[layer] = ayas;
     this.suraName = suraName;
     this.suraOrder = suraOrder;
   }
 
-  loadLayers() {
-    this.layers.forEach((layer, li) => {
-      let ind = li + this._pageIndex - 1;
-      if (ind < 0)
-        ind = this._pages.length - 1;
-      if (ind >= this._pages.length)
-        ind = 0;
-
-      if (li === 1)
-        this._pageIndex = ind;
-
-      this.loadPage(this._pages[ind], layer)
-    })
+  private pageIndexPlus(layer) {
+    let ind = layer + this._pageIndex;
+    if (ind < 0)
+      ind = 0;
+    else if (ind >= this._pages.length)
+      ind = this._pages.length - 1;
+    return ind;
   }
 
   ngAfterViewInit() {
     this.borders.changes.subscribe(() => {
       this.layerElements = this.borders._results.map(r => r.nativeElement);
-
+      this.scrollLock = false;
       //enabling pinch, only for ios devices
       if (this.platform.is('ios')) {
-        let activeLayer = this.layerElements.filter(e => e.id == 'active')[0];
-        this.gesture = new Gesture(activeLayer);
-        this.gesture.listen();
-        this.pinchObservable = Observable.fromEventPattern(handler => this.gesture.on('pinch', handler)).throttleTime(500);
-        this.pinchObservable.subscribe(e => this.pinch(e));
-
+        let activeLayer = this.layerElements.filter(e => e.id == this.quranPage)[0];
+        if (activeLayer) {
+          this.gesture = new Gesture(activeLayer);
+          this.gesture.listen();
+          this.pinchObservable = Observable.fromEventPattern(handler => this.gesture.on('pinch', handler)).throttleTime(500);
+          this.pinchObservable.subscribe(e => this.pinch(e));
+        }
       }
     });
   }
 
   ngAfterViewChecked() {
+    this.layerHeights = {};
     this.layerElements.forEach(e => {
-      this.layerHeight[e.id] = e.offsetHeight + 25;
+      this.layerHeights[e.id] = e.offsetHeight + 25;
     });
-    this.to = null;
-    this.scrollPage.scrollTo(0, this.layerHeight['minus'], 0,()=>this.toggleScroll(true));
-  }
-
-  swipe(e) {
-    if (e.deltaX > 0) {
-      this.goForth();
-    }
-    else {
-      this.goBack();
-    }
+    this.layerIndices = this.layerElements.map(e => +e.id).sort((x, y) => x - y).map(r => r + '');
   }
 
   pinch(e) {
@@ -243,51 +257,21 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     console.log(e);
   }
 
-  goForth() {
-    this.layerElements[2].children[0]=this.layerElements[1].children[0];
-    this._pageIndex++;
-    this.loadLayers();
-  }
-
-  goBack() {
-    this.layerElements[1].children[0]=this.layerElements[0].children[0];
-    this._pageIndex--;
-    this.loadLayers();
-  }
-
   onScroll(e) {
-    if (e.scrollTop >= this.layerHeight['minus'] + this.layerHeight['active']) {
-      if (!this.to) {
-        console.log('bottom', e);
-        this.zone.run(() => {
-          this.to = setTimeout(() => {
-            this.toggleScroll(false);
-            this.goForth();
-          }, 0);
-        })
-      }
-    }
+    if (!this.scrollLock) {
+      let i = '', sumLayerHeights = 0;
 
-    if (e.scrollTop <= 0) {
-      if (!this.to) {
-        console.log('top', e);
-        this.zone.run(() => {
-          this.to = setTimeout(() => {
-            this.toggleScroll(false);
-            this.goBack();
-          }, 0);
-        })
-      }
-    }
-  }
+      let found = this.layerIndices.some(key => {
+        i = key;
+        sumLayerHeights += this.layerHeights[key];
+        return sumLayerHeights > e.scrollTop;
+      });
 
-  toggleScroll(scrollEnabled){
-    let scroll = this.scrollPage.getScrollElement();
-    if(!scrollEnabled){
-      scroll.style.overflowY = 'hidden';
-    }
-    else {
-      scroll.style.overflowY = 'scroll'
+      if (found && i && +i !== this._pageIndex)
+        this.zone.run(() => {
+          this._pageIndex = +i;
+          this.specifyPage();
+        });
     }
   }
 }
