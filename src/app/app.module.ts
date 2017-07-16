@@ -1,3 +1,4 @@
+
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import {IonicApp, IonicErrorHandler, IonicModule, NavController} from 'ionic-angular';
@@ -10,7 +11,6 @@ import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {Clipboard} from "@ionic-native/clipboard";
 import {SocialSharing} from "@ionic-native/social-sharing";
 import {Network} from "@ionic-native/network";
-
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import {Text} from "../pages/text/text";
@@ -27,8 +27,8 @@ import {MsgService} from "../services/msg.service";
 import {HttpService} from "../services/http.service";
 import {QuranService} from "../services/quran.service";
 import {StylingService} from "../services/styling";
-import { LeftMenuComponent } from '../components/left-menu/left-menu';
-import { RightMenuComponent } from '../components/right-menu/right-menu';
+import {LeftMenuComponent} from '../components/left-menu/left-menu';
+import {RightMenuComponent} from '../components/right-menu/right-menu';
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {LanguageService} from "../services/language";
 import {KhatmService} from "../services/khatm.service";
@@ -87,4 +87,5 @@ import {CommitmentPage} from "../pages/commitment/commitment";
     Network,
   ]
 })
-export class AppModule {}
+export class AppModule {
+}

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Http } from "@angular/http";
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/throttleTime';
-import {QURAN_DATA, QuranData, QuranReference, QuranSections, QuranSection} from './quran-data';
+import {QURAN_DATA, QuranData, QuranReference, QuranSection} from './quran-data';
 import { Subject } from "rxjs/Subject";
 
 export class SectionAddress{
