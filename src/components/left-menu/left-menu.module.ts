@@ -4,13 +4,13 @@ import { LeftMenuComponent } from './left-menu';
 
 @NgModule({
   declarations: [
-    LeftMenuComponent,
+    // LeftMenuComponent,
   ],
   imports: [
-    IonicPageModule.forChild(LeftMenuComponent),
+    // IonicPageModule.forChild(LeftMenuComponent),
   ],
   exports: [
-    LeftMenuComponent
+    // LeftMenuComponent
   ]
 })
 export class LeftMenuComponentModule {}

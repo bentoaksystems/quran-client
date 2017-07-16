@@ -8,47 +8,69 @@ import { HomePage } from '../pages/home/home';
 import {AuthService} from "../services/auth.service";
 import {LanguageService} from "../services/language";
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
+import {KhatmService} from "../services/khatm.service";
+import {MsgService} from "../services/msg.service";
+import {platform} from "os";
+
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
   @ViewChild(Nav) navChild: Nav;
+  @ViewChild('rightMenu') rightMenu;
 
   rootPage:any = HomePage;
   isLoggedIn: boolean = false;
+  khatmInfoPage: CreateKhatmPage;
 
-  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen,
-              authService: AuthService, private ls:LanguageService,
-              private deeplinks: Deeplinks) {
-    platform.ready().then(() => {
+  constructor(private platform: Platform, private statusBar: StatusBar, private splashScreen: SplashScreen,
+              private authService: AuthService, private ls:LanguageService,
+              private deeplinks: Deeplinks, private khatmService: KhatmService,
+              private msgService: MsgService) {
+    this.platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      statusBar.show();
-      splashScreen.hide();
-
-      deeplinks.routeWithNavController(this.navChild, {
-        '/khatm': CreateKhatmPage
-      })
-          .subscribe(
-              (match) => {
-                console.log('Successfully match: ',  match);
-              },
-              (noMatch) => {
-                console.log('Cannot match: ', noMatch);
-              }
-          );
-
-      authService.isLoggedIn.subscribe(
-        (data) => this.isLoggedIn = data
-      );
+      this.statusBar.styleDefault();
+      this.splashScreen.hide();
     });
+  }
+
+  ngAfterViewInit(){
+    this.platform.ready().then(() => {
+      this.deeplinks.routeWithNavController(this.navChild, {
+        '/khatm/:link': CreateKhatmPage
+      }).subscribe(
+        (match) => {
+          let urlParts = match.$link.url.split('/');
+
+          if(urlParts[2] === 'khatm')
+            this.navChild.push(CreateKhatmPage, {link: urlParts[3]});
+        },
+        (nomatch) => {
+          this.msgService.showMessage('error', 'Cannot find your requested page');
+        }
+      );
+
+      this.authService.isLoggedIn.subscribe(
+        (data) => this.isLoggedIn = data);
+
+      this.authService.user.subscribe(
+        (u) => {
+          if(u !== null && u.token !== null && u.token !== undefined){
+            this.khatmService.loadKhatms();
+          }
+        }
+      )
+    })
   }
 
   goToPage(event){
     console.log(event);
-    if(event.isChanged){
+    if(event.shouldClose)
+      this.rightMenu.close();
+
+    if(event.isChanged)
       this.navChild.push(event.page, event.params);
-    }
   }
 }
 

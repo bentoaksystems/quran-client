@@ -1,0 +1,35 @@
+<span [ngStyle]="{'direction': ls.direction()}">
+  <ion-header>
+    <ion-navbar>
+      <ion-title>{{ls.translate('commitment')}}</ion-title>
+    </ion-navbar>
+  </ion-header>
+
+  <ion-content padding>
+    <div *ngIf="!isSelect" style="margin-bottom: 50px;">
+      <ion-grid>
+        <!--<ion-row *ngIf="rowPages.length > 0">-->
+          <!--<ion-col col-2>-->
+            <!--<ion-label>{{ls.translate('All')}}</ion-label>-->
+            <!--<ion-checkbox [(ngModel)]="allSelection" (ionChange)="allSelectionChange()"></ion-checkbox>-->
+          <!--</ion-col>-->
+        <!--</ion-row>-->
+        <ion-row *ngFor="let rp of rowPages">
+          <ion-col col-2 *ngFor="let p of rp">
+            <button ion-button block
+                    *ngIf="p.isread"
+                    [style.background-color]="stylingService.nightMode ? '#7b87ad' : '#c5bfb1' "
+                    (click)="commit(p)" (press)="selectRange(p)">{{p.page_number}}</button>
+            <button ion-button block
+                    *ngIf="!p.isread"
+                    [style.background-color]="stylingService.nightMode ? '#95506f' : '#7ec5a5' "
+                    (click)="commit(p)" (press)="selectRange(p)">{{p.page_number}}</button>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+    <div *ngIf="isSelect">
+
+    </div>
+  </ion-content>
+</span>

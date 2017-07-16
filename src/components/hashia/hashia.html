@@ -11,9 +11,12 @@
 
     </td>
     <td class="info-column2">
-      <span *ngIf="!pageNumberToggled" (click)="pageNumberToggle()" [ngClass]="[stylingService.nightMode ? 'night-pic-address':'day-pic-address']" class="center-text pic pagenum">{{pagenumberAr}}</span>
+      <span *ngIf="!pageNumberToggled" (click)="pageNumberToggle()"
+            [ngClass]="[stylingService.nightMode ? 'night-pic-address':'day-pic-address']"
+            class="center-text pic pagenum">{{pagenumberAr}}</span>
       <ion-item *ngIf="pageNumberToggled">
-        <ion-input type="number" [(ngModel)]="selectedPage" (keyup)="keyup($event)" (blur)="pageNumberToggle(false)"></ion-input>
+        <ion-input type="number" [(ngModel)]="selectedPage"
+                   (keyup)="keyup($event)" (blur)="pageNumberToggle(false)"></ion-input>
       </ion-item>
     </td>
     <td class="info-column3 right-left-text">

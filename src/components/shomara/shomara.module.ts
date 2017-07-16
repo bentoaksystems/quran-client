@@ -4,13 +4,13 @@ import { Shomara } from './shomara';
 
 @NgModule({
   declarations: [
-    Shomara,
+    // Shomara,
   ],
   imports: [
-    IonicPageModule.forChild(Shomara),
+    // IonicPageModule.forChild(Shomara),
   ],
   exports: [
-    Shomara
+    // Shomara
   ]
 })
 export class ShomaraModule {}

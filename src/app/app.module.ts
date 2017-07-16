@@ -1,15 +1,18 @@
-import {BrowserModule} from '@angular/platform-browser';
-import {ErrorHandler, NgModule} from '@angular/core';
-import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
-import {SplashScreen} from '@ionic-native/splash-screen';
-import {StatusBar} from '@ionic-native/status-bar';
-import {Deeplinks} from '@ionic-native/deeplinks';
-import {IonicStorageModule} from '@ionic/storage';
+
+import { BrowserModule } from '@angular/platform-browser';
+import { ErrorHandler, NgModule } from '@angular/core';
+import {IonicApp, IonicErrorHandler, IonicModule, NavController} from 'ionic-angular';
+import { SplashScreen } from '@ionic-native/splash-screen';
+import { StatusBar } from '@ionic-native/status-bar';
+import { Deeplinks } from '@ionic-native/deeplinks';
+import { IonicStorageModule } from '@ionic/storage';
 import {HttpModule} from "@angular/http";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {Clipboard} from "@ionic-native/clipboard";
-import {MyApp} from './app.component';
-import {HomePage} from '../pages/home/home';
+import {SocialSharing} from "@ionic-native/social-sharing";
+import {Network} from "@ionic-native/network";
+import { MyApp } from './app.component';
+import { HomePage } from '../pages/home/home';
 import {Text} from "../pages/text/text";
 import {Tasks} from "../pages/tasks/tasks";
 import {Safha} from "../components/safha/safha";
@@ -29,7 +32,7 @@ import {RightMenuComponent} from '../components/right-menu/right-menu';
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {LanguageService} from "../services/language";
 import {KhatmService} from "../services/khatm.service";
-import {SocialSharing} from "@ionic-native/social-sharing";
+import {CommitmentPage} from "../pages/commitment/commitment";
 
 @NgModule({
   declarations: [
@@ -47,6 +50,7 @@ import {SocialSharing} from "@ionic-native/social-sharing";
     CreateKhatmPage,
     LeftMenuComponent,
     RightMenuComponent,
+    CommitmentPage,
   ],
   imports: [
     BrowserModule,
@@ -62,6 +66,7 @@ import {SocialSharing} from "@ionic-native/social-sharing";
     Tasks,
     Registration,
     CreateKhatmPage,
+    CommitmentPage,
   ],
   providers: [
     StatusBar,
@@ -79,6 +84,7 @@ import {SocialSharing} from "@ionic-native/social-sharing";
     KhatmService,
     SocialSharing,
     Clipboard,
+    Network,
   ]
 })
 export class AppModule {

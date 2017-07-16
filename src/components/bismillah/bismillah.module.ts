@@ -4,13 +4,13 @@ import { Bismillah } from './bismillah';
 
 @NgModule({
   declarations: [
-    Bismillah,
+    // Bismillah,
   ],
   imports: [
-    IonicPageModule.forChild(Bismillah),
+    // IonicPageModule.forChild(Bismillah),
   ],
   exports: [
-    Bismillah
+    // Bismillah
   ]
 })
 export class BismillahModule {}

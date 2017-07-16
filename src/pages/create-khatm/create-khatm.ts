@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {IonicPage, NavController, NavParams, LoadingController, Navbar, AlertController} from 'ionic-angular';
 import {SocialSharing} from '@ionic-native/social-sharing';
 import {Clipboard} from "@ionic-native/clipboard";
 import * as moment from 'moment-timezone';
@@ -8,6 +8,8 @@ import {QuranService} from "../../services/quran.service";
 import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {MsgService} from "../../services/msg.service";
+import {CommitmentPage} from "../commitment/commitment";
+import {StylingService} from "../../services/styling";
 
 @IonicPage()
 @Component({
@@ -15,7 +17,9 @@ import {MsgService} from "../../services/msg.service";
   templateUrl: 'create-khatm.html',
 })
 export class CreateKhatmPage implements OnInit{
-  basicShareLink: string = 'home/khatm/';
+  @ViewChild(Navbar) navBar: Navbar;
+  @ViewChild('commitPageInput') commitPageInput: HTMLFormElement;
+  basicShareLink: string = 'http://192.168.1.21:3000/khatm/';
   khatmIsStarted: boolean = true;
   isSubmitted: boolean = false;
   name: string = '';
@@ -36,36 +40,96 @@ export class CreateKhatmPage implements OnInit{
   submitDisability: boolean = true;
   duration;
   lastFocus: string = 'start';
+  rest_days: number = null;
+  conditionalColoring: any = {
+    background: 'normal_back',
+    text: 'noraml_text',
+    primary: 'normal_primary',
+    secondary: 'normal_secondary'
+  };
+  isChangingCommitments: boolean =  false;
+  isMember: boolean = false;
+  isCommit: boolean = false;
 
-  constructor(public navCtrl: NavController, public navParams: NavParams,
+  constructor(public navCtrl: NavController, private navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
-              private socialSharing: SocialSharing, private clipboard: Clipboard) {
+              private socialSharing: SocialSharing, private clipboard: Clipboard,
+              private loadingCtrl: LoadingController, private stylingService: StylingService,
+              private alertCtrl: AlertController) {
     this.suras = this.quranService.getAllSura();
   }
 
   ngOnInit(){
-    this.isNew = this.navParams.get('isNew');
-    this.khatm = this.navParams.get('khatm');
+    this.navBar.setBackButtonText(this.ls.translate('Back'));
 
-    if(this.khatm !== null){
-      // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
-      // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
-      this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
-      this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+    let link = this.navParams.get('link');
 
-      let mDate = moment(this.currentDate);
-      if(this.khatm.start_date > mDate)
-        this.khatmIsStarted = false;
-      else
-        this.khatmIsStarted = true;
-    }
-    else{
-      this.startDate = this.currentDate.getFullYear() + '-' +
+    if(link === undefined || link === null){
+      this.isNew = this.navParams.get('isNew');
+      this.khatm = this.navParams.get('khatm');
+      this.isMember = this.navParams.get('isMember');
+
+      if(this.khatm !== null){
+        // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
+        // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
+        this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
+        this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+
+        let mDate = moment(this.currentDate);
+        if(moment(this.khatm.start_date) > mDate)
+          this.khatmIsStarted = false;
+        else
+          this.khatmIsStarted = true;
+
+        this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
+        if(this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
+          this.rest_days++;
+      }
+      else{
+        this.startDate = this.currentDate.getFullYear() + '-' +
           this.getFormattedDate(this.currentDate.getMonth(), true) + '-' +
           this.getFormattedDate(this.currentDate.getDate(), false);
 
-      // this.startDate = this.ls.convertDate(this.startDate);
+        // this.startDate = this.ls.convertDate(this.startDate);
+      }
+    }
+    else{
+      this.isNew = false;
+      this.khatm = null;
+      this.isMember = false;
+
+      this.khatmService.getKhatm(link)
+        .then(res => {
+          this.khatm = res;
+        })
+        .catch(err => {
+          if(err === 'expired')
+            this.msgService.showMessage('error', this.ls.translate('The khatm end date is passed'));
+          else
+            this.msgService.showMessage('error', this.ls.translate('Cannot get khatm details'));
+        });
+    }
+
+    this.stylingService.nightMode$.subscribe(
+      (data) => {
+        if(data) {
+          this.conditionalColoring.background = 'night_back';
+          this.conditionalColoring.text = 'night_text';
+          this.conditionalColoring.primary = 'night_primary';
+          this.conditionalColoring.secondary = 'night_secondary';
+        }
+        else{
+          this.conditionalColoring.background = 'normal_back';
+          this.conditionalColoring.text = 'normal_text';
+          this.conditionalColoring.primary = 'normal_primary';
+          this.conditionalColoring.secondary = 'normal_secondary';
+        }
+      }
+    );
+
+    this.navBar.backButtonClick = (e:UIEvent) => {
+      this.checkOnLeft();
     }
   }
 
@@ -77,13 +141,13 @@ export class CreateKhatmPage implements OnInit{
 
     //Check validation
     if(this.name === null || this.name === '')
-      this.msgService.showMessage('warn', 'The khatm should have a name');
+      this.msgService.showMessage('warn', this.ls.translate('The khatm should have a name'));
     else if(this.endDate === null)
-      this.msgService.showMessage('warn', 'The end date field cannot be empty');
+      this.msgService.showMessage('warn', this.ls.translate('The end date field cannot be empty'));
     else if(this.endDate < this.startDate)
-      this.msgService.showMessage('warn', 'The start date cannot be later then end date');
+      this.msgService.showMessage('warn', this.ls.translate('The start date cannot be later then end date'));
     else if(this.range === 'sura' && (this.suraNumber === null || this.suraNumber === 0))
-      this.msgService.showMessage('warn', 'Please choose sura');
+      this.msgService.showMessage('warn', this.ls.translate('Please choose sura'));
     else {
       this.isSubmitted = true;
 
@@ -126,11 +190,11 @@ export class CreateKhatmPage implements OnInit{
 
     this.khatmService.createKhatm(khatmData)
         .then((res) => {
-          this.msgService.showMessage('inform', 'Your khatm created successfully');
+          this.msgService.showMessage('inform', this.ls.translate('Your khatm created successfully'));
           this.navCtrl.popToRoot();
         })
         .catch((err) => {
-          this.msgService.showMessage('warn', 'Cannot save your khamt now. Please try again');
+          this.msgService.showMessage('warn', this.ls.translate('Cannot save your khamt now. Please try again'));
         })
   }
 
@@ -154,95 +218,149 @@ export class CreateKhatmPage implements OnInit{
       this.submitDisability = false;
   }
 
-  changeDuration(currentFocus){
-    var mDate = moment(this.currentDate);
+  changeDuration(currentFocus, newVal){
+    let currentDate = moment(this.currentDate);
+    let startDate = (currentFocus === 'start') ? moment(newVal) : moment(this.startDate);
+    let endDate = (currentFocus === 'end') ? moment(newVal) : moment(this.endDate);
 
-    if(currentFocus === 'end' && this.endDate < this.startDate){
-      this.msgService.showMessage('warn', 'Please choose correct date');
-      this.startDate = this.castDate(mDate);
-      this.duration = null;
+    //Check start date validation
+    if(this.isFirstLess(startDate, currentDate)){
+      this.startDate = this.castDate(currentDate);
+      this.msgService.showMessage('warn', this.ls.translate('Please choose valid start date'), true);
+      this.submitDisability = true;
+      return;
+    }
+
+    //Check all date validation
+    if(!moment(this.startDate).isValid){
+      this.msgService.showMessage('warn', this.ls.translate('Please choose the valid start date'), true);
+      this.startDate = null;
+      this.submitDisability = true;
+      return;
+    }
+    else if(!moment(this.endDate).isValid){
+      this.msgService.showMessage('warn', this.ls.translate('Please choose the valid end date'), true);
       this.endDate = null;
+      this.submitDisability = true;
       return;
     }
 
     if(this.lastFocus === 'start'){
-      if(currentFocus === 'end'){
-        this.duration = this.getDate(this.startDate, null, this.endDate);
-        this.lastFocus = currentFocus;
-        console.log(this.duration);
-      }
-      else if(currentFocus === 'duration' || currentFocus === 'start'){
-        if(this.duration === null || this.duration === 0)
+      if(currentFocus === 'start'){
+        if(this.isFirstLess(startDate, currentDate)){
+          this.startDate = this.castDate(currentDate);
+          this.msgService.showMessage('warn', this.ls.translate('Please choose the valid start date'), true);
+          this.submitDisability = true;
           return;
+        }
 
-        var e = this.getDate(this.startDate, this.duration, null);
-        if(e > mDate.add(10, 'years')) {
-          this.msgService.showMessage('warn', 'The end date cannot great than 10 year later');
-          this.duration = this.getDate(this.startDate, null, this.endDate);
-        }
-        else{
-          this.endDate = this.castDate(e);
-          this.lastFocus = currentFocus;
-          console.log(this.endDate);
-        }
-      }
-    }
-    else if(this.lastFocus === 'duration'){
-      if(currentFocus === 'start' || currentFocus === 'duration'){
-        if(currentFocus === 'duration' && (this.duration === null || this.duration === 0))
-          return;
-
-        var e = this.getDate(this.startDate, this.duration, null);
-        if(e > mDate.add(10, 'years')) {
-          this.msgService.showMessage('warn', 'The end date cannot great than 10 year later');
-          this.duration = this.getDate(this.startDate, null, this.endDate);
-        }
-        else {
-          this.endDate = this.castDate(e);
-          this.lastFocus = currentFocus;
-          console.log(this.endDate);
-        }
+        if(this.duration !== null && this.duration !== '')
+          this.startDate = this.castDate(this.getDate(this.startDate, this.duration, null));
       }
       else if(currentFocus === 'end'){
-        var s = this.getDate(null, this.duration, this.endDate);
-        if(s < mDate) {
-          this.msgService.showMessage('warn', 'The start date cannot less than current date');
-          this.duration = this.getDate(this.startDate, null, this.endDate);
+        if(this.isFirstLess(endDate, startDate)){
+          this.endDate = null;
+          this.msgService.showMessage('warn', 'Please choose the valid end date', true);
+          this.submitDisability = true;
+          return;
         }
-        else if(s > mDate.add(1, 'years')) {
-          this.msgService.showMessage('warn', 'The start date cannot great than 1 year later');
-          this.duration = this.getDate(this.startDate, null, this.endDate);
-        }
-        else {
-          this.startDate = this.castDate(s);
-          this.lastFocus = currentFocus;
-          console.log(this.startDate);
+        else
+          this.duration = this.getDate(startDate, null, endDate);
+      }
+      else if(currentFocus === 'duration'){
+        if(this.duration !== null && this.duration !== '') {
+          if (this.duration > (365 * 10)) {
+            this.duration = null;
+            this.msgService.showMessage('warn', this.ls.translate('The duration cannot be greater than 10 years'));
+            this.submitDisability = true;
+            return;
+          }
+          else
+            this.endDate = this.castDate(this.getDate(startDate, this.duration, null));
         }
       }
     }
     else if(this.lastFocus === 'end'){
       if(currentFocus === 'start'){
-        this.duration = this.getDate(this.startDate, null, this.endDate);
-        this.lastFocus = currentFocus;
-        console.log(this.duration);
-      }
-      else if(currentFocus === 'duration' || currentFocus === 'end'){
-        if(this.duration === null || this.duration === 0)
+        if(this.isFirstLess(startDate, currentDate)){
+          this.startDate = this.castDate(currentDate);
+          this.msgService.showMessage('warn', 'Please choose the valid start date', true);
+          this.submitDisability = true;
           return;
+        }
+        else
+          this.duration = this.getDate(startDate, null, endDate);
+      }
+      else if(currentFocus === 'end'){
+        if(this.isFirstLess(endDate, currentDate)){
+          this.endDate = null;
+          this.msgService.showMessage('warn', 'Please choose the valid end date', true);
+          this.submitDisability = true;
+          return;
+        }
+        else
+          this.duration = this.getDate(startDate, null, endDate);
+      }
+      else if(currentFocus === 'duration'){
+        if(this.duration !== null && this.duration !== '') {
+          if (this.duration < 0) {
+            this.duration = null;
+            this.msgService.showMessage('warn', this.ls.translate('The duration value cannot be negative'), true);
+            this.submitDisability = true;
+            return;
+          }
+          else {
+            let tempStartDate = this.getDate(null, this.duration, endDate);
 
-        var s = this.getDate(null, this.duration, this.endDate);
-        if(s < mDate) {
-          this.msgService.showMessage('warn', 'The start date cannot less than current date');
-          this.duration = this.getDate(this.startDate, null, this.endDate);
+            if (this.isFirstLess(tempStartDate, currentDate)) {
+              this.startDate = this.castDate(currentDate);
+              this.endDate = this.castDate(endDate.add(currentDate.diff(tempStartDate, 'days'), 'days'));
+            }
+            else
+              this.startDate = this.castDate(tempStartDate);
+          }
         }
-        else if(s > mDate.add(1, 'years')) {
-          this.msgService.showMessage('warn', 'The start date cannot great than 1 year later');
-          this.duration = this.getDate(this.startDate, null, this.endDate);
+      }
+    }
+    else if(this.lastFocus === 'duration'){
+      if(currentFocus === 'start'){
+        if(this.isFirstLess(startDate, currentDate)){
+          this.msgService.showMessage('warn', this.ls.translate('The start date cannot be less than current date'), true);
+          this.startDate = this.castDate(currentDate);
+          this.submitDisability = true;
+          return;
         }
-        else {
-          this.startDate = this.castDate(s);
-          this.lastFocus = currentFocus;
-          console.log(this.startDate);
+        else if(this.duration !== null && this.duration !== '')
+          this.endDate = this.castDate(this.getDate(startDate, this.duration, null));
+      }
+      else if(currentFocus === 'end'){
+        if(this.isFirstLess(endDate, currentDate)){
+          this.endDate = null;
+          this.msgService.showMessage('warn', this.ls.translate('The end date cannot be less than current date'), true);
+          this.submitDisability = true;
+          return;
+        }
+        else if(this.duration !== null && this.duration !== ''){
+          let tempStartDate = this.getDate(null, this.duration, endDate);
+
+          if(this.isFirstLess(tempStartDate, currentDate)){
+            this.startDate = this.castDate(currentDate);
+            this.endDate = this.castDate(endDate.add(currentDate.diff(tempStartDate, 'days'), 'days'));
+          }
+          else
+            this.startDate = this.castDate(tempStartDate);
+        }
+      }
+      else if(currentFocus === 'duration'){
+        if(this.duration !== null && this.duration !== '') {
+          if (this.duration < 0) {
+            this.msgService.showMessage('warn', this.ls.translate('The duration value cannot be negative'), true);
+            this.duration = null;
+            this.submitDisability = true;
+            return;
+          }
+          else
+            this.endDate = this.castDate(this.getDate(startDate, this.duration, null));
         }
       }
     }
@@ -285,20 +403,166 @@ export class CreateKhatmPage implements OnInit{
 
   copyLink(){
     let link: string = 'http://quranApp/' + this.basicShareLink + this.khatm.share_link;
-    this.clipboard.copy(link);
+    this.clipboard.copy(link)
+      .then(res => {
+        this.msgService.showMessage('inform', res);
+      })
+      .catch(err => {
+        this.msgService.showMessage('error', err);
+      })
   }
 
   shareVia(){
-    let message: string = 'Join to this khatm\n';
-    let link: string = 'quranApp://' + this.basicShareLink + this.khatm.share_link;
-    let tlink: string = '<html><head></head><body><a>'+this.basicShareLink + this.khatm.share_link+'</a></body></html>';
+    let message: string = (this.khatm.creator_shown) ? this.khatm.owner_name + " invite you" : "You invited";
+    message += " to join to '" + this.khatm.khatm_name + "' khatm";
 
-    this.socialSharing.share(message + '\n' + link, 'Khatm share link', null, tlink)
+    let link: any = this.basicShareLink + this.khatm.share_link;
+
+    this.socialSharing.share(message, "Join to kahtm", null, link)
         .then((res) => {
           console.log(res);
         })
         .catch((err) => {
           console.log(err.message);
         });
+  }
+
+  changeCommitPages(data){
+    // let newVal = data.target.value;
+    let newVal = data;
+    let newValNum = parseInt(newVal);
+    if(newVal.toString() === '')
+      newValNum = 0;
+
+    if(newVal !== null && newVal !== undefined && newValNum !== this.khatm.you_unread) {
+      //Start loading controller
+      let loading = this.loadingCtrl.create({
+        content: this.ls.translate('Please wait until save changes') + ' ...'
+      });
+
+      //update commit page for khatm
+      let type = (newValNum < (this.khatm.you_unread === null ? 0 : this.khatm.you_unread)) ? 'delete' : 'add';
+
+      if (type === 'add' && this.khatm.commitment_pages >= this.khatm.repeats * 604) {
+        this.commitPageInput.value = this.khatm.you_unread;
+        this.msgService.showMessage('warn', this.ls.translate('Sorry. All pages are committed'));
+        this.isChangingCommitments = false;
+      }
+      else {
+        this.khatmService.getPages(newValNum, this.khatm.khid, type)
+          .then((res: any) => {
+            if(res !== null){
+              this.khatm.commitment_pages = (this.khatm.commitment_pages === null) ? 0 : this.khatm.commitment_pages;
+              this.khatm.you_unread = (this.khatm.you_unread === null) ? 0 : this.khatm.you_unread;
+              this.khatm.you_read = (this.khatm.you_read === null) ? 0 : this.khatm.you_read;
+
+              if(type === 'add'){
+                this.khatm.commitment_pages = parseInt(this.khatm.commitment_pages) + parseInt(res);
+                this.khatm.you_unread = (newValNum === 0) ? null : (parseInt(this.khatm.you_unread) + parseInt(res));
+                this.msgService.showMessage('inform', res + ' ' + this.ls.translate('pages are assigned to you'));
+              }
+              else{
+                this.khatm.commitment_pages = parseInt(this.khatm.commitment_pages) - (parseInt(this.khatm.you_unread) - parseInt(res));
+                this.khatm.you_unread = (newValNum === 0) ? null : res;
+                this.msgService.showMessage('inform', (parseInt(this.khatm.you_unread) - parseInt(res)) + ' ' + this.ls.translate('pages get down from your commitments'));
+              }
+            }
+
+            //Stop loading controller
+            loading.dismiss();
+            this.isChangingCommitments = false;
+          })
+          .catch((err) => {
+            //Stop loading controller
+            loading.dismiss();
+            this.isChangingCommitments = false;
+
+            console.log(err.message);
+            this.msgService.showMessage('warn', this.ls.translate('Cannot assign you requested pages'));
+          });
+      }
+    }
+    else
+      this.isChangingCommitments = false;
+  }
+
+  goToCommitment(isSelect){
+    this.navCtrl.push(CommitmentPage, {khatm: this.khatm, isSelect: isSelect});
+  }
+
+  start_stop_Khatm(){
+    this.khatmService.start_stop_Khatm(this.khatm);
+
+    if(this.khatmService.activeKhatm.getValue() !== null)
+      this.navCtrl.popToRoot();
+  }
+
+  isFirstLess(aDate, bDate){
+    return aDate.diff(bDate, 'days') < 0 ? true : false;
+  }
+
+  setDuration(){
+    if(this.duration === null || this.duration === '')
+      this.duration = this.getDate(moment(this.startDate), null, moment(this.endDate));
+  }
+
+  limitClick(value){
+    if(value !== null || value !== undefined){
+      let data: number = (value.toString() === '') ? 0 : parseInt(value);
+
+      this.isChangingCommitments = (data !== parseInt(this.khatm.you_unread));
+    }
+    else
+      this.isChangingCommitments = false;
+  }
+
+  checkOnLeft(){
+    if((this.isChangingCommitments && !this.isCommit) || (!this.isMember && !this.isChangingCommitments && !this.isCommit)){
+      if(this.isMember){
+        this.alertCtrl.create({
+          title: this.ls.translate('Confirm Commit Pages'),
+          message: this.ls.translate('Do you want to save your changes on commit pages?'),
+          buttons: [
+            {
+              text: this.ls.translate('Cancel'),
+              role: 'cancel'
+            },
+            {
+              text: this.ls.translate('No'),
+              handler: () => {
+                this.navCtrl.pop();
+              }
+            },
+            {
+              text: this.ls.translate('Yes'),
+              handler: () => {
+                console.log(this.commitPageInput);
+                this.changeCommitPages(this.commitPageInput.value);
+              }
+            }
+          ]
+        }).present();
+      }
+      else{
+        this.alertCtrl.create({
+          title: this.ls.translate('Confirm Commit Pages'),
+          message: this.ls.translate('You cannot join to this khatm unless commit some pages. Do you want to join this khatm?'),
+          buttons: [
+            {
+              text: this.ls.translate('Interested To Join'),
+              role: 'cancel'
+            },
+            {
+              text: this.ls.translate('Uninterested To Join'),
+              handler: () => {
+                this.navCtrl.pop();
+              }
+            }
+          ]
+        })
+      }
+    }
+    else
+      this.navCtrl.pop();
   }
 }

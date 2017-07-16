@@ -4,13 +4,13 @@ import { Alama } from './alama';
 
 @NgModule({
   declarations: [
-    Alama,
+    // Alama,
   ],
   imports: [
-    IonicPageModule.forChild(Alama),
+    // IonicPageModule.forChild(Alama),
   ],
   exports: [
-    Alama
+    // Alama
   ]
 })
 export class AlamaModule {}
