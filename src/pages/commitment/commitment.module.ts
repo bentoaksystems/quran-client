@@ -4,13 +4,13 @@ import { CommitmentPage } from './commitment';
 
 @NgModule({
   declarations: [
-    CommitmentPage,
+    // CommitmentPage,
   ],
   imports: [
-    IonicPageModule.forChild(CommitmentPage),
+    // IonicPageModule.forChild(CommitmentPage),
   ],
   exports: [
-    CommitmentPage
+    // CommitmentPage
   ]
 })
 export class CommitmentPageModule {}

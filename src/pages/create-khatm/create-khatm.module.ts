@@ -4,13 +4,13 @@ import { CreateKhatmPage } from './create-khatm';
 
 @NgModule({
   declarations: [
-    CreateKhatmPage,
+    // CreateKhatmPage,
   ],
   imports: [
-    IonicPageModule.forChild(CreateKhatmPage),
+    // IonicPageModule.forChild(CreateKhatmPage),
   ],
   exports: [
-    CreateKhatmPage
+    // CreateKhatmPage
   ]
 })
 export class CreateKhatmPageModule {}

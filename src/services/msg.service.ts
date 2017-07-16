@@ -12,7 +12,7 @@ const css={
 const duration={
   warn:2000,
   error:3000,
-  inform:200,
+  inform:2000,
 };
 
 @Injectable()
@@ -23,15 +23,22 @@ export class MsgService{
   }
 
   showMessage(type: string, text: string, hasCloseButton: boolean = false){
-    var tsCtrl = this.toastCtrl.create({
-      message: text,
-      showCloseButton: hasCloseButton,
-      position: 'bottom',
-      cssClass: 'msg_'+this.ls.direction() + ' ' + (css[type]?css[type]:'normal'),
-      duration: duration[type]?duration[type]:2000,
-    });
+    var tsCtrl;
+    if(hasCloseButton)
+      tsCtrl = this.toastCtrl.create({
+        message: text,
+        showCloseButton: true,
+        position: 'bottom',
+        cssClass: 'msg_'+this.ls.direction() + ' ' + (css[type]?css[type]:'normal')
+      });
+    else
+      tsCtrl = this.toastCtrl.create({
+        message: text,
+        position: 'bottom',
+        cssClass: 'msg_'+this.ls.direction() + ' ' + (css[type]?css[type]:'normal'),
+        duration: duration[type]
+      });
 
     tsCtrl.present();
   }
-
 }

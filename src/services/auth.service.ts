@@ -33,14 +33,19 @@ export class AuthService {
     };
 
     this.user.next(tempUser);
+    this.httpService.user = tempUser;
     return this.storage.set('user', tempUser);
   }
 
   loadUser(){
     this.storage.get('user')
-        .then((data) => this.user.next(data))
+        .then((data) => {
+          this.httpService.user = data;
+          this.user.next(data);
+        })
         .catch((err) => {
           this.user.next(null);
+          this.httpService.user = null;
           console.log(err.message)
         });
   }
@@ -67,6 +72,7 @@ export class AuthService {
   removeUser(){
     this.storage.remove('user');
     this.user.next(null);
+    this.httpService.user = null;
   }
 
   logout(){
@@ -74,9 +80,44 @@ export class AuthService {
     this.isLoggedIn.next(false);
   }
 
-  register(userEmail, userName){
+  register(userEmail, userName, isRegistration: boolean){
     return new Promise((resolve, reject) => {
-      this.httpService.putData('user', {email: userEmail, name: userName}, false, false).subscribe(
+      if(!isRegistration){
+        this.httpService.postData('user/exist', {email: userEmail}, false).subscribe(
+          (data) => {
+            if(data.json().exist)
+              this.register_signin(userEmail, userName)
+                .then(res => resolve(res))
+                .catch(err => reject(err));
+            else
+              reject('This email is not exist. Please register');
+          },
+          (err) => {
+            reject(err);
+          }
+        )
+      }
+      else{
+        this.httpService.postData('user/exist', {email: userEmail}, false).subscribe(
+          (data) => {
+            if(!data.json().exist)
+              this.register_signin(userEmail, userName)
+                .then(res => resolve(res))
+                .catch(err => reject(err));
+            else
+              reject('This email is exist now. Please choose another email');
+          },
+          (err) => {
+            reject(err);
+          }
+        );
+      }
+    });
+  }
+
+  private register_signin(userEmail, userName){
+    return new Promise((resolve, reject) => {
+      this.httpService.putData('user', {email: userEmail, name: userName}, false).subscribe(
         (data) => {
           this.saveUser(userEmail, userName, null)
             .then(() => {
@@ -88,22 +129,20 @@ export class AuthService {
         (err) => {
           reject(err);
         }
-      )
+      );
     });
   }
 
   verify(code){
     return new Promise((resolve, reject) => {
-      this.httpService.postData('user/auth', {email: this.user.getValue().email, code: code}, false, false)
+      this.httpService.postData('user/auth', {email: this.user.getValue().email, code: code}, false)
         .subscribe(
           (data) => {
-            let token = data.json().token;
+            let dataObj = data.json();
             this.isLoggedIn.next(true);
-            this.saveToken(token)
+            this.saveUser(dataObj.email, dataObj.name, dataObj.token)
               .then(() => {
-                console.log('EMAIL:' + this.user.getValue().email);
-                console.log('TOKEN:' + token);
-                this.httpService.deleteData('user/auth', true, false, this.user.getValue().email, token)
+                this.httpService.deleteData('user/auth', true, this.user.getValue().email, dataObj.token)
                   .subscribe(
                     (res) => resolve(),
                     (er) => reject(er)

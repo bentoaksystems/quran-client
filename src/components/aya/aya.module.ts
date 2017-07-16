@@ -4,13 +4,13 @@ import { Aya } from './aya';
 
 @NgModule({
   declarations: [
-    Aya,
+    // Aya,
   ],
   imports: [
-    IonicPageModule.forChild(Aya),
+    // IonicPageModule.forChild(Aya),
   ],
   exports: [
-    Aya
+    // Aya
   ]
 })
 export class AyaModule {}

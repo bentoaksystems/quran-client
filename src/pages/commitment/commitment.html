@@ -6,8 +6,14 @@
   </ion-header>
 
   <ion-content padding>
-    <div *ngIf="!isSelect">
+    <div *ngIf="!isSelect" style="margin-bottom: 50px;">
       <ion-grid>
+        <!--<ion-row *ngIf="rowPages.length > 0">-->
+          <!--<ion-col col-2>-->
+            <!--<ion-label>{{ls.translate('All')}}</ion-label>-->
+            <!--<ion-checkbox [(ngModel)]="allSelection" (ionChange)="allSelectionChange()"></ion-checkbox>-->
+          <!--</ion-col>-->
+        <!--</ion-row>-->
         <ion-row *ngFor="let rp of rowPages">
           <ion-col col-2 *ngFor="let p of rp">
             <button ion-button block

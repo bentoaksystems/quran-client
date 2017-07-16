@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams, Navbar} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, Navbar, AlertController} from 'ionic-angular';
 import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {StylingService} from "../../services/styling";
@@ -23,10 +23,13 @@ export class CommitmentPage implements OnInit{
     primary: 'normal_primary',
     secondary: 'normal_secondary'
   };
+  anyPagesCommitted: boolean = false;
+  allSelection: boolean = false;
+  selectionCounter: number = 0;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private ls: LanguageService, private khatmService: KhatmService,
-              private stylingService: StylingService) {}
+              private stylingService: StylingService, private alertCtrl: AlertController) {}
 
   ngOnInit(){
     this.navBar.setBackButtonText(this.ls.translate('Back'));
@@ -79,7 +82,25 @@ export class CommitmentPage implements OnInit{
         this.khatmService.commitPages(this.khatm.khid, [this.startRange], this.startRange.isread);
       }
 
-      this.navCtrl.pop();
+      if(this.anyPagesCommitted)
+        this.alertCtrl.create({
+          title: this.ls.translate('Commit Pages Confirmation'),
+          message: this.ls.translate('All changes will be irreversible after you exit. Do you sure to exit?'),
+          buttons: [
+            {
+              text: this.ls.translate('Yes'),
+              handler: () => {
+                this.navCtrl.pop();
+              }
+            },
+            {
+              text: this.ls.translate('No'),
+              role: 'cancel'
+            }
+          ]
+        }).present();
+      else
+        this.navCtrl.pop();
     }
   }
 
@@ -103,9 +124,13 @@ export class CommitmentPage implements OnInit{
   }
 
   commit(page){
+    this.anyPagesCommitted = true;
+
     if(this.startRange !== null)
       this.selectRange(page);
     else {
+      // this.allSelection = (page.isread && this.allSelection) ? false : this.allSelection;
+
       page.isread = !page.isread;
       this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
       this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
@@ -116,11 +141,17 @@ export class CommitmentPage implements OnInit{
 
   selectRange(page){
     if(this.startRange === null) {
-      page.isread = true;
-      this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
-      this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
-      this.khatm.read_pages = (page.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
-      this.startRange = page;
+      if(page.isread) {
+        this.startRange = null;
+        this.commit(page);
+      }
+      else {
+        page.isread = true;
+        this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
+        this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
+        this.khatm.read_pages = (page.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
+        this.startRange = page;
+      }
     }
     else if(this.endRange === null)
       this.endRange = page;
@@ -142,6 +173,27 @@ export class CommitmentPage implements OnInit{
           this.endRange.isread = false;
           this.startRange.isread = true;
         }
+      }
+
+      let anyIsRead = false;
+
+      //Check pages status
+      this.allCommitments.forEach(el => {
+        if((el.page_number > this.startRange.page_number ||
+          (el.page_number === this.startRange.page_number && el.repeat_number > this.startRange.repeat_number)) &&
+          (el.page_number < this.endRange.page_number ||
+          (el.page_number === this.endRange.page_number && el.repeat_number <= this.endRange.repeat_number)))
+            anyIsRead = anyIsRead || el.isread;
+      });
+
+      if(anyIsRead){
+        let tempStartRange = this.startRange;
+        tempStartRange.isread = false;
+        this.startRange = null;
+        this.commit(tempStartRange);
+        this.commit(this.endRange);
+        this.endRange = null;
+        return;
       }
 
       let pages = [];
@@ -169,6 +221,20 @@ export class CommitmentPage implements OnInit{
 
       this.startRange = null;
       this.endRange = null;
+
+      this.anyPagesCommitted = true;
     }
+  }
+
+  allSelectionChange(){
+    let currentReadStatus = false;
+
+    if(this.allSelection)
+      currentReadStatus = false;
+    else
+      currentReadStatus = true;
+
+    this.allCommitments.forEach(el => el.isread = currentReadStatus);
+    this.allCommitments.forEach(el => this.commit(el));
   }
 }

@@ -6,15 +6,17 @@ import {Http, Response, Headers} from "@angular/http";
 import {Observable} from "rxjs";
 import {Network} from "@ionic-native/network";
 import {Storage} from "@ionic/storage";
-import {PromiseObservable} from "rxjs/observable/PromiseObservable";
+import * as moment from 'moment-timezone';
+import {AuthService} from "./auth.service";
 
 @Injectable()
 export class HttpService{
   // serverAddress: string = isDevMode()?'http://192.168.1.10:3000/api':
   //    'https://quran-together.herokuapp.com/api';
 
-  serverAddress: string = 'http://192.168.1.10:3000/api';
+  serverAddress: string = 'http://192.168.1.21:3000/api';
   isDisconnected: boolean = false;
+  user: any = null;
 
   constructor(private http: Http, private network: Network,
               private storage: Storage){
@@ -24,113 +26,263 @@ export class HttpService{
 
     this.network.onConnect().subscribe(
         () => {
-          this.sendBufferedRequests();
-          this.isDisconnected = false;
-          this.storage.remove('http_buffer');
+          if(this.user !== null){
+            this.sendDiff()
+              .then(() => this.isDisconnected = false)
+              .catch(err => console.log(err));
+          }
         }
     );
   }
 
-  postData(address, data, needAuthDetails: boolean, canBuffer = true, email = null, token = null) : Observable<Response>{
+  postData(address, data, needAuthDetails: boolean) : Observable<Response>{
     let headers = new Headers();
     if(needAuthDetails){
-      headers.append('email', email);
-      headers.append('token', token);
+      headers.append('email', (this.user === null) ? null : this.user.email);
+      headers.append('token', (this.user === null) ? null : this.user.token);
     }
 
-    let request = this.http.post(this.serverAddress + '/' + address, data, {
+    return this.http.post(this.serverAddress + '/' + address, data, {
       headers: headers
     });
-
-    if(canBuffer && this.isDisconnected) {
-      this.bufferingRequest({type: 'post', address: address, data: data, headers: headers});
-      return PromiseObservable.create(Promise.resolve(null));
-    }
-    else
-      return request;
   }
 
-  putData(address, data, needAuthDetails: boolean, canBuffer = true, email = null, token = null) : Observable<Response> {
+  putData(address, data, needAuthDetails: boolean) : Observable<Response> {
     let headers = new Headers();
     if(needAuthDetails){
-      headers.append('email', email);
-      headers.append('token', token);
+      headers.append('email', (this.user === null) ? null : this.user.email);
+      headers.append('token', (this.user === null) ? null : this.user.token);
     }
 
-    let request = this.http.put(this.serverAddress + '/' + address, data, {
+    return this.http.put(this.serverAddress + '/' + address, data, {
       headers: headers
     });
-
-    if(canBuffer && this.isDisconnected) {
-      this.bufferingRequest({type: 'put', address: address, data: data, headers: headers});
-      return PromiseObservable.create(Promise.resolve(null));
-    }
-    else
-      return request;
   }
 
-  getData(address, needAuthDetails: boolean, canBuffer = true, email = null, token = null) : Observable<Response>{
+  getData(address, needAuthDetails: boolean) : Observable<Response>{
     let headers = new Headers();
     if(needAuthDetails){
-      headers.append('email', email);
-      headers.append('token', token);
+      headers.append('email', (this.user === null) ? null : this.user.email);
+      headers.append('token', (this.user === null) ? null : this.user.token);
     }
 
-    let request = this.http.get(this.serverAddress + '/' + address, {
+    return this.http.get(this.serverAddress + '/' + address, {
       headers: headers
     });
-
-    if(canBuffer && this.isDisconnected) {
-      this.bufferingRequest({type: 'get', address: address, data: null, headers: headers});
-      return PromiseObservable.create(Promise.resolve(null));
-    }
-    else
-      return request;
   }
 
-  deleteData(address, needAuthDetails: boolean, canBuffer = true, email = null, token = null) : Observable<Response>{
+  deleteData(address, needAuthDetails: boolean, email = null, token = null) : Observable<Response>{
     let headers = new Headers();
     if(needAuthDetails){
-      headers.append('email', email);
-      headers.append('token', token);
+      headers.append('email', (this.user === null) ? null : this.user.email);
+      headers.append('token', (this.user === null) ? null : this.user.token);
     }
 
-    let request = this.http.delete(this.serverAddress + '/' + address, {
+   return this.http.delete(this.serverAddress + '/' + address, {
       headers: headers
     });
-
-    if(canBuffer && this.isDisconnected) {
-      this.bufferingRequest({type: 'delete', address: address, data: null, headers: headers});
-      return PromiseObservable.create(Promise.resolve(null));
-    }
-    else
-      return request;
   }
 
-  sendBufferedRequests(){
-    this.storage.get('http_buffer')
-      .then((buffer) => {
-        for(let req of buffer){
-          switch (req.type){
-            case 'post': this.http.post(this.serverAddress + '/' + req.address, req.data, {headers: req.headers});
-              break;
-            case 'put': this.http.put(this.serverAddress + '/' + req.address, req.data, {headers: req.headers});
-              break;
-            case 'get': this.http.get(this.serverAddress + '/' + req.address, {headers: req.headers});
-              break;
-            case 'delete': this.http.delete(this.serverAddress + '/' + req.address, {headers: req.headers});
-              break;
+  getKhatms(): any{
+    return new Promise((resolve, reject) => {
+      if(this.isDisconnected){
+        this.storage.get('khatms')
+          .then(res => resolve(res))
+          .catch(err => reject(err));
+      }
+      else{
+        this.getData('khatm', true).subscribe(
+          (res) => {
+            let mDate = moment(new Date());
+
+            let tempList = [];
+            for (let item of res.json()) {
+              //Check rest days of khatm
+              if (moment(item.end_date).diff(mDate, 'days') >= 0)
+                tempList.push(item);
+            }
+
+            this.storage.set('khatms', tempList);
+            resolve(tempList);
+          },
+          (err) => {
+            reject(err);
           }
-        }
-      });
+        )
+      }
+    });
   }
 
-  bufferingRequest(request){
-    this.storage.get('http_buffer')
-      .then(value => {
-        let temp_buffer = (value === null) ? [] : value;
-        temp_buffer.push(request);
-        this.storage.set('http_buffer', temp_buffer);
+  getCommitments(khatm_id): any{
+    return new Promise((resolve, reject) => {
+      if(this.isDisconnected){
+        let mainValue = null;
+        let diffValue = null;
+
+        this.storage.get('khatm_' + khatm_id)
+          .then(res => {
+            mainValue = res;
+            return this.storage.get('diff_khatm_' + khatm_id);
+          })
+          .then(res => {
+            diffValue = res;
+            resolve(this.getFinalResult(mainValue, diffValue));
+          })
+          .catch(err => reject(err));
+      }
+      else{
+        this.sendDiff()
+          .then(data => {
+            return this.storage.get('khatms');
+          })
+          .then(data => {
+            let promiseList = [Promise.resolve(null)];
+
+            for(let id of data.map(el => el.khid))
+              promiseList.push(this.storage.remove('diff_khatm_' + id));
+
+            return Promise.all(promiseList);
+          })
+          .then(data => {
+            this.getData('khatm/commitment/' + khatm_id, true).subscribe(
+              (res) => {
+                this.storage.set('khatm_' + khatm_id, res.json());
+                resolve(res.json());
+              },
+              (err) => {
+                reject(err);
+              }
+            );
+          })
+          .catch(err => reject(err));
+      }
+    });
+  }
+
+  commitPages(khatm_id, pages, isread): any{
+    return new Promise((resolve, reject) => {
+      if(this.isDisconnected){
+        if(isread){
+          this.modifyCommitmentsStorage('diff_khatm', khatm_id, pages, 'add')
+            .then(res => resolve(res))
+            .catch(err => reject(err));
+        }
+        else{
+          this.modifyCommitmentsStorage('diff_khatm', khatm_id, pages, 'delete')
+            .then(res => resolve(res))
+            .catch(err => reject(err));
+        }
+      }
+      else{
+        let cids = pages.map(el => el.cid);
+
+        this.postData('khatm/commitment/commit', {cids: cids, isread: isread}, true).subscribe(
+          (data) => {
+            if(isread){
+              this.modifyCommitmentsStorage('khatm', khatm_id, pages, 'delete')
+                .then(res => resolve(res))
+                .catch(err => reject(err));
+            }
+            else{
+              this.modifyCommitmentsStorage('khatm', khatm_id, pages, 'add')
+                .then(res => resolve(res))
+                .catch(err => reject(err));
+            }
+          },
+          (err) => {
+            reject(err);
+          }
+        )
+      }
+    })
+  }
+
+  modifyCommitmentsStorage(storageName, khatm_id, pages, action) {
+    return new Promise((resolve, reject) => {
+      this.storage.get(storageName + '_' + khatm_id)
+        .then((value) => {
+          if (value != null) {
+            if (action === 'add') {
+              value = value.concat(pages);
+            }
+            else if (action === 'delete') {
+              let pNumbers = pages.map(el => el.page_number);
+              value = value.filter(el => pNumbers.findIndex(i => i === el.page_number) === -1);
+            }
+            else if (action === 'update') {
+              let pNumbers = pages.map(el => el.page_number);
+              value = value.filter(el => pNumbers.findIndex(i => i === el.page_number) === -1);
+              value = value.concat(pages);
+            }
+          }
+          else {
+            value = pages;
+          }
+
+          if (value.length === 0)
+            return this.storage.remove(storageName + '_' + khatm_id);
+          else
+            return this.storage.set(storageName + '_' + khatm_id, value);
+        })
+        .then((res) => {
+          resolve();
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+  }
+
+  sendDiff(): any{
+    return new Promise((resolve, reject) => {
+      this.storage.get('khatms')
+        .then(res => {
+          let khids = res.map(el => el.khid);
+          let promiseList = [Promise.resolve(null)];
+
+          for(let id of khids)
+            promiseList.push(this.storage.get('diff_khatm_' + id));
+
+          return Promise.all(promiseList);
+        })
+        .then(res => {
+          let promiseList = [];
+          let data = res.filter(el => el !== null);
+
+          if(data.length === 0)
+            promiseList.push(Promise.resolve());
+          else{
+            let readPages = [];
+            let unreadPages = [];
+
+            data.forEach(cel => {
+              readPages = readPages.concat(cel.filter(el => el.isread === true).map(el => el.cid));
+              unreadPages = unreadPages.concat(cel.filter(el => el.isread === false).map(el => el.cid));
+            });
+
+            if(readPages.length > 0)
+              promiseList.push(this.postData('khatm/commitment/commit', {cids: readPages, isread: true}, true).toPromise());
+
+            if(unreadPages.length > 0)
+              promiseList.push(this.postData('khatm/commitment/commit', {cids: unreadPages, isread: false}, true).toPromise());
+          }
+
+          return Promise.all(promiseList);
+        })
+        .then(res => resolve())
+        .catch(err => {
+          reject(err);
+        })
+    })
+  }
+
+  getFinalResult(mainValue, diffValue): any{
+    if(diffValue !== null){
+      diffValue.forEach(el => {
+        mainValue.find(item => item.cid === el.cid).isread = el.isread;
       });
+    }
+
+    return mainValue.filter(el => el.isread === false);
   }
 }

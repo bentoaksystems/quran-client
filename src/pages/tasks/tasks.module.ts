@@ -4,13 +4,13 @@ import { Tasks } from './tasks';
 
 @NgModule({
   declarations: [
-    Tasks,
+    // Tasks,
   ],
   imports: [
-    IonicPageModule.forChild(Tasks),
+    // IonicPageModule.forChild(Tasks),
   ],
   exports: [
-    Tasks
+    // Tasks
   ]
 })
 export class TasksModule {}

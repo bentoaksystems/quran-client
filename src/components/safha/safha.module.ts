@@ -4,13 +4,13 @@ import { Safha } from './safha';
 
 @NgModule({
   declarations: [
-    Safha,
+    // Safha,
   ],
   imports: [
-    IonicPageModule.forChild(Safha),
+    // IonicPageModule.forChild(Safha),
   ],
   exports: [
-    Safha
+    // Safha
   ]
 })
 export class SafhaModule {}
