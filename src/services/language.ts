@@ -216,6 +216,86 @@ const translations = {
     fa: 'بازگشت',
     ar: 'الى الخلف',
   },
+  "please wait until save changes": {
+    fa: "لطفا صبر کنید تا تغییرات را اعمال کنیم",
+    ar: "يرجى الانتظار حتى يتم حفظ التغييرات",
+  },
+  "sorry. all pages are committed": {
+    fa: "متأسفانه تمام صفحات اختصاص یافته اند",
+    ar: "معذرة. جميع الصفحات ملتزمة",
+  },
+  "pages are assigned to you":{
+    fa: "صفحات به شما اختصاص یافت",
+    ar: "يتم تعيين الصفحات لك",
+  },
+  "pages get down from your commitments":{
+    fa: "صفحات از تعهد شما برداشته شد",
+    ar: "صفحات الحصول على أسفل من الالتزامات الخاصة بك",
+  },
+  "cannot assign you requested pages now": {
+    fa: "در حال حاضر نمی توانیم صفحات درخواست شده به شما اختصاص دهیم",
+    ar: "لا يمكن تعيين الصفحات المطلوبة الآن",
+  },
+  "the khatm end date is passed": {
+    fa: "تاریخ پایان این ختم گذشته است",
+    ar: "يتم تمرير تاريخ نهاية خاتم",
+  },
+  "cannot get khatm details": {
+    fa: "قادر به دریافت اطلاعات ختم نیستم",
+    ar: "لا يمكن الحصول على تفاصيل خاتم",
+  },
+  "the khatm should have a name": {
+    fa: "ختم باید دارای یک عنوان باشد",
+    ar: "يجب أن يكون للخاتم اسم",
+  },
+  "the end date field cannot be empty": {
+    fa: "بخش تاریخ پایانی نمی تواند خالی باشد",
+    ar: "لا يمكن أن يكون حقل تاريخ الانتهاء فارغا",
+  },
+  "the start date cannot be later then end date": {
+    fa: "تاریخ شروع نمی تواند پس از تاریخ پایان باشد",
+    ar: "لا يمكن أن يكون تاريخ البدء في وقت لاحق ثم تاريخ الانتهاء",
+  },
+  "please choose sura": {
+    fa: "لطفا سوره را انتخاب کنید",
+    ar: "الرجاء اختيار سورة",
+  },
+  "your khatm created successfully": {
+    fa: "ختم با موفقیت ساخته شد",
+    ar: "تم إنشاء القرآن الكريم بنجاح",
+  },
+  "cannot save your khamt now. Please try again": {
+    fa: "در حال حاضر قادر به ذخیره ختم نیستیم. لطفا دوباره اقدام کنید",
+    ar: "لا يمكن حفظ خمت الخاص بك الآن. حاول مرة اخرى",
+  },
+  "please choose valid start date": {
+    fa: "لطفا تاریخ شروع را انتخاب کنید",
+    ar: "الرجاء اختيار تاريخ بدء صالح",
+  },
+  "please choose the valid start date": {
+    fa: "لطفا تاریخ شروع معتبری انتخاب کنید",
+    ar: "الرجاء اختيار تاريخ البدء الصحيح",
+  },
+  "please choose the valid end date": {
+    fa: "لطفا تاریخ پایان معتبری انتخاب کنید",
+    ar: "الرجاء اختيار تاريخ الانتهاء الصحيح",
+  },
+  "the duration cannot be greater than 10 years": {
+    fa: "مدت زمان نمی تواند بیش از 10 سال باشد",
+    ar: "مدة لا يمكن أن تكون أكبر من 10 عاما",
+  },
+  "the duration value cannot be negative": {
+    fa: "مدت زمان نمی تواند مقدار منفی داشته باشد",
+    ar: "لا يمكن أن تكون قيمة المدة سالبة",
+  },
+  "the start date cannot be less than current date": {
+    fa: "تاریخ شروع نمی تواند پیش تر از امروز باشد",
+    ar: "لا يمكن أن يكون تاريخ البدء أقل من التاريخ الحالي",
+  },
+  "the end date cannot be less than current date": {
+    fa: "تاریخ پایان نمی تواند پیش از امروز باشد",
+    ar: "لا يمكن أن يكون تاريخ الانتهاء أقل من التاريخ الحالي",
+  },
 };
 
 const directionRTL = {

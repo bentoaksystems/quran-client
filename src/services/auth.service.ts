@@ -33,14 +33,19 @@ export class AuthService {
     };
 
     this.user.next(tempUser);
+    this.httpService.user = tempUser;
     return this.storage.set('user', tempUser);
   }
 
   loadUser(){
     this.storage.get('user')
-        .then((data) => this.user.next(data))
+        .then((data) => {
+          this.httpService.user = data;
+          this.user.next(data);
+        })
         .catch((err) => {
           this.user.next(null);
+          this.httpService.user = null;
           console.log(err.message)
         });
   }
@@ -67,6 +72,7 @@ export class AuthService {
   removeUser(){
     this.storage.remove('user');
     this.user.next(null);
+    this.httpService.user = null;
   }
 
   logout(){

@@ -1,7 +1,9 @@
 <span [ngStyle]="{'direction': ls.direction()}">
   <ion-header>
     <ion-navbar>
-      <ion-title>{{ls.translate('Khatm')}}</ion-title>
+      <ion-title *ngIf="!isNew && khatm !== null">{{khatm.khatm_name}}</ion-title>
+      <ion-title *ngIf="isNew && !isSubmitted">{{ls.translate('Khatm')}}</ion-title>
+      <ion-title *ngIf="isNew && isSubmitted">{{khatm.khatm_name}}</ion-title>
     </ion-navbar>
   </ion-header>
   <ion-content padding [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' ">
@@ -180,7 +182,8 @@
                       (ngModelChange)="limitClick($event)"></ion-input>
           </ion-col>
           <ion-col col-2>
-            <button ion-button block [color]="conditionalColoring.primary" [small]="true" outline (click)="changeCommitPages(commitPageInput.value)" icon-only>
+            <button ion-button block [color]="conditionalColoring.primary" [small]="true" outline (click)="changeCommitPages(commitPageInput.value)" icon-only
+                    [disabled]="khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid">
               <ion-icon ios="ios-checkmark" md="md-checkmark"></ion-icon>
             </button>
           </ion-col>
@@ -206,7 +209,7 @@
           <ion-col col-6>
             <button ion-button block (click)="start_stop_Khatm()"
                     [color]="conditionalColoring.primary"
-                    [disabled]="isChangingCommitments"
+                    [disabled]="isChangingCommitments && khatm.you_unread <= 0"
                     *ngIf="khatmService.activeKhatm.getValue() === null || (khatmService.activeKhatm.getValue().khid !== khatm.khid)">
               {{ls.translate('Start Khatm')}}
             </button>
@@ -221,7 +224,7 @@
         </ion-row>
       <ion-row>
         <ion-col col-12>
-          <button ion-button block (click)="navCtrl.popToRoot()"
+          <button ion-button block (click)="checkOnLeft()"
                   [color]="conditionalColoring.secondary">{{ls.translate('Close')}}</button>
         </ion-col>
       </ion-row>

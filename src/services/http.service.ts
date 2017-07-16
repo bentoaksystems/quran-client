@@ -7,6 +7,7 @@ import {Observable} from "rxjs";
 import {Network} from "@ionic-native/network";
 import {Storage} from "@ionic/storage";
 import * as moment from 'moment-timezone';
+import {AuthService} from "./auth.service";
 
 @Injectable()
 export class HttpService{
@@ -15,6 +16,7 @@ export class HttpService{
 
   serverAddress: string = 'http://192.168.1.21:3000/api';
   isDisconnected: boolean = false;
+  user: any = null;
 
   constructor(private http: Http, private network: Network,
               private storage: Storage){
@@ -23,15 +25,21 @@ export class HttpService{
     );
 
     this.network.onConnect().subscribe(
-        () => this.isDisconnected = false
+        () => {
+          if(this.user !== null){
+            this.sendDiff()
+              .then(() => this.isDisconnected = false)
+              .catch(err => console.log(err));
+          }
+        }
     );
   }
 
-  postData(address, data, needAuthDetails: boolean, email = null, token = null) : Observable<Response>{
+  postData(address, data, needAuthDetails: boolean) : Observable<Response>{
     let headers = new Headers();
     if(needAuthDetails){
-      headers.append('email', email);
-      headers.append('token', token);
+      headers.append('email', (this.user === null) ? null : this.user.email);
+      headers.append('token', (this.user === null) ? null : this.user.token);
     }
 
     return this.http.post(this.serverAddress + '/' + address, data, {
@@ -39,11 +47,11 @@ export class HttpService{
     });
   }
 
-  putData(address, data, needAuthDetails: boolean, email = null, token = null) : Observable<Response> {
+  putData(address, data, needAuthDetails: boolean) : Observable<Response> {
     let headers = new Headers();
     if(needAuthDetails){
-      headers.append('email', email);
-      headers.append('token', token);
+      headers.append('email', (this.user === null) ? null : this.user.email);
+      headers.append('token', (this.user === null) ? null : this.user.token);
     }
 
     return this.http.put(this.serverAddress + '/' + address, data, {
@@ -51,11 +59,11 @@ export class HttpService{
     });
   }
 
-  getData(address, needAuthDetails: boolean, email = null, token = null) : Observable<Response>{
+  getData(address, needAuthDetails: boolean) : Observable<Response>{
     let headers = new Headers();
     if(needAuthDetails){
-      headers.append('email', email);
-      headers.append('token', token);
+      headers.append('email', (this.user === null) ? null : this.user.email);
+      headers.append('token', (this.user === null) ? null : this.user.token);
     }
 
     return this.http.get(this.serverAddress + '/' + address, {
@@ -66,8 +74,8 @@ export class HttpService{
   deleteData(address, needAuthDetails: boolean, email = null, token = null) : Observable<Response>{
     let headers = new Headers();
     if(needAuthDetails){
-      headers.append('email', email);
-      headers.append('token', token);
+      headers.append('email', (this.user === null) ? null : this.user.email);
+      headers.append('token', (this.user === null) ? null : this.user.token);
     }
 
    return this.http.delete(this.serverAddress + '/' + address, {
@@ -75,7 +83,7 @@ export class HttpService{
     });
   }
 
-  getKhatms(user): any{
+  getKhatms(): any{
     return new Promise((resolve, reject) => {
       if(this.isDisconnected){
         this.storage.get('khatms')
@@ -83,7 +91,7 @@ export class HttpService{
           .catch(err => reject(err));
       }
       else{
-        this.getData('khatm', true, user.email, user.token).subscribe(
+        this.getData('khatm', true).subscribe(
           (res) => {
             let mDate = moment(new Date());
 
@@ -105,7 +113,7 @@ export class HttpService{
     });
   }
 
-  getCommitments(user, khatm_id): any{
+  getCommitments(khatm_id): any{
     return new Promise((resolve, reject) => {
       if(this.isDisconnected){
         let mainValue = null;
@@ -123,7 +131,7 @@ export class HttpService{
           .catch(err => reject(err));
       }
       else{
-        this.sendDiff(user)
+        this.sendDiff()
           .then(data => {
             return this.storage.get('khatms');
           })
@@ -136,7 +144,7 @@ export class HttpService{
             return Promise.all(promiseList);
           })
           .then(data => {
-            this.getData('khatm/commitment/' + khatm_id, true, user.email, user.token).subscribe(
+            this.getData('khatm/commitment/' + khatm_id, true).subscribe(
               (res) => {
                 this.storage.set('khatm_' + khatm_id, res.json());
                 resolve(res.json());
@@ -151,7 +159,7 @@ export class HttpService{
     });
   }
 
-  commitPages(user, khatm_id, pages, isread): any{
+  commitPages(khatm_id, pages, isread): any{
     return new Promise((resolve, reject) => {
       if(this.isDisconnected){
         if(isread){
@@ -168,7 +176,7 @@ export class HttpService{
       else{
         let cids = pages.map(el => el.cid);
 
-        this.postData('khatm/commitment/commit', {cids: cids, isread: isread}, true, user.email, user.token).subscribe(
+        this.postData('khatm/commitment/commit', {cids: cids, isread: isread}, true).subscribe(
           (data) => {
             if(isread){
               this.modifyCommitmentsStorage('khatm', khatm_id, pages, 'delete')
@@ -225,7 +233,7 @@ export class HttpService{
     });
   }
 
-  sendDiff(user): any{
+  sendDiff(): any{
     return new Promise((resolve, reject) => {
       this.storage.get('khatms')
         .then(res => {
@@ -253,10 +261,10 @@ export class HttpService{
             });
 
             if(readPages.length > 0)
-              promiseList.push(this.postData('khatm/commitment/commit', {cids: readPages, isread: true}, true, user.email, user.token).toPromise());
+              promiseList.push(this.postData('khatm/commitment/commit', {cids: readPages, isread: true}, true).toPromise());
 
             if(unreadPages.length > 0)
-              promiseList.push(this.postData('khatm/commitment/commit', {cids: unreadPages, isread: false}, true, user.email, user.token).toPromise());
+              promiseList.push(this.postData('khatm/commitment/commit', {cids: unreadPages, isread: false}, true).toPromise());
           }
 
           return Promise.all(promiseList);
