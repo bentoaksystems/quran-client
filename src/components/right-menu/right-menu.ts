@@ -42,13 +42,15 @@ export class RightMenuComponent implements OnInit{
       if(viewKhatm !== null){
         params = {
           isNew: false,
-          khatm: viewKhatm
+          khatm: viewKhatm,
+          isMember: true,
         }
       }
       else {
         params = {
           isNew: true,
-          khatm: null
+          khatm: null,
+          isMember: true,
         }
       }
     }

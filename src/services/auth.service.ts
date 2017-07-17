@@ -77,7 +77,7 @@ export class AuthService {
   register(userEmail, userName, isRegistration: boolean){
     return new Promise((resolve, reject) => {
       if(!isRegistration){
-        this.httpService.postData('user/exist', {email: userEmail}, false, false).subscribe(
+        this.httpService.postData('user/exist', {email: userEmail}, false).subscribe(
           (data) => {
             if(data.json().exist)
               this.register_signin(userEmail, userName)
@@ -92,7 +92,7 @@ export class AuthService {
         )
       }
       else{
-        this.httpService.postData('user/exist', {email: userEmail}, false, false).subscribe(
+        this.httpService.postData('user/exist', {email: userEmail}, false).subscribe(
           (data) => {
             if(!data.json().exist)
               this.register_signin(userEmail, userName)
@@ -111,7 +111,7 @@ export class AuthService {
 
   private register_signin(userEmail, userName){
     return new Promise((resolve, reject) => {
-      this.httpService.putData('user', {email: userEmail, name: userName}, false, false).subscribe(
+      this.httpService.putData('user', {email: userEmail, name: userName}, false).subscribe(
         (data) => {
           this.saveUser(userEmail, userName, null)
             .then(() => {
@@ -129,14 +129,14 @@ export class AuthService {
 
   verify(code){
     return new Promise((resolve, reject) => {
-      this.httpService.postData('user/auth', {email: this.user.getValue().email, code: code}, false, false)
+      this.httpService.postData('user/auth', {email: this.user.getValue().email, code: code}, false)
         .subscribe(
           (data) => {
             let dataObj = data.json();
             this.isLoggedIn.next(true);
             this.saveUser(dataObj.email, dataObj.name, dataObj.token)
               .then(() => {
-                this.httpService.deleteData('user/auth', true, false, this.user.getValue().email, dataObj.token)
+                this.httpService.deleteData('user/auth', true, this.user.getValue().email, dataObj.token)
                   .subscribe(
                     (res) => resolve(),
                     (er) => reject(er)
