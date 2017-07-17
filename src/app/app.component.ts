@@ -35,7 +35,7 @@ export class MyApp {
 
   ngAfterViewInit(){
     this.platform.ready().then(() => {
-      this.deeplinks.routeWithNavController(this.navChild, {
+      this.deeplinks.route({
         '/khatm/:link': CreateKhatmPage
       }).subscribe(
         (match) => {

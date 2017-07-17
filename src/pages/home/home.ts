@@ -24,7 +24,22 @@ export class HomePage implements OnInit{
           this.khatmService.loadCommitments(this.khatm.khid)
             .then(res => {
               this.khatmPagesInfo = res;
-              this.khatmPages = this.khatmPagesInfo.map(el => el.page_number);
+              this.khatmPages = this.khatmPagesInfo
+                .sort((a, b) => {
+                  if(a.repeat_number > b.repeat_number)
+                    return 1;
+                  else if(a.repeat_number < b.repeat_number)
+                    return -1;
+                  else {
+                    if(a.page_number > b.page_number)
+                      return 1;
+                    else if(a.page_number < b.page_number)
+                      return -1;
+                    else
+                      return 0;
+                  }
+                })
+                .map(el => el.page_number);
             })
             .catch(err => {
               this.khatmPages = [];
@@ -41,7 +56,9 @@ export class HomePage implements OnInit{
   }
 
   readPage(page_index){
-    if(this.khatm !== null)
+    if(this.khatm !== null) {
+      this.khatmService.updateKhatmDetails(this.khatm.khid, true);
       this.khatmService.commitPages(this.khatm.khid, [this.khatmPagesInfo[page_index]], true);
+    }
   }
 }

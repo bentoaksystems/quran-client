@@ -198,6 +198,15 @@ export class KhatmService {
     this.activeKhatm.next(null);
   }
 
+  updateKhatmDetails(khatm_id, readPage){
+    let khatms = this.khatms.getValue();
+
+    let khatm = khatms.find(el => el.khid === khatm_id);
+    khatm.you_read = (readPage) ? parseInt(khatm.you_read) + 1 : parseInt(khatm.you_read) - 1;
+    khatm.you_unread = (!readPage) ? parseInt(khatm.you_unread) + 1 : parseInt(khatm.you_unread) - 1;
+    khatm.read_pages = (readPage) ? parseInt(khatm.read_pages) + 1 : parseInt(khatm.read_pages) - 1;
+  }
+
   // commitmentsReconciliation(khatm_id, pages) {
   //   return new Promise((resolve, reject) => {
   //     this.storage.get('khatm_' + khatm_id)

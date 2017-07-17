@@ -10,6 +10,7 @@ import {HttpService} from "./http.service";
 export class AuthService {
   isLoggedIn : BehaviorSubject<boolean> = new BehaviorSubject(false);
   user: BehaviorSubject<any> = new BehaviorSubject(null);
+
   constructor(private storage: Storage, private httpService: HttpService) {
     this.user.subscribe(
       (data) => {
@@ -32,8 +33,8 @@ export class AuthService {
         token: userToken
     };
 
-    this.user.next(tempUser);
     this.httpService.user = tempUser;
+    this.user.next(tempUser);
     return this.storage.set('user', tempUser);
   }
 
@@ -139,9 +140,9 @@ export class AuthService {
         .subscribe(
           (data) => {
             let dataObj = data.json();
-            this.isLoggedIn.next(true);
             this.saveUser(dataObj.email, dataObj.name, dataObj.token)
               .then(() => {
+                this.isLoggedIn.next(true);
                 this.httpService.deleteData('user/auth', true, this.user.getValue().email, dataObj.token)
                   .subscribe(
                     (res) => resolve(),

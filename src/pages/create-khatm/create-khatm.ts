@@ -104,10 +104,11 @@ export class CreateKhatmPage implements OnInit{
       this.isMember = false;
 
       let stillNotLoggedIn: boolean = true;
+      let visited: boolean = false;
 
       this.authService.isLoggedIn.subscribe(
         (status) => {
-          if(status) {
+          if (status) {
             stillNotLoggedIn = false;
             this.khatmService.getKhatm(link)
               .then(res => {
@@ -136,13 +137,14 @@ export class CreateKhatmPage implements OnInit{
                 }
               });
           }
-          else if(!status){
+          else if (!status && !visited) {
+            visited = true;
             setTimeout(() => {
-              if(stillNotLoggedIn){
+              if (stillNotLoggedIn && !this.authService.isLoggedIn.getValue()) {
                 stillNotLoggedIn = false;
                 this.alertCtrl.create({
                   title: 'Not logged in yet',
-                  message: this.ls.translate('You must logged in to join to this khatm'),
+                  message: this.ls.translate('You must be logged in to join to this khatm'),
                   buttons: [
                     {
                       text: 'Register',
