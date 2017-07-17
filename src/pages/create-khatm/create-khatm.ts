@@ -22,7 +22,7 @@ import {error} from "util";
 export class CreateKhatmPage implements OnInit{
   @ViewChild(Navbar) navBar: Navbar;
   @ViewChild('commitPageInput') commitPageInput: HTMLFormElement;
-  basicShareLink: string = 'http://192.168.1.21:3000/khatm/';
+  basicShareLink: string = 'https://www.read.quran.parts/khatm/';
   khatmIsStarted: boolean = true;
   isSubmitted: boolean = false;
   name: string = '';
@@ -463,7 +463,7 @@ export class CreateKhatmPage implements OnInit{
   }
 
   copyLink(){
-    let link: string = 'http://quranApp/' + this.basicShareLink + this.khatm.share_link;
+    let link: string = this.basicShareLink + this.khatm.share_link;
     this.clipboard.copy(link)
       .then(res => {
         this.msgService.showMessage('inform', res);
