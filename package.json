@@ -96,7 +96,19 @@
                 "URL_SCHEME": "quranapp",
                 "DEEPLINK_SCHEME": "https",
                 "DEEPLINK_HOST": "192.168.1.10",
-                "ANDROID_PATH_PREFIX": "/"
+                "ANDROID_PATH_PREFIX": "/",
+                "ANDROID_2_PATH_PREFIX": "/",
+                "ANDROID_3_PATH_PREFIX": "/",
+                "ANDROID_4_PATH_PREFIX": "/",
+                "ANDROID_5_PATH_PREFIX": "/",
+                "DEEPLINK_2_SCHEME": " ",
+                "DEEPLINK_2_HOST": " ",
+                "DEEPLINK_3_SCHEME": " ",
+                "DEEPLINK_3_HOST": " ",
+                "DEEPLINK_4_SCHEME": " ",
+                "DEEPLINK_4_HOST": " ",
+                "DEEPLINK_5_SCHEME": " ",
+                "DEEPLINK_5_HOST": " "
             }
         },
         "platforms": [
