@@ -1,20 +1,15 @@
-import {Component, Input, ViewChild} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
 import {StylingService} from "../../services/styling";
 import {Keyboard} from "ionic-angular";
 
-/**
- * Generated class for the Hashia component.
- *
- * See https://angular.io/docs/ts/latest/api/core/index/ComponentMetadata-class.html
- * for more info on Angular Components.
- */
 @Component({
   selector: 'hashia',
   templateUrl: 'hashia.html'
 })
 export class Hashia {
   @Input() suraname;
+  @Input() disabled = false;
   private _so;
   private _pn;
   private pageNumberToggled=false;
@@ -91,10 +86,11 @@ export class Hashia {
     if(e.keyCode===13){
       this.pageNumberToggled=false;
       this.changePage();
+      setTimeout(()=>this.keyboard.close(),100);
     }
   }
   pageNumberToggle(val=null) {
-    if(this.pageNumberToggled!==val) {
+    if(!this.disabled && this.pageNumberToggled!==val) {
       this.pageNumberToggled = !this.pageNumberToggled;
       if (!this.pageNumberToggled) {
         this.changePage();
