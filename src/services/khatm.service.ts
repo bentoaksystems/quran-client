@@ -7,26 +7,20 @@ import {Storage} from '@ionic/storage';
 import * as moment from 'moment-timezone';
 
 import {HttpService} from "./http.service";
-import {AuthService} from "./auth.service";
 
 @Injectable()
 export class KhatmService {
   khatms: BehaviorSubject<any> = new BehaviorSubject([]);
   activeKhatm: BehaviorSubject<any> = new BehaviorSubject(null);
 
-  constructor(private httpService: HttpService, private authService: AuthService,
-              private storage: Storage) {
-    // this.storage.remove('khatms');
-    // this.storage.remove('khatm_35');
-    // this.storage.remove('khatm_40');
-  }
+  constructor(private httpService: HttpService, private storage: Storage) {}
 
   createKhatm(data) {
     return new Promise((resolve, reject) => {
-      this.httpService.putData('khatm', data, true, this.authService.user.getValue().email, this.authService.user.getValue().token)
+      this.httpService.putData('khatm', data, true)
         .subscribe(
           (data) => {
-            this.loadKhatms(this.authService.user.getValue().email);
+            this.loadKhatms();
             resolve();
           },
           (err) => {
@@ -37,8 +31,8 @@ export class KhatmService {
     });
   }
 
-  loadKhatms(user) {
-    this.httpService.getKhatms(user)
+  loadKhatms() {
+    this.httpService.getKhatms()
       .then(res => this.khatms.next(res))
       .catch(err => {
         console.log(err);
@@ -47,13 +41,12 @@ export class KhatmService {
   }
 
   loadCommitments(khatm_id){
-    return this.httpService.getCommitments(this.authService.user.getValue(), khatm_id);
+    return this.httpService.getCommitments(khatm_id);
   }
 
   getPages(number, khatm_id, type) {
     return new Promise((resolve, reject) => {
-      this.httpService.postData('khatm/commitment/auto', {khid: khatm_id, pages: number}, true,
-        this.authService.user.getValue().email, this.authService.user.getValue().token)
+      this.httpService.postData('khatm/commitment/auto', {khid: khatm_id, pages: number}, true)
         .subscribe(
           (res) => {
             let data = res.json();
@@ -132,7 +125,7 @@ export class KhatmService {
   }
 
   getKhatmPages(khatm_id) {
-    return this.httpService.getCommitments(this.authService.user.getValue(), khatm_id);
+    return this.httpService.getCommitments(khatm_id);
   }
 
   updateKhatmCommtiments(khatm_id, page_numbers) {
@@ -152,7 +145,7 @@ export class KhatmService {
   }
 
   start_stop_Khatm(khatm) {
-    if (khatm.you_read === null || khatm.you_unread === null)
+    if (khatm.you_read === null || khatm.you_unread === null || khatm.you_unread <= 0)
       this.activeKhatm.next(null);
     else if (this.activeKhatm.getValue() === null || this.activeKhatm.getValue().khid !== khatm.khid) {
       let actKhatm = Object.assign({}, khatm);
@@ -162,22 +155,19 @@ export class KhatmService {
             actKhatm.pages = value;
 
           this.activeKhatm.next(actKhatm);
-          // console.log('Active khatm is: ', this.activeKhatm.getValue());
         })
         .catch((err) => {
           console.log(err);
           this.activeKhatm.next(null);
-          // console.log('Active khatm is: ', this.activeKhatm.getValue());
         });
     }
     else if (this.activeKhatm.getValue().khid === khatm.khid) {
       this.activeKhatm.next(null);
-      // console.log('Active khatm is: ', this.activeKhatm.getValue());
     }
   }
 
   commitPages(khatm_id, pages, is_read) {
-    return this.httpService.commitPages(this.authService.user.getValue(), khatm_id, pages, is_read);
+    return this.httpService.commitPages(khatm_id, pages, is_read);
   }
 
   clearStorage() {

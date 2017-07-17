@@ -10,6 +10,7 @@ import {LanguageService} from "../services/language";
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {KhatmService} from "../services/khatm.service";
 import {MsgService} from "../services/msg.service";
+import {platform} from "os";
 
 @Component({
   templateUrl: 'app.html'
@@ -22,39 +23,45 @@ export class MyApp {
   isLoggedIn: boolean = false;
   khatmInfoPage: CreateKhatmPage;
 
-  constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen,
-              authService: AuthService, private ls:LanguageService,
+  constructor(private platform: Platform, private statusBar: StatusBar, private splashScreen: SplashScreen,
+              private authService: AuthService, private ls:LanguageService,
               private deeplinks: Deeplinks, private khatmService: KhatmService,
               private msgService: MsgService) {
-    platform.ready().then(() => {
+    this.platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
-      statusBar.styleDefault();
-      splashScreen.hide();
+      this.statusBar.styleDefault();
+      this.splashScreen.hide();
+    });
+  }
 
-      deeplinks.route({
+  ngAfterViewInit(){
+    this.platform.ready().then(() => {
+      this.deeplinks.routeWithNavController(this.navChild, {
         '/khatm/:link': CreateKhatmPage
-      })
-          .subscribe(
-              (match) => {
-                console.log('Successfully match: ',  match);
-              },
-              (noMatch) => {
-                console.log('Cannot match: ', noMatch);
-              }
-          );
+      }).subscribe(
+        (match) => {
+          let urlParts = match.$link.url.split('/');
 
-      authService.isLoggedIn.subscribe(
+          if(urlParts[2] === 'khatm')
+            this.navChild.push(CreateKhatmPage, {link: urlParts[3]});
+        },
+        (nomatch) => {
+          this.msgService.showMessage('error', 'Cannot find your requested page');
+        }
+      );
+
+      this.authService.isLoggedIn.subscribe(
         (data) => this.isLoggedIn = data);
 
-      authService.user.subscribe(
+      this.authService.user.subscribe(
         (u) => {
           if(u !== null && u.token !== null && u.token !== undefined){
-            this.khatmService.loadKhatms(u);
+            this.khatmService.loadKhatms();
           }
         }
       )
-    });
+    })
   }
 
   goToPage(event){
