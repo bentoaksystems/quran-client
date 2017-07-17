@@ -6,7 +6,6 @@
   </ion-navbar>
 </ion-header>
 
-
 <ion-content padding [class]="stylingService.nightMode ? 'night_background' : 'normal_background'">
   <ion-list *ngIf="!showVerify">
     <ion-item [color]="conditionalColoring.background">
@@ -25,11 +24,11 @@
   </ion-list>
   <ion-grid *ngIf="!showVerify">
     <ion-row>
-      <ion-col col-6 *ngIf="isRegistration">
-        <button ion-button block color="{{conditionalColoring.primary}}" (click)="register()" [disabled]="email === '' || reEmail === ''">{{ls.translate('Register')}}</button>
-      </ion-col>
-      <ion-col col-6 *ngIf="!isRegistration">
-        <button ion-button block color="{{conditionalColoring.primary}}" (click)="register()" [disabled]="email === '' || reEmail === ''">{{ls.translate('Sign In')}}</button>
+      <ion-col col-6>
+        <button ion-button block color="{{conditionalColoring.primary}}" (click)="register()" [disabled]="email === '' || reEmail === ''">
+          <span *ngIf="isRegistration">{{ls.translate('Register')}}</span>
+          <span *ngIf="!isRegistration">{{ls.translate('Sign In')}}</span>
+        </button>
       </ion-col>
       <ion-col col-6>
         <button ion-button block color="{{conditionalColoring.secondary}}" (click)="skip()">{{ls.translate('Skip')}}</button>
@@ -48,7 +47,6 @@
       <ion-col col-6>
         <ion-list>
           <ion-item [color]="conditionalColoring.background">
-            <!--<ion-label fixed>{{ls.translate('Verification Code')}}</ion-label>-->
             <ion-input type="text" maxlength="6" #code placeholder="Code" style="text-align: center"></ion-input>
           </ion-item>
         </ion-list>

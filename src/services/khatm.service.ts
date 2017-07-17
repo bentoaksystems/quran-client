@@ -44,7 +44,7 @@ export class KhatmService {
     return this.httpService.getCommitments(khatm_id);
   }
 
-  getPages(number, khatm_id, type) {
+  getPages(number, khatm_id, type, isMember) {
     return new Promise((resolve, reject) => {
       this.httpService.postData('khatm/commitment/auto', {khid: khatm_id, pages: number}, true)
         .subscribe(
@@ -56,11 +56,14 @@ export class KhatmService {
             else {
               let numberOfFinal = (type === 'delete') ? number : data.length;
 
-              //Save/Update page numbers
-              this.storeKhatmPages(khatm_id, data, type)
-                .then((re) => this.updateKhatmCommtiments(khatm_id, numberOfFinal))
-                .then((r) => resolve(numberOfFinal))
-                .catch((er) => reject(er));
+              if(!isMember)
+                resolve(numberOfFinal);
+              else
+                //Save/Update page numbers
+                this.storeKhatmPages(khatm_id, data, type)
+                  .then((re) => this.updateKhatmCommtiments(khatm_id, numberOfFinal))
+                  .then((r) => resolve(numberOfFinal))
+                  .catch((er) => reject(er));
             }
           },
           (err) => {
@@ -73,7 +76,7 @@ export class KhatmService {
 
   getKhatm(khatm_link){
     return new Promise((resolve, reject) => {
-      this.httpService.getData('khatm/link/' + khatm_link, false).subscribe(
+      this.httpService.getData('khatm/link/' + khatm_link, true).subscribe(
         (res) => {
           let data = res.json();
           let mDate = moment(new Date());
