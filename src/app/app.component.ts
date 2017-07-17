@@ -10,7 +10,6 @@ import {LanguageService} from "../services/language";
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {KhatmService} from "../services/khatm.service";
 import {MsgService} from "../services/msg.service";
-import {platform} from "os";
 
 @Component({
   templateUrl: 'app.html'
@@ -21,7 +20,6 @@ export class MyApp {
 
   rootPage:any = HomePage;
   isLoggedIn: boolean = false;
-  khatmInfoPage: CreateKhatmPage;
 
   constructor(private platform: Platform, private statusBar: StatusBar, private splashScreen: SplashScreen,
               private authService: AuthService, private ls:LanguageService,
@@ -65,7 +63,6 @@ export class MyApp {
   }
 
   goToPage(event){
-    console.log(event);
     if(event.shouldClose)
       this.rightMenu.close();
 
