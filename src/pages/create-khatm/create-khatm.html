@@ -3,7 +3,7 @@
     <ion-navbar>
       <ion-title *ngIf="!isNew && khatm !== null">{{khatm.khatm_name}}</ion-title>
       <ion-title *ngIf="isNew && !isSubmitted">{{ls.translate('Khatm')}}</ion-title>
-      <ion-title *ngIf="isNew && isSubmitted">{{khatm.khatm_name}}</ion-title>
+      <ion-title *ngIf="isNew && isSubmitted">{{name}}</ion-title>
     </ion-navbar>
   </ion-header>
   <ion-content padding [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' ">

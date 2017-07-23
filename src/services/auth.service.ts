@@ -121,16 +121,10 @@ export class AuthService {
       this.httpService.putData('user', {email: userEmail, name: userName}, false).subscribe(
         (data) => {
           this.saveUser(userEmail, userName, null)
-            .then(() => {
-              console.log('email:' + this.user.getValue().email);
-              console.log('name:' + this.user.getValue().name);
-              resolve();
-            })
+            .then(() => resolve())
+            .catch(er => reject(er))
         },
-        (err) => {
-          reject(err);
-        }
-      );
+        (err) => reject(err));
     });
   }
 
