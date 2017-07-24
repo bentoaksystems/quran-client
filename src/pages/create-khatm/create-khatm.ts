@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams, LoadingController, Navbar, AlertController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, LoadingController, Navbar, AlertController, ViewController, App} from 'ionic-angular';
 import {SocialSharing} from '@ionic-native/social-sharing';
 import {Clipboard} from "@ionic-native/clipboard";
 import * as moment from 'moment-timezone';
@@ -10,6 +10,9 @@ import {KhatmService} from "../../services/khatm.service";
 import {MsgService} from "../../services/msg.service";
 import {CommitmentPage} from "../commitment/commitment";
 import {StylingService} from "../../services/styling";
+import {AuthService} from "../../services/auth.service";
+import {Registration} from "../registration/registration";
+import {error} from "util";
 
 @IonicPage()
 @Component({
@@ -19,7 +22,7 @@ import {StylingService} from "../../services/styling";
 export class CreateKhatmPage implements OnInit{
   @ViewChild(Navbar) navBar: Navbar;
   @ViewChild('commitPageInput') commitPageInput: HTMLFormElement;
-  basicShareLink: string = 'http://192.168.1.21:3000/khatm/';
+  basicShareLink: string = 'https://www.read.quran.parts/khatm/';
   khatmIsStarted: boolean = true;
   isSubmitted: boolean = false;
   name: string = '';
@@ -56,7 +59,8 @@ export class CreateKhatmPage implements OnInit{
               private khatmService: KhatmService, private msgService: MsgService,
               private socialSharing: SocialSharing, private clipboard: Clipboard,
               private loadingCtrl: LoadingController, private stylingService: StylingService,
-              private alertCtrl: AlertController) {
+              private alertCtrl: AlertController, private authService: AuthService,
+              public appCtrl: App) {
     this.suras = this.quranService.getAllSura();
   }
 
@@ -99,15 +103,72 @@ export class CreateKhatmPage implements OnInit{
       this.khatm = null;
       this.isMember = false;
 
-      this.khatmService.getKhatm(link)
-        .then(res => {
-          this.khatm = res;
-        })
-        .catch(err => {
-          if(err === 'expired')
-            this.msgService.showMessage('error', this.ls.translate('The khatm end date is passed'));
-          else
-            this.msgService.showMessage('error', this.ls.translate('Cannot get khatm details'));
+      let stillNotLoggedIn: boolean = true;
+      let visited: boolean = false;
+
+      this.authService.isLoggedIn.subscribe(
+        (status) => {
+          if (status) {
+            stillNotLoggedIn = false;
+            this.khatmService.getKhatm(link)
+              .then(res => {
+                this.khatm = res;
+
+                this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
+                this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+
+                let mDate = moment(this.currentDate);
+                if (moment(this.khatm.start_date) > mDate)
+                  this.khatmIsStarted = false;
+                else
+                  this.khatmIsStarted = true;
+
+                this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
+                if (this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
+                  this.rest_days++;
+
+                this.isMember = (this.khatm.you_read !== null && this.khatm.you_unread !== null);
+              })
+              .catch(err => {
+                if (err === 'expired')
+                  this.msgService.showMessage('error', this.ls.translate('The khatm end date is passed'));
+                else {
+                  this.msgService.showMessage('error', this.ls.translate('Cannot get khatm details'));
+                }
+              });
+          }
+          else if (!status && !visited) {
+            visited = true;
+            setTimeout(() => {
+              if (stillNotLoggedIn && !this.authService.isLoggedIn.getValue()) {
+                stillNotLoggedIn = false;
+                this.alertCtrl.create({
+                  title: 'Not logged in yet',
+                  message: this.ls.translate('You must be logged in to join to this khatm'),
+                  buttons: [
+                    {
+                      text: 'Register',
+                      handler: () => {
+                        this.appCtrl.getRootNav().push(Registration, {data: {fromButton: 'register'}});
+                      }
+                    },
+                    {
+                      text: 'Sign In',
+                      handler: () => {
+                        this.appCtrl.getRootNav().push(Registration, {data: {fromButton: 'signin'}});
+                      }
+                    },
+                    {
+                      text: 'Cancel',
+                      handler: () => {
+                        this.appCtrl.getRootNav().pop();
+                      }
+                    }
+                  ]
+                }).present();
+              }
+            }, 1000)
+          }
         });
     }
 
@@ -191,7 +252,7 @@ export class CreateKhatmPage implements OnInit{
     this.khatmService.createKhatm(khatmData)
         .then((res) => {
           this.msgService.showMessage('inform', this.ls.translate('Your khatm created successfully'));
-          this.navCtrl.popToRoot();
+          this.navCtrl.pop();
         })
         .catch((err) => {
           this.msgService.showMessage('warn', this.ls.translate('Cannot save your khamt now. Please try again'));
@@ -402,7 +463,7 @@ export class CreateKhatmPage implements OnInit{
   }
 
   copyLink(){
-    let link: string = 'http://quranApp/' + this.basicShareLink + this.khatm.share_link;
+    let link: string = this.basicShareLink + this.khatm.share_link;
     this.clipboard.copy(link)
       .then(res => {
         this.msgService.showMessage('inform', res);
@@ -434,6 +495,10 @@ export class CreateKhatmPage implements OnInit{
     if(newVal.toString() === '')
       newValNum = 0;
 
+    if(!this.isMember){
+      this.isCommit = !(newValNum === 0);
+    }
+
     if(newVal !== null && newVal !== undefined && newValNum !== this.khatm.you_unread) {
       //Start loading controller
       let loading = this.loadingCtrl.create({
@@ -449,7 +514,7 @@ export class CreateKhatmPage implements OnInit{
         this.isChangingCommitments = false;
       }
       else {
-        this.khatmService.getPages(newValNum, this.khatm.khid, type)
+        this.khatmService.getPages(newValNum, this.khatm.khid, type, this.isMember)
           .then((res: any) => {
             if(res !== null){
               this.khatm.commitment_pages = (this.khatm.commitment_pages === null) ? 0 : this.khatm.commitment_pages;
@@ -478,6 +543,7 @@ export class CreateKhatmPage implements OnInit{
             this.isChangingCommitments = false;
 
             console.log(err.message);
+            this.msgService.showMessage('error', JSON.stringify(err), true);
             this.msgService.showMessage('warn', this.ls.translate('Cannot assign you requested pages'));
           });
       }
@@ -530,6 +596,7 @@ export class CreateKhatmPage implements OnInit{
             {
               text: this.ls.translate('No'),
               handler: () => {
+                this.khatmService.loadKhatms();
                 this.navCtrl.pop();
               }
             },
@@ -555,14 +622,17 @@ export class CreateKhatmPage implements OnInit{
             {
               text: this.ls.translate('Uninterested To Join'),
               handler: () => {
+                this.khatmService.loadKhatms();
                 this.navCtrl.pop();
               }
             }
           ]
-        })
+        }).present();
       }
     }
-    else
+    else{
+      this.khatmService.loadKhatms();
       this.navCtrl.pop();
+    }
   }
 }

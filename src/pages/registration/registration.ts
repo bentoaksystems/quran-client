@@ -73,7 +73,6 @@ export class Registration implements OnInit{
       }
     );
 
-
     this.authService.loadUser();
   }
 
@@ -101,7 +100,8 @@ export class Registration implements OnInit{
   }
 
   skip(){
-    this.viewCtrl.dismiss();
+    // this.viewCtrl.dismiss();
+    this.navCtrl.popToRoot();
   }
 
   mailValidation(mail){
@@ -136,7 +136,7 @@ export class Registration implements OnInit{
         .then(() => {
           // this.khatmService.loadKhatm(this.authService.user.getValue().email);
           // this.khatmService.loadAllCommitments();
-          this.navCtrl.popToRoot();
+          this.navCtrl.pop();
           this.authService.loadUser();
         })
         .catch((err) => {

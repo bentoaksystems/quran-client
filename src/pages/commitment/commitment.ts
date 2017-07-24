@@ -129,13 +129,14 @@ export class CommitmentPage implements OnInit{
     if(this.startRange !== null)
       this.selectRange(page);
     else {
-      // this.allSelection = (page.isread && this.allSelection) ? false : this.allSelection;
-
       page.isread = !page.isread;
       this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
       this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
       this.khatm.read_pages = (page.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
       this.khatmService.commitPages(this.khatm.khid, [page], page.isread);
+
+      this.selectionCounter = (page.isread) ? this.selectionCounter + 1 : this.selectionCounter - 1;
+      this.checkAllSelection();
     }
   }
 
@@ -151,6 +152,8 @@ export class CommitmentPage implements OnInit{
         this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
         this.khatm.read_pages = (page.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
         this.startRange = page;
+
+        this.selectionCounter = (page.isread) ? this.selectionCounter + 1 : this.selectionCounter - 1;
       }
     }
     else if(this.endRange === null)
@@ -209,6 +212,8 @@ export class CommitmentPage implements OnInit{
             this.khatm.you_unread = (el.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
             this.khatm.read_pages = (el.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
             pages.push(el);
+
+            this.selectionCounter = (page.isread) ? this.selectionCounter + 1 : this.selectionCounter - 1;
         }
       });
 
@@ -223,6 +228,8 @@ export class CommitmentPage implements OnInit{
       this.endRange = null;
 
       this.anyPagesCommitted = true;
+
+      this.checkAllSelection();
     }
   }
 
@@ -234,7 +241,15 @@ export class CommitmentPage implements OnInit{
     else
       currentReadStatus = true;
 
-    this.allCommitments.forEach(el => el.isread = currentReadStatus);
-    this.allCommitments.forEach(el => this.commit(el));
+    let needChange = this.allCommitments.filter(el => el.isread === currentReadStatus);
+    needChange.forEach(el => this.commit(el));
+  }
+
+  checkAllSelection(){
+    let all_isread: boolean = true;
+
+    this.allCommitments.forEach(el => all_isread = all_isread && el.isread);
+
+    this.allSelection = all_isread
   }
 }
