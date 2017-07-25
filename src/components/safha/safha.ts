@@ -269,6 +269,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
 
       if (found && i && +i !== this._pageIndex)
         this.zone.run(() => {
+          this.pageIsRead.emit(this._pageIndex);
           this._pageIndex = +i;
           this.specifyPage();
         });
