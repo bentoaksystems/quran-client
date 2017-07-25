@@ -33,6 +33,7 @@ import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {LanguageService} from "../services/language";
 import {KhatmService} from "../services/khatm.service";
 import {CommitmentPage} from "../pages/commitment/commitment";
+import {BookmarkService} from "../services/bookmark";
 
 @NgModule({
   declarations: [
@@ -82,6 +83,7 @@ import {CommitmentPage} from "../pages/commitment/commitment";
     ScreenOrientation,
     LanguageService,
     KhatmService,
+    BookmarkService,
     SocialSharing,
     Clipboard,
     Network,

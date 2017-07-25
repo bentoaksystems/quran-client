@@ -19,12 +19,19 @@ export class QuranService {
   private ayaStream = new Subject<QuranReference>();
   private pageStream = new Subject<number>();
   private quranData:QuranData = QURAN_DATA;
+  private suraTopStream = new Subject<any>();
   aya$ = this.ayaStream.asObservable();
   page$ = this.pageStream.asObservable().throttleTime(500);
+  suraTop$ = this.suraTopStream.asObservable();
 
   def = 0;
   temp = '';
   i = 0;
+  suraNumber: number = NaN;
+
+  suraTop(suraNumber,scrollTop){
+    this.suraTopStream.next({suraNumber:suraNumber,scrollTop:scrollTop});
+  }
 
   constructor(private http:Http) { }
 
@@ -33,18 +40,8 @@ export class QuranService {
       .map(res => res.json().data);
   }
 
-  getPage(pageNum){
-    let page = this.getSec('page',pageNum);
-    return page;
-  }
-
   applySectionFilter(sectionType, ayas, index){
     return this.filterFunc(sectionType, ayas, index);
-  }
-
-  getRukus(rukuNum){
-    let ruku = this.getSec('ruku', rukuNum);
-    return ruku;
   }
 
   getSura(suraNum){
@@ -83,21 +80,9 @@ export class QuranService {
       return new SectionAddress({num:this.findReference(sectionType,aya)});
   }
 
-  goForth(sectionType,sectionNumber){
-    let p = this.pageForSection(sectionType,sectionNumber);
-    if(p<605)
-      this.pageStream.next(p);
-    else
-      this.pageStream.next(1);
-  }
-  goBack(sectionType,sectionNumber){
-    let p = this.pageForSection(sectionType,sectionNumber);
-    if(p>0)
-      this.pageStream.next(p);
-    else
-      this.pageStream.next(604);
-  }
    goTo(sectionType,sectionNumber){
+    this.suraNumber= sectionType==='sura' ? sectionNumber : NaN;
+
      this.temp = '';
     let p = this.pageForSection(sectionType,sectionNumber);
     if(p>604)

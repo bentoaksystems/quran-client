@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
 
 /**
@@ -11,12 +11,18 @@ import {QuranService} from "../../services/quran.service";
   selector: 'aya',
   templateUrl: 'aya.html'
 })
-export class Aya {
+export class Aya implements AfterViewInit{
   @Input() value;
   @Input() fontFamily;
   @Input() margin;
+  @ViewChild('bism') bism;
 
   constructor(private quranService:QuranService) {
+  }
+
+  ngAfterViewInit(): void {
+    if(this.value.bismillah)
+      this.quranService.suraTop(this.value.sura, this.bism.nativeElement.offsetTop + this.bism.nativeElement.offsetHeight);
   }
 
   sajdaCheck(obj){
