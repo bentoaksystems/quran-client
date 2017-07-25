@@ -198,6 +198,8 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     range.forEach(p => {
         if (!this.shownPages[p]) {
           this.shownPages[p] = true;
+          if(p<this._pageIndex)
+            this.scrollLock = true;
         }
       }
     );
@@ -307,6 +309,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
         if(res.suraNumber == suraNumber && res.scrollTop){
           subsc.unsubscribe();
           this.scrollPage.scrollTo(0, res.scrollTop, 0);
+          this.bookmarkService.setScrollLocation(res.scrollTop);
         }
       })
     }
