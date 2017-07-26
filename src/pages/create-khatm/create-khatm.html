@@ -146,12 +146,12 @@
         <h2>{{ls.translate('Rest Days')}}</h2>
         <p [ngStyle]="{'text-align': oppositeDirection()}">{{rest_days}}</p>
       </ion-item>
-        <ion-item *ngIf="khatm.you_read !== null && khatm.you_unread !== null"
+        <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
                   [color]="conditionalColoring.background">
         <h2>{{ls.translate('You Read')}}</h2>
         <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.you_read}}</p>
       </ion-item>
-        <ion-item *ngIf="khatm.you_read !== null && khatm.you_unread !== null"
+        <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
                   [color]="conditionalColoring.background">
         <h2>{{ls.translate('Remain of your commitments')}}</h2>
         <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.you_unread}}</p>

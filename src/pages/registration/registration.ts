@@ -15,6 +15,7 @@ import {KhatmService} from "../../services/khatm.service";
 })
 export class Registration implements OnInit{
   @ViewChild(Navbar) navBar: Navbar;
+  @ViewChild('code') code: any;
   email: string = '';
   reEmail: string = '';
   name: string = '';
@@ -150,7 +151,6 @@ export class Registration implements OnInit{
       return false;
 
     for(let i=0; i<code.length; i++){
-      console.log(code.charCodeAt(i));
       if(code.charCodeAt(i) < 48 || code.charCodeAt(i) > 57)
         return false;
     }

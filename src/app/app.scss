@@ -245,3 +245,38 @@ ion-select{
   margin-right:0px !important;
   align-self: flex-start;
 }
+
+.action-sheet-ios .action-sheet-button:last-child{
+  font-family: 'quran' !important;
+  font-size: 1.3em !important;
+}
+
+.action-sheet-ios .action-sheet-button{
+  font-family: 'quran' !important;
+  font-size: 1.3em !important;
+}
+
+.night_mode .action-sheet-button:last-child{
+  background-color: #474747 !important;
+  color: #b0b6b4;
+}
+
+.night_mode .action-sheet-button{
+  background-color: #474747 !important;
+  color: #b0b6b4;
+}
+
+.night_mode .action-sheet-title{
+  background-color: #323232 !important;
+  color: #b0b6b4;
+}
+
+.day_mode .action-sheet-button:last-child{
+  background-color: #fbfaf8 !important;
+  color: blue;
+}
+
+.day_mode .action-sheet-button{
+  background-color: #fbfaf8 !important;
+  color: blue;
+}

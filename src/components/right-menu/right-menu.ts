@@ -97,14 +97,6 @@ export class RightMenuComponent implements OnInit{
         }
       }
     );
-
-    // this.authService.isLoggedIn.subscribe(
-    //   (data) => {
-    //     if(data)
-    //       this.khatmService.loadKhatm(this.authService.user.getValue().email)
-    //   },
-    //   (err) => console.log(err.message)
-    // );
   }
 
   logout(){

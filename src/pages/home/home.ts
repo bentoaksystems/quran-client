@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import { NavController } from 'ionic-angular';
+import {Vibration} from "@ionic-native/vibration";
 
 import {KhatmService} from "../../services/khatm.service";
 
@@ -12,7 +13,8 @@ export class HomePage implements OnInit{
   khatmPagesInfo: any = [];
   khatmPages: number[] = [];
 
-  constructor(public navCtrl: NavController, private khatmService: KhatmService) {}
+  constructor(public navCtrl: NavController, private khatmService: KhatmService,
+              private vibration: Vibration) {}
 
   ngOnInit(){
     this.khatmService.activeKhatm.subscribe(
@@ -57,6 +59,7 @@ export class HomePage implements OnInit{
 
   readPage(page_index){
     if(this.khatm !== null) {
+      this.vibration.vibrate(100);
       this.khatmService.updateKhatmDetails(this.khatm.khid, true);
       this.khatmService.commitPages(this.khatm.khid, [this.khatmPagesInfo[page_index]], true);
     }
