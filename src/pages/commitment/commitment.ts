@@ -3,6 +3,8 @@ import {IonicPage, NavController, NavParams, Navbar, AlertController} from 'ioni
 import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {StylingService} from "../../services/styling";
+import {MsgService} from "../../services/msg.service";
+import {Vibration} from "@ionic-native/vibration";
 
 @IonicPage()
 @Component({
@@ -29,7 +31,8 @@ export class CommitmentPage implements OnInit{
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private ls: LanguageService, private khatmService: KhatmService,
-              private stylingService: StylingService, private alertCtrl: AlertController) {}
+              private stylingService: StylingService, private alertCtrl: AlertController,
+              private msgService: MsgService, private vibration: Vibration) {}
 
   ngOnInit(){
     this.navBar.setBackButtonText(this.ls.translate('Back'));
@@ -136,25 +139,21 @@ export class CommitmentPage implements OnInit{
       this.khatmService.commitPages(this.khatm.khid, [page], page.isread);
 
       this.selectionCounter = (page.isread) ? this.selectionCounter + 1 : this.selectionCounter - 1;
+
+      this.vibration.vibrate(100);
       this.checkAllSelection();
     }
   }
 
   selectRange(page){
-    if(this.startRange === null) {
-      if(page.isread) {
-        this.startRange = null;
-        this.commit(page);
-      }
-      else {
-        page.isread = true;
-        this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
-        this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
-        this.khatm.read_pages = (page.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
-        this.startRange = page;
+    if (this.startRange === null) {
+      page.isread = !page.isread;
+      this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
+      this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
+      this.khatm.read_pages = (page.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
+      this.startRange = page;
 
-        this.selectionCounter = (page.isread) ? this.selectionCounter + 1 : this.selectionCounter - 1;
-      }
+      this.selectionCounter = (page.isread) ? this.selectionCounter + 1 : this.selectionCounter - 1;
     }
     else if(this.endRange === null)
       this.endRange = page;
@@ -178,27 +177,6 @@ export class CommitmentPage implements OnInit{
         }
       }
 
-      let anyIsRead = false;
-
-      //Check pages status
-      this.allCommitments.forEach(el => {
-        if((el.page_number > this.startRange.page_number ||
-          (el.page_number === this.startRange.page_number && el.repeat_number > this.startRange.repeat_number)) &&
-          (el.page_number < this.endRange.page_number ||
-          (el.page_number === this.endRange.page_number && el.repeat_number <= this.endRange.repeat_number)))
-            anyIsRead = anyIsRead || el.isread;
-      });
-
-      if(anyIsRead){
-        let tempStartRange = this.startRange;
-        tempStartRange.isread = false;
-        this.startRange = null;
-        this.commit(tempStartRange);
-        this.commit(this.endRange);
-        this.endRange = null;
-        return;
-      }
-
       let pages = [];
       pages.push(this.startRange);
 
@@ -207,22 +185,24 @@ export class CommitmentPage implements OnInit{
            (el.page_number === this.startRange.page_number && el.repeat_number > this.startRange.repeat_number)) &&
            (el.page_number < this.endRange.page_number ||
            (el.page_number === this.endRange.page_number && el.repeat_number <= this.endRange.repeat_number))){
-            el.isread = !el.isread;
+            if(el.isread !== this.startRange.isread)
+              this.selectionCounter = (el.isread) ? this.selectionCounter - 1 : this.selectionCounter + 1;
+
+            el.isread = this.startRange.isread;
             this.khatm.you_read = (el.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
             this.khatm.you_unread = (el.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
             this.khatm.read_pages = (el.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
             pages.push(el);
-
-            this.selectionCounter = (page.isread) ? this.selectionCounter + 1 : this.selectionCounter - 1;
         }
       });
 
-      let readPages = pages.filter(el => el.isread === true);
-      let unreadPages = pages.filter(el => el.isread === false);
+      let targetPages = pages.filter(el => el.isread === this.startRange.isread);
 
-      this.khatmService.commitPages(this.khatm.khid, readPages, true)
-          .then((res) => this.khatmService.commitPages(this.khatm.khid, unreadPages, false))
-          .catch((err) => console.log(err));
+      this.khatmService.commitPages(this.khatm.khid, targetPages, this.startRange.isread)
+          .then((res) => {this.vibration.vibrate(100)})
+          .catch((err) => {
+            this.msgService.showMessage('error', 'Cannot save your changes. Please try again.', true);
+          });
 
       this.startRange = null;
       this.endRange = null;
