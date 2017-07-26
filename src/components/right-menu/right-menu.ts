@@ -19,6 +19,7 @@ export class RightMenuComponent implements OnInit{
   khatms: any;
   conditionalColoring: any = {
     background: 'normal_back',
+    backgroundLighter: 'normal_back_secondary',
     text: 'noraml_text',
     primary: 'normal_primary',
     secondary: 'normal_secondary'
@@ -85,12 +86,14 @@ export class RightMenuComponent implements OnInit{
       (data) => {
         if(data) {
           this.conditionalColoring.background = 'night_back';
+          this.conditionalColoring.backgroundLighter = 'night_back_secondary';
           this.conditionalColoring.text = 'night_text';
           this.conditionalColoring.primary = 'night_primary';
           this.conditionalColoring.secondary = 'night_secondary';
         }
         else{
           this.conditionalColoring.background = 'normal_back';
+          this.conditionalColoring.backgroundLighter = 'normal_back_secondary';
           this.conditionalColoring.text = 'normal_text';
           this.conditionalColoring.primary = 'normal_primary';
           this.conditionalColoring.secondary = 'normal_secondary';

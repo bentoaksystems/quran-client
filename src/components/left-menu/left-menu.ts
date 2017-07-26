@@ -103,7 +103,6 @@ export class LeftMenuComponent {
 
   nightMode(){
     this.stylingService.nightModeSwitch();
-    this.menuCtrl.close();
   }
 
   changeLanguage(){
