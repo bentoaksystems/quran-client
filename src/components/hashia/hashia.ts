@@ -1,18 +1,19 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit, ViewChild, AfterViewChecked} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
 import {StylingService} from "../../services/styling";
 import {Keyboard} from "ionic-angular";
+import {getTsFilePaths} from "@ionic/app-scripts/dist/upgrade-scripts/add-default-ngmodules";
 
 @Component({
   selector: 'hashia',
   templateUrl: 'hashia.html'
 })
-export class Hashia {
+export class Hashia implements OnInit {
   @Input() suraname;
   @Input() disabled = false;
   private _so;
   private _pn;
-  private pageNumberToggled=false;
+  private pageNumberToggled = false;
 
   @Input()
   set suraorder(so) {
@@ -27,7 +28,7 @@ export class Hashia {
   @Input()
   set pagenumber(pn) {
     this._pn = pn;
-    this.selectedPage=pn;
+    this.selectedPage = pn;
     this.pagenumberAr = this.pagenumber ? this.pagenumber.toLocaleString('ar') : '';
     this.pageJuzNumber = this.quranService.pageJuzCheck(this.pagenumber);
     this.pageJuzNumberAr = this.pageJuzNumber ? this.pageJuzNumber.toLocaleString('ar') : '';
@@ -80,17 +81,19 @@ export class Hashia {
   }
 
   changePage() {
-    this.quranService.goTo('page', this.selectedPage);
+    this.quranService.goTo('page', +this.selectedPage);
   }
-  keyup(e){
-    if(e.keyCode===13){
-      this.pageNumberToggled=false;
+
+  keyup(e) {
+    if (e.keyCode === 13) {
+      this.pageNumberToggled = false;
       this.changePage();
-      setTimeout(()=>this.keyboard.close(),100);
+      setTimeout(() => this.keyboard.close(), 100);
     }
   }
-  pageNumberToggle(val=null) {
-    if(!this.disabled && this.pageNumberToggled!==val) {
+
+  pageNumberToggle(val = null) {
+    if (!this.disabled && this.pageNumberToggled !== val) {
       this.pageNumberToggled = !this.pageNumberToggled;
       if (!this.pageNumberToggled) {
         this.changePage();

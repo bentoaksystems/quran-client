@@ -14,7 +14,7 @@
             class="center-text pic pagenum">{{pagenumberAr}}</span>
       <ion-item *ngIf="pageNumberToggled">
         <ion-input type="number" [(ngModel)]="selectedPage"
-                   (keyup)="keyup($event)" (blur)="pageNumberToggle(false)"></ion-input>
+                   (keyup)="keyup($event)" (blur)="pageNumberToggle(false)" clearOnEdit="true"></ion-input>
       </ion-item>
     </td>
     <td class="info-column3 right-left-text">
