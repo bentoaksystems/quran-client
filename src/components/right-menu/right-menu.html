@@ -14,12 +14,13 @@
     </ion-grid>
     <hr/>
     <ion-list *ngIf="isLoggedIn && khatms.length > 0">
-      <ion-list-header>
+      <ion-list-header [color]="conditionalColoring.backgroundLighter">
         <ion-label [color]="conditionalColoring.text">
           {{ls.translate('My Khatms')}}
         </ion-label>
       </ion-list-header>
       <button *ngFor="let khatm of khatms" ion-item
+              detail-none
               [color]="conditionalColoring.background"
               (press)="start_stop_khatm(khatm)" (click)="openPage('khatm', khatm)"
               [ngClass]="{active_night: khatmService.activeKhatm.getValue() !== null &&

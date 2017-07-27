@@ -196,8 +196,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     range.forEach(p => {
         if (!this.shownPages[p]) {
           this.shownPages[p] = true;
-          if(p<this._pageIndex)
-            this.scrollLock = true;
+          this.scrollLock = true;
         }
       }
     );
