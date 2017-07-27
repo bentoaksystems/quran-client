@@ -132,7 +132,6 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     this.stylingService.fontChanged$
       .subscribe(
         (f) => {
-          console.log(f);
           if (isNaN(f) && this.stylingService.fontFamily) {//on initial load
             this.fontFamily = this.stylingService.fontFamily;
           }
@@ -140,7 +139,6 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
             let tempFont;
             do {
               tempFont = fonts[f % fonts.length];
-              console.log(f, tempFont);
               f++;
             } while (tempFont && tempFont === this.fontFamily || (this.naskhIncompatible && this.isUthmanic(tempFont)));
             if (tempFont !== this.fontFamily) {

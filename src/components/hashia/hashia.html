@@ -7,8 +7,6 @@
           <ion-option *ngFor="let sura of suras" [value]="sura.number" [selected]="sura.number===suraorder">{{sura.numberAr}}. {{sura.name}}</ion-option>
         </ion-select>
       </ion-item>
-
-
     </td>
     <td class="info-column2">
       <span *ngIf="!pageNumberToggled" (click)="pageNumberToggle()"
