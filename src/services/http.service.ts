@@ -1,7 +1,7 @@
 /**
  * Created by Ali on 5/21/2017.
  */
-import {Injectable, isDevMode} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {Http, Response, Headers} from "@angular/http";
 import {Observable} from "rxjs";
 import {Network} from "@ionic-native/network";
@@ -12,9 +12,7 @@ import * as moment from 'moment-timezone';
 export class HttpService{
   // serverAddress: string = isDevMode()?'http://192.168.1.10:3000/api':
   //    'https://quran-together.herokuapp.com/api';
-
-  // serverAddress: string = 'http://www.read.quran.parts/api';
-  serverAddress: string = 'http://192.168.15.6:3000/api';
+  serverAddress: string = 'http://read.quran.parts/api';
   isDisconnected: boolean = false;
   user: any = null;
 

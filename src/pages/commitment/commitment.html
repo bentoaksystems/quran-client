@@ -1,6 +1,6 @@
 <span [ngStyle]="{'direction': ls.direction()}">
   <ion-header>
-    <ion-navbar [color]="conditionalColoring.backgroundLighter">
+    <ion-navbar [color]="stylingService.conditionalColoring.backgroundLighter">
       <ion-title>{{ls.translate('Commitment Pages')}}</ion-title>
     </ion-navbar>
   </ion-header>
@@ -10,9 +10,9 @@
       <ion-grid>
         <ion-row *ngIf="rowPages.length > 0">
           <ion-col col-12>
-            <ion-label *ngIf="ls.direction() === 'ltr'" [color]="conditionalColoring.text">{{ls.translate('All')}} - ({{ls.convertDigits(selectionCounter)}})</ion-label>
-            <ion-label *ngIf="ls.direction() === 'rtl'" [color]="conditionalColoring.text">({{ls.convertDigits(selectionCounter)}}) - {{ls.translate('All')}}</ion-label>
-            <ion-checkbox [(ngModel)]="allSelection" (click)="allSelectionChange()" [color]="conditionalColoring.secondary"></ion-checkbox>
+            <ion-label *ngIf="ls.direction() === 'ltr'" [color]="stylingService.conditionalColoring.text">{{ls.translate('All')}} - ({{ls.convertDigits(selectionCounter)}})</ion-label>
+            <ion-label *ngIf="ls.direction() === 'rtl'" [color]="stylingService.conditionalColoring.text">({{ls.convertDigits(selectionCounter)}}) - {{ls.translate('All')}}</ion-label>
+            <ion-checkbox [(ngModel)]="allSelection" (click)="allSelectionChange()" [color]="stylingService.conditionalColoring.secondary"></ion-checkbox>
           </ion-col>
         </ion-row>
         <ion-row *ngFor="let rp of rowPages">
