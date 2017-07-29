@@ -1,9 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
 import {Component, Input, OnInit, ViewChild, AfterViewChecked} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
 import {StylingService} from "../../services/styling";
 import {Keyboard, NavParams, PopoverController} from "ionic-angular";
-import {Keyboard} from "ionic-angular";
 import {getTsFilePaths} from "@ionic/app-scripts/dist/upgrade-scripts/add-default-ngmodules";
 
 @Component({
@@ -102,7 +100,8 @@ export class Hashia implements OnInit {
   changeSura(event) {
     let suraPopOver = this.popoverCtrl.create(SuraList, {
       suras: this.suras,
-      disabled: this.disabled
+      disabled: this.disabled,
+      selectedSura: this._so
     },{
       cssClass: (this.stylingService.nightMode) ? 'night_mode' : 'day_mode'
     });
@@ -115,7 +114,8 @@ export class Hashia implements OnInit {
   changeJuz(event) {
     let juzPopOver = this.popoverCtrl.create(JuzList, {
       juzes: this.juzes,
-      disabled: this.disabled
+      disabled: this.disabled,
+      selectedJuz: this.pageJuzNumber
     },{
       cssClass: (this.stylingService.nightMode) ? 'night_mode' : 'day_mode'
     });
@@ -156,8 +156,8 @@ export class Hashia implements OnInit {
       <button ion-item detail-none icon-start *ngFor="let sura of suras" (click)="changeSura(sura)"
               [color]="conditionalColoring.backgroundLighter"
               style="font-family: 'quran'; font-size: 1.2em; text-align: right;">
-        <ion-label [color]="conditionalColoring.text">{{sura.numberAr}}. {{sura.name}}</ion-label>
-        <ion-icon name="checkmark" *ngIf="selectedSura === sura.numberAr"></ion-icon>
+        {{sura.numberAr}}. {{sura.name}}
+        <ion-icon name="checkmark" *ngIf="selectedSura === sura.number"></ion-icon>
       </button>
     </ion-list>
   `
@@ -180,6 +180,7 @@ export class SuraList implements OnInit{
   ngOnInit(){
     this.suras = this.params.get('suras');
     this.disabled = this.params.get('disabled');
+    this.selectedSura = this.params.get('selectedSura');
 
     this.stylingService.nightMode$.subscribe(
       (data) => {
@@ -202,7 +203,7 @@ export class SuraList implements OnInit{
   }
 
   changeSura(sura){
-    console.log(sura);
+    this.selectedSura = sura.number;
     this.quranService.goTo('sura', sura.number);
   }
 }
@@ -214,8 +215,8 @@ export class SuraList implements OnInit{
       <button ion-item detail-none icon-start *ngFor="let juz of juzes" (click)="changeJuz(juz)"
               [color]="conditionalColoring.backgroundLighter"
               style="font-family: 'quran'; font-size: 1.2em; text-align: right;">
-        <ion-label [color]="conditionalColoring.text">جزء {{juz.numberAr}}</ion-label>
-        <ion-icon name="checkmark" *ngIf="selectedJuz === juz.number"></ion-icon>
+        جزء {{juz.numberAr}}
+        <ion-icon name="checkmark" *ngIf="juz.number === selectedJuz"></ion-icon>
       </button>
     </ion-list>
   `
@@ -238,6 +239,7 @@ export class JuzList implements OnInit{
   ngOnInit(){
     this.juzes = this.params.get('juzes');
     this.disabled = this.params.get('disabled');
+    this.selectedJuz = this.params.get('selectedJuz');
 
     this.stylingService.nightMode$.subscribe(
       (data) => {
@@ -260,6 +262,7 @@ export class JuzList implements OnInit{
   }
 
   changeJuz(juz){
+    this.selectedJuz = juz.number;
     this.quranService.goTo('juz', juz.number);
   }
 }
