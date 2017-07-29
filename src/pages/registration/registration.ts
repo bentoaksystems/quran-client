@@ -20,13 +20,6 @@ export class Registration implements OnInit{
   reEmail: string = '';
   name: string = '';
   showVerify: boolean = false;
-  conditionalColoring: any = {
-    background: 'normal_back',
-    backgroundLighter: 'normal_back_secondary',
-    text: 'noraml_text',
-    primary: 'normal_primary',
-    secondary: 'normal_secondary'
-  };
   loading;
   isRegistration: boolean = true;
 
@@ -47,31 +40,13 @@ export class Registration implements OnInit{
     else
       this.navBar.setElementClass('persian', false);
 
-    this.conditionalColoring.background = (this.stylingService.nightMode) ? 'night_back' : 'normal_back';
-    this.conditionalColoring.backgroundLighter = (this.stylingService.nightMode) ? 'night_back_secondary' : 'normal_back_secondary';
-    this.conditionalColoring.text = (this.stylingService.nightMode) ? 'night_text' : 'normal_text';
-    this.conditionalColoring.primary = (this.stylingService.nightMode) ? 'night_primary' : 'normal_primary';
-    this.conditionalColoring.secondary = (this.stylingService.nightMode) ? 'night_secondary' : 'normal_secondary';
-
     this.stylingService.nightMode$.subscribe(
       (data) => {
         if(data) {
-          this.conditionalColoring.background = 'night_back';
-          this.conditionalColoring.backgroundLighter = 'night_back_secondary';
-          this.conditionalColoring.text = 'night_text';
-          this.conditionalColoring.primary = 'night_primary';
-          this.conditionalColoring.secondary = 'night_secondary';
-
           this.navBar.setElementClass('night_mode', true);
           this.navBar.setElementClass('day_mode', false);
         }
         else{
-          this.conditionalColoring.background = 'normal_back';
-          this.conditionalColoring.backgroundLighter = 'normal_back_secondary';
-          this.conditionalColoring.text = 'normal_text';
-          this.conditionalColoring.primary = 'normal_primary';
-          this.conditionalColoring.secondary = 'normal_secondary';
-
           this.navBar.setElementClass('night_mode', false);
           this.navBar.setElementClass('day_mode', true);
         }

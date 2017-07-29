@@ -44,13 +44,6 @@ export class CreateKhatmPage implements OnInit{
   duration;
   lastFocus: string = 'start';
   rest_days: number = null;
-  conditionalColoring: any = {
-    background: 'normal_back',
-    backgroundLighter: 'normal_back_secondary',
-    text: 'noraml_text',
-    primary: 'normal_primary',
-    secondary: 'normal_secondary'
-  };
   isChangingCommitments: boolean =  false;
   isMember: boolean = false;
   isCommit: boolean = false;
@@ -183,22 +176,10 @@ export class CreateKhatmPage implements OnInit{
     this.stylingService.nightMode$.subscribe(
       (data) => {
         if(data) {
-          this.conditionalColoring.background = 'night_back';
-          this.conditionalColoring.backgroundLighter = 'night_back_secondary';
-          this.conditionalColoring.text = 'night_text';
-          this.conditionalColoring.primary = 'night_primary';
-          this.conditionalColoring.secondary = 'night_secondary';
-
           this.navBar.setElementClass('night_mode', true);
           this.navBar.setElementClass('day_mode', false);
         }
         else{
-          this.conditionalColoring.background = 'normal_back';
-          this.conditionalColoring.backgroundLighter = 'normal_back_secondary';
-          this.conditionalColoring.text = 'normal_text';
-          this.conditionalColoring.primary = 'normal_primary';
-          this.conditionalColoring.secondary = 'normal_secondary';
-
           this.navBar.setElementClass('night_mode', false);
           this.navBar.setElementClass('day_mode', true);
         }

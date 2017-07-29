@@ -16,12 +16,6 @@ const fonts = ['quran', 'quran-uthmanic', 'quran-uthmanic-bold', 'qalam', 'me-qu
   templateUrl: 'left-menu.html'
 })
 export class LeftMenuComponent {
-  conditionalColoring: any = {
-    background: 'normal_back',
-    text: 'noraml_text',
-    primary: 'normal_primary',
-    secondary: 'normal_secondary'
-  };
   sampleChangingFont: any = {"sura":78,"aya":1,"text":"عَمَّ يَتَسَآءَلُونَ"};
   fontFamily = 'quran';
   zoom = 100;
@@ -52,23 +46,6 @@ export class LeftMenuComponent {
   constructor(private stylingService:StylingService,
               private menuCtrl:MenuController,
               private ls:LanguageService, private actionSheetController: ActionSheetController) {
-    this.stylingService.nightMode$.subscribe(
-      (data) => {
-        if(data) {
-          this.conditionalColoring.background = 'night_back';
-          this.conditionalColoring.text = 'night_text';
-          this.conditionalColoring.primary = 'night_primary';
-          this.conditionalColoring.secondary = 'night_secondary';
-        }
-        else{
-          this.conditionalColoring.background = 'normal_back';
-          this.conditionalColoring.text = 'normal_text';
-          this.conditionalColoring.primary = 'normal_primary';
-          this.conditionalColoring.secondary = 'normal_secondary';
-        }
-      }
-    );
-
     this.stylingService.zoomChanged$
       .subscribe(
         (zoom) => {
