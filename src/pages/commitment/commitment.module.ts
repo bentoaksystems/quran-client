@@ -1,16 +1,17 @@
-import { NgModule } from '@angular/core';
-import { IonicPageModule } from 'ionic-angular';
-import { CommitmentPage } from './commitment';
+import {NgModule} from '@angular/core';
+import {CommitmentPage} from "./commitment";
+import {IonicPageModule} from "ionic-angular";
 
 @NgModule({
   declarations: [
-    // CommitmentPage,
+    CommitmentPage,
   ],
   imports: [
-    // IonicPageModule.forChild(CommitmentPage),
+    IonicPageModule.forChild(CommitmentPage),
   ],
   exports: [
-    // CommitmentPage
+    CommitmentPage
   ]
 })
-export class CommitmentPageModule {}
+export class CommitmentPageModule {
+}
