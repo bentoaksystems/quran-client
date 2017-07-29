@@ -17,7 +17,7 @@ import { HomePage } from '../pages/home/home';
 import {Text} from "../pages/text/text";
 import {Tasks} from "../pages/tasks/tasks";
 import {Safha} from "../components/safha/safha";
-import {Hashia} from "../components/hashia/hashia";
+import {Hashia, JuzList, SuraList} from "../components/hashia/hashia";
 import {Aya} from "../components/aya/aya";
 import {Alama} from "../components/alama/alama";
 import {Shomara} from "../components/shomara/shomara";
@@ -53,6 +53,8 @@ import {BookmarkService} from "../services/bookmark";
     LeftMenuComponent,
     RightMenuComponent,
     CommitmentPage,
+    SuraList,
+    JuzList,
   ],
   imports: [
     BrowserModule,
@@ -69,6 +71,8 @@ import {BookmarkService} from "../services/bookmark";
     Registration,
     CreateKhatmPage,
     CommitmentPage,
+    SuraList,
+    JuzList,
   ],
   providers: [
     StatusBar,

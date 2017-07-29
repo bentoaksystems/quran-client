@@ -1,7 +1,7 @@
 <div class="pageInfo" [ngStyle]="{'top': (platform.is('ios')?20:0)+ 'px'}">
   <table class="outer-table">
     <tr class="outer-row"
-        [ngStyle]="{'background':stylingService.nightMode?'black':'white','color':!stylingService.nightMode?'black':'white'}">
+        [ngStyle]="{'background':stylingService.nightMode?'#131313':'#fbfaf8','color':!stylingService.nightMode?'black':'white'}">
       <td class="tdBack">
         <ion-buttons start>
           <button ion-button [color]="!stylingService.nightMode?'light':'dark'" icon-only menuToggle="right">
@@ -23,7 +23,7 @@
   </table>
 </div>
 <ion-content class="overflowContainer"
-             [ngStyle]="{'width':width,'height':height-50+'px','top':(platform.is('ios')?70:50)+ 'px','background':stylingService.nightMode?'black':'white','border':this.khatmActive?'solid green 2px':null}"
+             [ngStyle]="{'width':width,'height':height-50+'px','top':(platform.is('ios')?70:50)+ 'px','background':stylingService.nightMode? '#131313':'#fbfaf8','border':this.khatmActive?'solid green 2px':null}"
              #scrollPage (ionScroll)="onScroll($event)">
   <span *ngFor='let page of selectedPages;let i=index'>
     <span *ngIf="shownPages[i]">

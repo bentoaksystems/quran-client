@@ -14,7 +14,7 @@ export class HttpService{
   //    'https://quran-together.herokuapp.com/api';
 
   // serverAddress: string = 'http://www.read.quran.parts/api';
-  serverAddress: string = 'http://192.168.15.6:3000/api';
+  serverAddress: string = 'http://192.168.15.7:3000/api';
   isDisconnected: boolean = false;
   user: any = null;
 

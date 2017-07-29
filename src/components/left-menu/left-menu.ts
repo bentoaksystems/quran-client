@@ -24,6 +24,7 @@ export class LeftMenuComponent {
   };
   sampleChangingFont: any = {"sura":78,"aya":1,"text":"عَمَّ يَتَسَآءَلُونَ"};
   fontFamily = 'quran';
+  zoom = 100;
   naskhIncompatible = false;
 
   langs = [
@@ -35,14 +36,14 @@ export class LeftMenuComponent {
       acronym: 'ar',
       name: 'العربية'
     },
-    {
-      acronym: 'ur',
-      name:'اُردُو'
-    },
-    {
-      acronym: 'id',
-      name: 'Malay'
-    },
+    // {
+    //   acronym: 'ur',
+    //   name:'اُردُو'
+    // },
+    // {
+    //   acronym: 'id',
+    //   name: 'Malay'
+    // },
     {
       acronym: 'fa',
       name: 'فارسی'
@@ -68,23 +69,10 @@ export class LeftMenuComponent {
       }
     );
 
-    this.stylingService.fontChanged$
+    this.stylingService.zoomChanged$
       .subscribe(
-        (f) => {
-          if (isNaN(f) && this.stylingService.fontFamily) {//on initial load
-            this.fontFamily = this.stylingService.fontFamily;
-          }
-          else if (fonts[f % fonts.length]) {
-            let tempFont;
-            do {
-              tempFont = fonts[f % fonts.length];
-              f++;
-            } while (tempFont && tempFont === this.fontFamily || (this.naskhIncompatible && this.isUthmanic(tempFont)));
-            if (tempFont !== this.fontFamily) {
-              this.fontFamily = tempFont;
-              this.stylingService.fontFamily = tempFont;
-            }
-          }
+        (zoom) => {
+          this.zoom = 100 * Math.pow(1.125, zoom);
         }
       );
   }
@@ -103,7 +91,6 @@ export class LeftMenuComponent {
 
   nightMode(){
     this.stylingService.nightModeSwitch();
-    this.menuCtrl.close();
   }
 
   changeLanguage(){
