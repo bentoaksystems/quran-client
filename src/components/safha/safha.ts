@@ -3,7 +3,7 @@ import {
   AfterViewChecked, NgZone
 } from '@angular/core';
 import {QuranService} from "../../services/quran.service";
-import {Platform, ToastController} from "ionic-angular";
+import {Platform} from "ionic-angular";
 import {Response} from "@angular/http";
 import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {StylingService} from "../../services/styling";
@@ -140,7 +140,6 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     this.stylingService.fontChanged$
       .subscribe(
         (f) => {
-          console.log(f);
           if (isNaN(f) && this.stylingService.fontFamily) {//on initial load
             this.fontFamily = this.stylingService.fontFamily;
           }
@@ -148,7 +147,6 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
             let tempFont;
             do {
               tempFont = fonts[f % fonts.length];
-              console.log(f, tempFont);
               f++;
             } while (tempFont && tempFont === this.fontFamily || (this.naskhIncompatible && this.isUthmanic(tempFont)));
             if (tempFont !== this.fontFamily) {
@@ -225,8 +223,8 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
 
     let suraNames = suras.map(e => e.name);
 
-    let suraName = suraNames.pop();
-    let suraOrder = suraOrders.pop();
+    let suraName = suraNames[1] ? suraNames[1]: suraNames[0];//suraNames.pop();
+    let suraOrder = suraOrders[1] ? suraOrders[1] : suraOrders[0];
     this.suraName = suraName;
     this.suraOrder = suraOrder;
   }

@@ -1,16 +1,17 @@
-import { NgModule } from '@angular/core';
-import { IonicPageModule } from 'ionic-angular';
-import { CreateKhatmPage } from './create-khatm';
+import {NgModule} from '@angular/core';
+import {CreateKhatmPage} from "./create-khatm";
+import {IonicPageModule} from "ionic-angular";
 
 @NgModule({
   declarations: [
-    // CreateKhatmPage,
+    CreateKhatmPage,
   ],
   imports: [
-    // IonicPageModule.forChild(CreateKhatmPage),
+    IonicPageModule.forChild(CreateKhatmPage),
   ],
   exports: [
-    // CreateKhatmPage
+    CreateKhatmPage
   ]
 })
-export class CreateKhatmPageModule {}
+export class CreateKhatmPageModule {
+}

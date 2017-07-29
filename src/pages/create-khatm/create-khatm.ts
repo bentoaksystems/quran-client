@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams, LoadingController, Navbar, AlertController, ViewController, App} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, LoadingController, Navbar, AlertController, App} from 'ionic-angular';
 import {SocialSharing} from '@ionic-native/social-sharing';
 import {Clipboard} from "@ionic-native/clipboard";
 import * as moment from 'moment-timezone';
@@ -12,7 +12,6 @@ import {CommitmentPage} from "../commitment/commitment";
 import {StylingService} from "../../services/styling";
 import {AuthService} from "../../services/auth.service";
 import {Registration} from "../registration/registration";
-import {error} from "util";
 
 @IonicPage()
 @Component({
@@ -46,6 +45,7 @@ export class CreateKhatmPage implements OnInit{
   rest_days: number = null;
   conditionalColoring: any = {
     background: 'normal_back',
+    backgroundLighter: 'normal_back_secondary',
     text: 'noraml_text',
     primary: 'normal_primary',
     secondary: 'normal_secondary'
@@ -66,6 +66,12 @@ export class CreateKhatmPage implements OnInit{
 
   ngOnInit(){
     this.navBar.setBackButtonText(this.ls.translate('Back'));
+
+    //Style back button
+    if(this.ls.direction() === 'rtl')
+      this.navBar.setElementClass('persian', true);
+    else
+      this.navBar.setElementClass('persian', false);
 
     let link = this.navParams.get('link');
 
@@ -143,7 +149,7 @@ export class CreateKhatmPage implements OnInit{
               if (stillNotLoggedIn && !this.authService.isLoggedIn.getValue()) {
                 stillNotLoggedIn = false;
                 this.alertCtrl.create({
-                  title: 'Not logged in yet',
+                  title: this.ls.translate('Not log in yet'),
                   message: this.ls.translate('You must be logged in to join to this khatm'),
                   buttons: [
                     {
@@ -164,7 +170,8 @@ export class CreateKhatmPage implements OnInit{
                         this.appCtrl.getRootNav().pop();
                       }
                     }
-                  ]
+                  ],
+                  cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' alert'
                 }).present();
               }
             }, 1000)
@@ -176,15 +183,23 @@ export class CreateKhatmPage implements OnInit{
       (data) => {
         if(data) {
           this.conditionalColoring.background = 'night_back';
+          this.conditionalColoring.backgroundLighter = 'night_back_secondary';
           this.conditionalColoring.text = 'night_text';
           this.conditionalColoring.primary = 'night_primary';
           this.conditionalColoring.secondary = 'night_secondary';
+
+          this.navBar.setElementClass('night_mode', true);
+          this.navBar.setElementClass('day_mode', false);
         }
         else{
           this.conditionalColoring.background = 'normal_back';
+          this.conditionalColoring.backgroundLighter = 'normal_back_secondary';
           this.conditionalColoring.text = 'normal_text';
           this.conditionalColoring.primary = 'normal_primary';
           this.conditionalColoring.secondary = 'normal_secondary';
+
+          this.navBar.setElementClass('night_mode', false);
+          this.navBar.setElementClass('day_mode', true);
         }
       }
     );
@@ -607,7 +622,8 @@ export class CreateKhatmPage implements OnInit{
                 this.changeCommitPages(this.commitPageInput.value);
               }
             }
-          ]
+          ],
+          cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' alert'
         }).present();
       }
       else{
@@ -626,7 +642,8 @@ export class CreateKhatmPage implements OnInit{
                 this.navCtrl.pop();
               }
             }
-          ]
+          ],
+          cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' alert'
         }).present();
       }
     }

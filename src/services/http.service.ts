@@ -1,13 +1,12 @@
 /**
  * Created by Ali on 5/21/2017.
  */
-import {Injectable, isDevMode} from "@angular/core";
+import {Injectable} from "@angular/core";
 import {Http, Response, Headers} from "@angular/http";
 import {Observable} from "rxjs";
 import {Network} from "@ionic-native/network";
 import {Storage} from "@ionic/storage";
 import * as moment from 'moment-timezone';
-import {AuthService} from "./auth.service";
 
 @Injectable()
 export class HttpService{
@@ -20,6 +19,9 @@ export class HttpService{
 
   constructor(private http: Http, private network: Network,
               private storage: Storage){
+    if(this.network.type === 'none')
+      this.isDisconnected = true;
+
     this.network.onDisconnect().subscribe(
         () => this.isDisconnected = true
     );
@@ -161,15 +163,25 @@ export class HttpService{
 
   commitPages(khatm_id, pages, isread): any{
     return new Promise((resolve, reject) => {
+      let returnValue = null;
+
       if(this.isDisconnected){
         if(isread){
           this.modifyCommitmentsStorage('diff_khatm', khatm_id, pages, 'add')
-            .then(res => resolve(res))
+            .then(res => {
+              returnValue = res;
+              return this.modifyKhatmsStorage(khatm_id, isread);
+            })
+            .then(res => resolve(returnValue))
             .catch(err => reject(err));
         }
         else{
           this.modifyCommitmentsStorage('diff_khatm', khatm_id, pages, 'delete')
-            .then(res => resolve(res))
+            .then(res => {
+              returnValue = res;
+              return this.modifyKhatmsStorage(khatm_id, isread);
+            })
+            .then(res => resolve(returnValue))
             .catch(err => reject(err));
         }
       }
@@ -180,12 +192,20 @@ export class HttpService{
           (data) => {
             if(isread){
               this.modifyCommitmentsStorage('khatm', khatm_id, pages, 'delete')
-                .then(res => resolve(res))
+                .then(res => {
+                  returnValue = res;
+                  return this.modifyKhatmsStorage(khatm_id, isread);
+                })
+                .then(res => resolve(returnValue))
                 .catch(err => reject(err));
             }
             else{
               this.modifyCommitmentsStorage('khatm', khatm_id, pages, 'add')
-                .then(res => resolve(res))
+                .then(res => {
+                  returnValue = res;
+                  return this.modifyKhatmsStorage(khatm_id, isread);
+                })
+                .then(res => resolve(returnValue))
                 .catch(err => reject(err));
             }
           },
@@ -233,6 +253,23 @@ export class HttpService{
     });
   }
 
+  modifyKhatmsStorage(khatm_id, isread){
+    return new Promise((resolve, reject) => {
+      this.storage.get('khatms')
+        .then(res => {
+          let khatm = res.find(el => el.khid === khatm_id);
+
+          khatm.you_read = (isread) ? parseInt(khatm.you_read) + 1 : parseInt(khatm.you_read) - 1;
+          khatm.you_unread = (isread) ? parseInt(khatm.you_unread) - 1 : parseInt(khatm.you_unread) + 1;
+          khatm.read_pages = (isread) ? parseInt(khatm.read_pages) + 1 : parseInt(khatm.read_pages) - 1;
+
+          return this.storage.set('khatms', res);
+        })
+        .then(res => resolve())
+        .catch(err => reject(err));
+    });
+  }
+
   sendDiff(): any{
     return new Promise((resolve, reject) => {
       this.storage.get('khatms')
@@ -253,18 +290,25 @@ export class HttpService{
             promiseList.push(Promise.resolve());
           else{
             let readPages = [];
-            let unreadPages = [];
 
             data.forEach(cel => {
-              readPages = readPages.concat(cel.filter(el => el.isread === true).map(el => el.cid));
-              unreadPages = unreadPages.concat(cel.filter(el => el.isread === false).map(el => el.cid));
+              readPages = readPages.concat(cel.map(el => el.cid));
             });
 
-            if(readPages.length > 0)
-              promiseList.push(this.postData('khatm/commitment/commit', {cids: readPages, isread: true}, true).toPromise());
+            promiseList.push(this.postData('khatm/commitment/commit', {cids: readPages, isread: true}, true).toPromise());
 
-            if(unreadPages.length > 0)
-              promiseList.push(this.postData('khatm/commitment/commit', {cids: unreadPages, isread: false}, true).toPromise());
+            // let unreadPages = [];
+            //
+            // data.forEach(cel => {
+            //   readPages = readPages.concat(cel.filter(el => el.isread === true).map(el => el.cid));
+            //   unreadPages = unreadPages.concat(cel.filter(el => el.isread === false).map(el => el.cid));
+            // });
+            //
+            // if(readPages.length > 0)
+            //   promiseList.push(this.postData('khatm/commitment/commit', {cids: readPages, isread: true}, true).toPromise());
+            //
+            // if(unreadPages.length > 0)
+            //   promiseList.push(this.postData('khatm/commitment/commit', {cids: unreadPages, isread: false}, true).toPromise());
           }
 
           return Promise.all(promiseList);

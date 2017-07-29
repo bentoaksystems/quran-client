@@ -1,7 +1,6 @@
-
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
-import {IonicApp, IonicErrorHandler, IonicModule, NavController} from 'ionic-angular';
+import {IonicApp, IonicErrorHandler, IonicModule} from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { Deeplinks } from '@ionic-native/deeplinks';
@@ -11,10 +10,9 @@ import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {Clipboard} from "@ionic-native/clipboard";
 import {SocialSharing} from "@ionic-native/social-sharing";
 import {Network} from "@ionic-native/network";
+import {Vibration} from "@ionic-native/vibration";
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-import {Text} from "../pages/text/text";
-import {Tasks} from "../pages/tasks/tasks";
 import {Safha} from "../components/safha/safha";
 import {Hashia} from "../components/hashia/hashia";
 import {Aya} from "../components/aya/aya";
@@ -39,8 +37,6 @@ import {BookmarkService} from "../services/bookmark";
   declarations: [
     MyApp,
     HomePage,
-    Text,
-    Tasks,
     Safha,
     Hashia,
     Aya,
@@ -63,8 +59,6 @@ import {BookmarkService} from "../services/bookmark";
   entryComponents: [
     MyApp,
     HomePage,
-    Text,
-    Tasks,
     Registration,
     CreateKhatmPage,
     CommitmentPage,
@@ -87,6 +81,7 @@ import {BookmarkService} from "../services/bookmark";
     SocialSharing,
     Clipboard,
     Network,
+    Vibration,
   ]
 })
 export class AppModule {

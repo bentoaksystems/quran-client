@@ -1,6 +1,6 @@
 <span [ngStyle]="{'direction': ls.direction()}">
   <ion-header>
-    <ion-navbar>
+    <ion-navbar [color]="conditionalColoring.backgroundLighter">
       <ion-title *ngIf="!isNew && khatm !== null">{{khatm.khatm_name}}</ion-title>
       <ion-title *ngIf="isNew && !isSubmitted">{{ls.translate('Khatm')}}</ion-title>
       <ion-title *ngIf="isNew && isSubmitted">{{name}}</ion-title>
@@ -9,7 +9,11 @@
   <ion-content padding [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' ">
     <div *ngIf="!isSubmitted && isNew">
       <ion-list>
-      <ion-item-divider color="light">General Specification</ion-item-divider>
+      <ion-item-divider [style.background-color]="stylingService.nightMode ? '#323232' : '#fcf7ef'">
+        <ion-label [color]="conditionalColoring.text">
+          {{ls.translate('General Specification')}}
+        </ion-label>
+      </ion-item-divider>
       <ion-item [color]="conditionalColoring.background">
         <ion-label fixed>{{ls.translate('Title')}}</ion-label>
         <ion-input type="text" [(ngModel)]="name" (ngModelChange)="checkDisability()"></ion-input>
@@ -20,7 +24,7 @@
       </ion-item>
       <ion-item [color]="conditionalColoring.background">
         <ion-label>{{ls.translate("Show owner's details to others")}}</ion-label>
-        <ion-checkbox [(ngModel)]="ownerShown"></ion-checkbox>
+        <ion-checkbox [(ngModel)]="ownerShown" [color]="conditionalColoring.primary"></ion-checkbox>
       </ion-item>
       <ion-item [color]="conditionalColoring.background">
         <ion-label>{{ls.translate('Range')}}</ion-label>
@@ -41,7 +45,11 @@
         <ion-input type="number" min="1" [(ngModel)]="repeats"
                    [ngClass]="[oppositeDirection()]"></ion-input>
       </ion-item>
-      <ion-item-divider color="light">Date Specification</ion-item-divider>
+      <ion-item-divider [style.background-color]="stylingService.nightMode ? '#323232' : '#fcf7ef'">
+        <ion-label [color]="conditionalColoring.text">
+          {{ls.translate('Date Specification')}}
+        </ion-label>
+      </ion-item-divider>
       <ion-item [color]="conditionalColoring.background">
         <ion-label>{{ls.translate('Start Date')}}</ion-label>
         <ion-datetime [min]="currentDate.getFullYear()"
@@ -72,32 +80,32 @@
     <div *ngIf="isSubmitted && isNew">
       <ion-list>
       <ion-item [color]="conditionalColoring.background">
-        <ion-label>{{ls.translate('Title')}}: </ion-label>
+        <ion-label>{{ls.translate('Title')}}</ion-label>
         <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{name}}</ion-label>
       </ion-item>
       <ion-item [color]="conditionalColoring.background">
-        <ion-label>{{ls.translate('Description')}}: </ion-label>
+        <ion-label>{{ls.translate('Description')}}</ion-label>
         <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{description}}</ion-label>
       </ion-item>
       <ion-item [color]="conditionalColoring.background">
-        <ion-label>{{ls.translate('Range')}}: </ion-label>
-        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{rangeDisplay}}</ion-label>
+        <ion-label>{{ls.translate('Range')}}</ion-label>
+        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{ls.translate(rangeDisplay)}}</ion-label>
       </ion-item>
       <ion-item *ngIf="range === 'sura'" [color]="conditionalColoring.background">
         <ion-label>{{ls.translate('Sura')}}: </ion-label>
         <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{quranService.getSura(suraNumber).name}}</ion-label>
       </ion-item>
       <ion-item [color]="conditionalColoring.background">
-        <ion-label>{{ls.translate('Repeat')}}: </ion-label>
-        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{repeats}}</ion-label>
+        <ion-label>{{ls.translate('Repeat')}}</ion-label>
+        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(repeats)}}</ion-label>
       </ion-item>
       <ion-item [color]="conditionalColoring.background">
-        <ion-label>{{ls.translate('Start Date')}}: </ion-label>
-        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{startDateDisplay}}</ion-label>
+        <ion-label>{{ls.translate('Start Date')}}</ion-label>
+        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(startDateDisplay)}}</ion-label>
       </ion-item>
       <ion-item [color]="conditionalColoring.background">
-        <ion-label>{{ls.translate('End Date')}} </ion-label>
-        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{endDateDisplay}}</ion-label>
+        <ion-label>{{ls.translate('End Date')}}</ion-label>
+        <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(endDateDisplay)}}</ion-label>
       </ion-item>
     </ion-list>
       <ion-grid>
@@ -115,7 +123,11 @@
     </div>
     <div *ngIf="!isNew && khatm !== null">
       <ion-list>
-        <ion-list-header>{{ls.translate('Khatm information')}}</ion-list-header>
+        <ion-list-header [style.background-color]="stylingService.nightMode ? '#323232' : '#fcf7ef'">
+          <ion-label [color]="conditionalColoring.text">
+            {{ls.translate('Khatm information')}}
+          </ion-label>
+        </ion-list-header>
         <ion-item [color]="conditionalColoring.background">
           <h2>{{ls.translate('Name')}}</h2>
           <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.khatm_name}}</p>
@@ -132,29 +144,29 @@
       </ion-item>
         <ion-item [color]="conditionalColoring.background">
         <h2>{{ls.translate('Read pages')}}</h2>
-        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.read_pages}}</p>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.read_pages)}}</p>
       </ion-item>
         <ion-item [color]="conditionalColoring.background">
         <h2>{{ls.translate('Participating numbers')}}</h2>
-        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.participatings}}</p>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.participatings)}}</p>
       </ion-item>
         <ion-item [color]="conditionalColoring.background">
         <h2>{{ls.translate('End Date')}}</h2>
-        <p [ngStyle]="{'text-align': oppositeDirection()}">{{endDateDisplay}}</p>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(endDateDisplay)}}</p>
       </ion-item>
         <ion-item [color]="conditionalColoring.background">
         <h2>{{ls.translate('Rest Days')}}</h2>
-        <p [ngStyle]="{'text-align': oppositeDirection()}">{{rest_days}}</p>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(rest_days)}}</p>
       </ion-item>
-        <ion-item *ngIf="khatm.you_read !== null && khatm.you_unread !== null"
+        <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
                   [color]="conditionalColoring.background">
         <h2>{{ls.translate('You Read')}}</h2>
-        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.you_read}}</p>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.you_read)}}</p>
       </ion-item>
-        <ion-item *ngIf="khatm.you_read !== null && khatm.you_unread !== null"
+        <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
                   [color]="conditionalColoring.background">
         <h2>{{ls.translate('Remain of your commitments')}}</h2>
-        <p [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.you_unread}}</p>
+        <p [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.you_unread)}}</p>
       </ion-item>
       </ion-list>
       <ion-grid>
@@ -175,7 +187,7 @@
           <ion-col col-5>
             <ion-input [color]="conditionalColoring.background"
                        [style.color]="stylingService.nightMode ? '#898f8d' : '#494949' "
-                       type="number" placeholder="Your Pages"
+                       type="number" placeholder="{{ls.translate('Your Pages')}}"
                        [ngModel]="khatm.you_unread"
                        [disabled]="khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid"
                        #commitPageInput
@@ -199,6 +211,7 @@
           <ion-col col-6>
             <button ion-button block
                     *ngIf="khatm.you_unread !== null && khatm.you_unread > 0"
+                    [color]="conditionalColoring.primary"
                     [disabled]="isChangingCommitments || (khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid)"
                     (click)="goToCommitment(false)">{{ls.translate('Commit Pages')}}</button>
           </ion-col>

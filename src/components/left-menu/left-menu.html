@@ -1,37 +1,49 @@
-
 <span [ngStyle]="{'direction':ls.direction()}">
-<ion-header>
-  <ion-toolbar>
-    <ion-title>
-      {{ls.translate('Settings')}}
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
+  <ion-header>
+    <ion-toolbar>
+      <ion-title [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' ">
+        <ion-label [color]="conditionalColoring.text" style="font-family: 'quran'; font-size: 1.3em !important;">
+          {{ls.translate('Settings')}}
+        </ion-label>
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
 
-  <ion-list>
-  <ion-item detail-none (click)="changeFont()">
-        <i class="fa fa-language" aria-hidden="true" item-left></i>
-        <ion-label>{{ls.translate('Change App Language')}}</ion-label>
-        <ion-select [(ngModel)]="ls.lang" interface="action-sheet" (ngModelChange)="changeLanguage()">
-          <ion-option *ngFor="let l of langs" [value]="l.acronym" [selected]="l.acronym===ls.lang">{{l.name}}</ion-option>
-        </ion-select>
+  <ion-content [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' " style="font-family: 'quran' !important; font-size: 1.3em !important;">
+    <ion-list>
+      <button ion-item detail-none (click)="changeLanguage()" [color]="conditionalColoring.background">
+        <ion-label [color]="conditionalColoring.text">Change App Language</ion-label>
+      </button>
+      <button ion-item detail-none (click)="nightMode()" [color]="conditionalColoring.background">
+        <ion-icon [name]="stylingService.nightMode ? 'sunny' : 'moon'" item-left [color]="conditionalColoring.text"></ion-icon>
+        <ion-label [color]="conditionalColoring.text">
+          {{stylingService.nightMode?ls.translate('Day Mode'):ls.translate('Night Mode')}}
+        </ion-label>
+      </button>
+      <button ion-item detail-none (click)="zoomIn()" [color]="conditionalColoring.background">
+        <ion-icon name="add-circle" item-left [color]="conditionalColoring.text"></ion-icon>
+        <ion-label [color]="conditionalColoring.text">
+          {{ls.translate('Zoom In')}}
+        </ion-label>
+      </button>
+      <button ion-item detail-none (click)="zoomOut()" [color]="conditionalColoring.background">
+        <ion-icon name="remove-circle" item-left [color]="conditionalColoring.text"></ion-icon>
+        <ion-label [color]="conditionalColoring.text">
+          {{ls.translate('Zoom Out')}}
+        </ion-label>
+      </button>
+      <button ion-item detail-none (click)="changeFont()" [color]="conditionalColoring.background">
+        <ion-icon name="information-circle" item-left [color]="conditionalColoring.text"></ion-icon>
+        <ion-label [color]="conditionalColoring.text">
+          {{ls.translate('Change Quran Font')}}
+        </ion-label>
+      </button>
+      <ion-item [color]="conditionalColoring.background">
+        <div [style.font-family]="fontFamily" style="text-align: center; font-size: 1.5em;">
+          <aya [fontFamily]="fontFamily" [margin]="2" [value]="sampleChangingFont"></aya>
+        </div>
       </ion-item>
-    <button ion-item detail-none (click)="nightMode()">
-      <ion-icon [name]="stylingService.nightMode ? 'sunny' : 'moon'" item-left></ion-icon>
-      {{stylingService.nightMode?ls.translate('Day Mode'):ls.translate('Night Mode')}}
-    </button>
-    <button ion-item detail-none (click)="zoomIn()">
-      <ion-icon name="add-circle" item-left></ion-icon>
-      {{ls.translate('Zoom In')}}
-    </button>
-    <button ion-item detail-none (click)="zoomOut()">
-      <ion-icon name="remove-circle" item-left></ion-icon>
-      {{ls.translate('Zoom Out')}}
-    </button>
-    <button ion-item detail-none (click)="changeFont()">
-      <i class="fa fa-pencil-square-o" aria-hidden="true" item-left></i>
-      {{ls.translate('Change Quran Font')}}
-    </button>
-  </ion-list>
+    </ion-list>
+  </ion-content>
 </span>
 
