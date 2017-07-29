@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
 import {StylingService} from "../../services/styling";
-import {Keyboard} from "ionic-angular";
+import {Keyboard, NavParams, PopoverController} from "ionic-angular";
 
 
 @Component({
