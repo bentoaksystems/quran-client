@@ -359,3 +359,20 @@ span{
 .night_mode .alert-button span{
   color: #b0b6b4;
 }
+
+.night_mode .popover-arrow::after{
+  background-color: #323232 !important;
+}
+
+.night_mode ion-icon{
+  float: left !important;
+}
+
+.night_mode .popover-content{
+  background-color: #323232 !important;
+}
+
+.day_mode .popover-content{
+  background-color: #fbfaf8 !important;
+}
+
