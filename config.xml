@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.ionicframework.quran968484" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="systems.bentoak.quran-together" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Quran Together</name>
     <description>Quran Together, for social reading of Quran</description>
     <author email="amin.azarbadegan@gmail.com" href="http://read.quran.parts/">Amin Azarbadegan</author>
@@ -82,7 +82,7 @@
     </platform>
     <engine name="android" spec="^6.2.3" />
     <engine name="ios" spec="^4.4.0" />
-    <plugin name="cordova-clipboard" spec="file:node_modules\cordova-clipboard" />
+    <plugin name="cordova-clipboard" spec="^1.0.0" />
     <plugin name="cordova-plugin-console" spec="^1.0.5" />
     <plugin name="cordova-plugin-crosswalk-webview" spec="^2.3.0">
         <variable name="XWALK_VERSION" value="23+" />

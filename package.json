@@ -32,7 +32,7 @@
         "@ionic-native/vibration": "^4.1.0",
         "@ionic/storage": "2.0.1",
         "cordova-android": "^6.2.3",
-        "cordova-clipboard": "file:node_modules\\cordova-clipboard",
+        "cordova-clipboard": "^1.0.0",
         "cordova-ios": "^4.4.0",
         "cordova-plugin-console": "^1.0.5",
         "cordova-plugin-crosswalk-webview": "^2.3.0",
@@ -112,7 +112,6 @@
                 "DEEPLINK_5_SCHEME": " ",
                 "DEEPLINK_5_HOST": " "
             },
-            "cordova-clipboard": {},
             "cordova-plugin-vibration": {},
             "cordova-plugin-crosswalk-webview": {
                 "XWALK_VERSION": "23+",
@@ -120,7 +119,8 @@
                 "XWALK_COMMANDLINE": "--disable-pull-to-refresh-effect",
                 "XWALK_MODE": "embedded",
                 "XWALK_MULTIPLEAPK": "true"
-            }
+            },
+            "cordova-clipboard": {}
         },
         "platforms": [
             "android",
