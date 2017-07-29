@@ -19,13 +19,6 @@ export class CommitmentPage implements OnInit{
   startRange: any = null;
   endRange: any = null;
   allCommitments: any = [];
-  conditionalColoring: any = {
-    background: 'normal_back',
-    backgroundLighter: 'normal_back_secondary',
-    text: 'noraml_text',
-    primary: 'normal_primary',
-    secondary: 'normal_secondary'
-  };
   anyPagesCommitted: boolean = false;
   allSelection: boolean = false;
   selectionCounter: number = 0;
@@ -47,22 +40,10 @@ export class CommitmentPage implements OnInit{
     this.stylingService.nightMode$.subscribe(
       (data) => {
         if(data) {
-          this.conditionalColoring.background = 'night_back';
-          this.conditionalColoring.backgroundLighter = 'night_back_secondary';
-          this.conditionalColoring.text = 'night_text';
-          this.conditionalColoring.primary = 'night_primary';
-          this.conditionalColoring.secondary = 'night_secondary';
-
           this.navBar.setElementClass('night_mode', true);
           this.navBar.setElementClass('day_mode', false);
         }
         else{
-          this.conditionalColoring.background = 'normal_back';
-          this.conditionalColoring.backgroundLighter = 'normal_back_secondary';
-          this.conditionalColoring.text = 'normal_text';
-          this.conditionalColoring.primary = 'normal_primary';
-          this.conditionalColoring.secondary = 'normal_secondary';
-
           this.navBar.setElementClass('night_mode', false);
           this.navBar.setElementClass('day_mode', true);
         }
@@ -115,7 +96,8 @@ export class CommitmentPage implements OnInit{
               text: this.ls.translate('No'),
               role: 'cancel'
             }
-          ]
+          ],
+          cssClass: (this.stylingService.nightMode) ? 'night_mode' : 'day_mode'
         }).present();
       else
         this.navCtrl.pop();

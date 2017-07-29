@@ -1,7 +1,7 @@
 <table class="info-table" [ngClass]="[stylingService.nightMode ? 'info-night':'info-day']">
   <tr class="info-row">
     <td class="info-column1 right-left-text">
-      <ion-item [color]="conditionalColoring.background" style="text-align:left" (click)="changeSura($event)">
+      <ion-item [color]="stylingService.conditionalColoring.background" style="text-align:left" (click)="changeSura($event)">
         <ion-label>{{suraorderAr}}. {{suraname}}</ion-label>
       </ion-item>
     </td>
@@ -15,8 +15,8 @@
       </ion-item>
     </td>
     <td class="info-column3 right-left-text">
-      <ion-item [color]="conditionalColoring.background" style="text-align: right" (click)="changeJuz($event)">
-        <ion-label [style.background-color]="conditionalColoring.background">جزء {{pageJuzNumberAr}}</ion-label>
+      <ion-item [color]="stylingService.conditionalColoring.background" style="text-align: right" (click)="changeJuz($event)">
+        <ion-label [style.background-color]="stylingService.conditionalColoring.background">جزء {{pageJuzNumberAr}}</ion-label>
       </ion-item>
     </td>
   </tr>

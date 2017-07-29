@@ -14,13 +14,6 @@ export class Hashia implements OnInit {
   private _so;
   private _pn;
   private pageNumberToggled = false;
-  conditionalColoring: any = {
-    background: 'normal_back',
-    backgroundLighter: 'normal_back_secondary',
-    text: 'noraml_text',
-    primary: 'normal_primary',
-    secondary: 'normal_secondary'
-  };
 
   @Input()
   set suraorder(so) {
@@ -76,25 +69,6 @@ export class Hashia implements OnInit {
           this.nightMode = m;
         }
       );
-
-    this.stylingService.nightMode$.subscribe(
-      (data) => {
-        if(data) {
-          this.conditionalColoring.background = 'night_back';
-          this.conditionalColoring.backgroundLighter = 'night_back_secondary';
-          this.conditionalColoring.text = 'night_text';
-          this.conditionalColoring.primary = 'night_primary';
-          this.conditionalColoring.secondary = 'night_secondary';
-        }
-        else{
-          this.conditionalColoring.background = 'normal_back';
-          this.conditionalColoring.backgroundLighter = 'normal_back_secondary';
-          this.conditionalColoring.text = 'normal_text';
-          this.conditionalColoring.primary = 'normal_primary';
-          this.conditionalColoring.secondary = 'normal_secondary';
-        }
-      }
-    );
   }
 
   changeSura(event) {
@@ -154,7 +128,7 @@ export class Hashia implements OnInit {
   template: `
     <ion-list>
       <button ion-item detail-none icon-start *ngFor="let sura of suras" (click)="changeSura(sura)"
-              [color]="conditionalColoring.backgroundLighter"
+              [color]="stylingService.conditionalColoring.backgroundLighter"
               style="font-family: 'quran'; font-size: 1.2em; text-align: right;">
         {{sura.numberAr}}. {{sura.name}}
         <ion-icon name="checkmark" *ngIf="selectedSura === sura.number"></ion-icon>
@@ -166,13 +140,6 @@ export class SuraList implements OnInit{
   suras;
   disabled;
   selectedSura = 1;
-  conditionalColoring: any = {
-    background: 'normal_back',
-    backgroundLighter: 'normal_back_secondary',
-    text: 'noraml_text',
-    primary: 'normal_primary',
-    secondary: 'normal_secondary'
-  };
 
   constructor(private quranService: QuranService, private params: NavParams,
               private stylingService: StylingService){}
@@ -181,25 +148,6 @@ export class SuraList implements OnInit{
     this.suras = this.params.get('suras');
     this.disabled = this.params.get('disabled');
     this.selectedSura = this.params.get('selectedSura');
-
-    this.stylingService.nightMode$.subscribe(
-      (data) => {
-        if(data) {
-          this.conditionalColoring.background = 'night_back';
-          this.conditionalColoring.backgroundLighter = 'night_back_secondary';
-          this.conditionalColoring.text = 'night_text';
-          this.conditionalColoring.primary = 'night_primary';
-          this.conditionalColoring.secondary = 'night_secondary';
-        }
-        else{
-          this.conditionalColoring.background = 'normal_back';
-          this.conditionalColoring.backgroundLighter = 'normal_back_secondary';
-          this.conditionalColoring.text = 'normal_text';
-          this.conditionalColoring.primary = 'normal_primary';
-          this.conditionalColoring.secondary = 'normal_secondary';
-        }
-      }
-    );
   }
 
   changeSura(sura){
@@ -213,7 +161,7 @@ export class SuraList implements OnInit{
   template: `
     <ion-list>
       <button ion-item detail-none icon-start *ngFor="let juz of juzes" (click)="changeJuz(juz)"
-              [color]="conditionalColoring.backgroundLighter"
+              [color]="stylingService.conditionalColoring.backgroundLighter"
               style="font-family: 'quran'; font-size: 1.2em; text-align: right;">
         جزء {{juz.numberAr}}
         <ion-icon name="checkmark" *ngIf="juz.number === selectedJuz"></ion-icon>
@@ -225,13 +173,6 @@ export class JuzList implements OnInit{
   juzes;
   disabled;
   selectedJuz = 1;
-  conditionalColoring: any = {
-    background: 'normal_back',
-    backgroundLighter: 'normal_back_secondary',
-    text: 'noraml_text',
-    primary: 'normal_primary',
-    secondary: 'normal_secondary'
-  };
 
   constructor(private quranService: QuranService, private params: NavParams,
               private stylingService: StylingService){}
@@ -240,25 +181,6 @@ export class JuzList implements OnInit{
     this.juzes = this.params.get('juzes');
     this.disabled = this.params.get('disabled');
     this.selectedJuz = this.params.get('selectedJuz');
-
-    this.stylingService.nightMode$.subscribe(
-      (data) => {
-        if(data) {
-          this.conditionalColoring.background = 'night_back';
-          this.conditionalColoring.backgroundLighter = 'night_back_secondary';
-          this.conditionalColoring.text = 'night_text';
-          this.conditionalColoring.primary = 'night_primary';
-          this.conditionalColoring.secondary = 'night_secondary';
-        }
-        else{
-          this.conditionalColoring.background = 'normal_back';
-          this.conditionalColoring.backgroundLighter = 'normal_back_secondary';
-          this.conditionalColoring.text = 'normal_text';
-          this.conditionalColoring.primary = 'normal_primary';
-          this.conditionalColoring.secondary = 'normal_secondary';
-        }
-      }
-    );
   }
 
   changeJuz(juz){

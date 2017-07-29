@@ -13,7 +13,11 @@ export class StylingService {
              this[key+'Stream'].next(key==='fontFamily'?NaN:val)
          })
          .catch(err=>console.log(err));
-    })
+    });
+
+    this.nightMode$.subscribe(
+      () => this.setColors()
+    )
   }
   curZoom = 0;
   nightMode= false;
@@ -26,6 +30,13 @@ export class StylingService {
   nightMode$ = this.nightModeStream.asObservable();
   fontChanged$ = this.fontFamilyStream.asObservable();
   fontFamily='quran';
+  conditionalColoring: any = {
+    background: 'normal_back',
+    backgroundLighter: 'normal_back_secondary',
+    text: 'noraml_text',
+    primary: 'normal_primary',
+    secondary: 'normal_secondary'
+  };
 
   zoomIn(){
     this.curZoom++;
@@ -55,5 +66,22 @@ export class StylingService {
     this.nightMode = !this.nightMode;
     this.nightModeStream.next(this.nightMode);
     this.storage.set('nightMode',this.nightMode);
+  }
+
+  setColors(){
+    if(this.nightMode) {
+      this.conditionalColoring.background = 'night_back';
+      this.conditionalColoring.backgroundLighter = 'night_back_secondary';
+      this.conditionalColoring.text = 'night_text';
+      this.conditionalColoring.primary = 'night_primary';
+      this.conditionalColoring.secondary = 'night_secondary';
+    }
+    else{
+      this.conditionalColoring.background = 'normal_back';
+      this.conditionalColoring.backgroundLighter = 'normal_back_secondary';
+      this.conditionalColoring.text = 'normal_text';
+      this.conditionalColoring.primary = 'normal_primary';
+      this.conditionalColoring.secondary = 'normal_secondary';
+    }
   }
 }
