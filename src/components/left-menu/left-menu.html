@@ -39,8 +39,8 @@
         </ion-label>
       </button>
       <ion-item [color]="conditionalColoring.background">
-        <div [style.font-family]="fontFamily" style="text-align: center; font-size: 1.5em;">
-          <aya [fontFamily]="fontFamily" [margin]="2" [value]="sampleChangingFont"></aya>
+        <div [ngStyle]="{'font-size': zoom + '%', 'text-align': 'center', 'font-family': stylingService.fontFamily}">
+          <aya [fontFamily]="stylingService.fontFamily" [margin]="2" [value]="sampleChangingFont"></aya>
         </div>
       </ion-item>
     </ion-list>

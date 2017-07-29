@@ -12,7 +12,6 @@ import * as moment from 'moment-timezone';
 export class HttpService{
   // serverAddress: string = isDevMode()?'http://192.168.1.10:3000/api':
   //    'https://quran-together.herokuapp.com/api';
-
   serverAddress: string = 'http://read.quran.parts/api';
   isDisconnected: boolean = false;
   user: any = null;

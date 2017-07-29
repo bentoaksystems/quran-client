@@ -1,11 +1,8 @@
 <table class="info-table" [ngClass]="[stylingService.nightMode ? 'info-night':'info-day']">
   <tr class="info-row">
     <td class="info-column1 right-left-text">
-      <ion-item [ngStyle]="{'background': stylingService.nightMode ? 'black':'white'}">
-        <ion-label [ngStyle]="{'color': stylingService.nightMode ? 'white':'black'}" style="text-align:left">{{suraorderAr}}. {{suraname}}</ion-label>
-        <ion-select [disabled]="disabled" [(ngModel)]="selectedSura" interface="popover" (ngModelChange)="changeSura()">
-          <ion-option *ngFor="let sura of suras" [value]="sura.number" [selected]="sura.number===suraorder">{{sura.numberAr}}. {{sura.name}}</ion-option>
-        </ion-select>
+      <ion-item [color]="conditionalColoring.background" style="text-align:left" (click)="changeSura($event)">
+        <ion-label>{{suraorderAr}}. {{suraname}}</ion-label>
       </ion-item>
     </td>
     <td class="info-column2">
@@ -18,11 +15,8 @@
       </ion-item>
     </td>
     <td class="info-column3 right-left-text">
-      <ion-item [ngStyle]="{'background': stylingService.nightMode ? 'black':'white'}">
-        <ion-label [ngStyle]="{'color': stylingService.nightMode ? 'white':'black'}">جزء {{pageJuzNumberAr}}</ion-label>
-        <ion-select [disabled]="disabled" [(ngModel)]="selectedJuz" interface="popover" (ngModelChange)="changeJuz()">
-          <ion-option *ngFor="let juz of juzes" [value]="juz.number" [selected]="juz.number===pageJuzNumber">جزء {{juz.numberAr}}</ion-option>
-        </ion-select>
+      <ion-item [color]="conditionalColoring.background" style="text-align: right" (click)="changeJuz($event)">
+        <ion-label [style.background-color]="conditionalColoring.background">جزء {{pageJuzNumberAr}}</ion-label>
       </ion-item>
     </td>
   </tr>
