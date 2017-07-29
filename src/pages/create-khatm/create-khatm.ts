@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams, LoadingController, Navbar, AlertController, ViewController, App} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, LoadingController, Navbar, AlertController, App} from 'ionic-angular';
 import {SocialSharing} from '@ionic-native/social-sharing';
 import {Clipboard} from "@ionic-native/clipboard";
 import * as moment from 'moment-timezone';
@@ -12,7 +12,6 @@ import {CommitmentPage} from "../commitment/commitment";
 import {StylingService} from "../../services/styling";
 import {AuthService} from "../../services/auth.service";
 import {Registration} from "../registration/registration";
-import {error} from "util";
 
 @IonicPage()
 @Component({

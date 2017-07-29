@@ -1,8 +1,8 @@
-import {Component, Input, OnInit, ViewChild, AfterViewChecked} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
 import {StylingService} from "../../services/styling";
-import {Keyboard, NavParams, PopoverController} from "ionic-angular";
-import {getTsFilePaths} from "@ionic/app-scripts/dist/upgrade-scripts/add-default-ngmodules";
+import {Keyboard} from "ionic-angular";
+
 
 @Component({
   selector: 'hashia',
