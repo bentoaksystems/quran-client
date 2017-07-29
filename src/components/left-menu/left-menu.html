@@ -2,16 +2,17 @@
   <ion-header>
     <ion-toolbar>
       <ion-title [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' ">
-        <ion-label [color]="conditionalColoring.text" style="font-family: 'quran'; font-size: 1.3em !important;">
+        <ion-label [color]="conditionalColoring.text">
           {{ls.translate('Settings')}}
         </ion-label>
       </ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <ion-content [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' " style="font-family: 'quran' !important; font-size: 1.3em !important;">
+  <ion-content [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' ">
     <ion-list>
       <button ion-item detail-none (click)="changeLanguage()" [color]="conditionalColoring.background">
+        <i class="fa fa-language" aria-hidden="true" item-left></i>
         <ion-label [color]="conditionalColoring.text">Change App Language</ion-label>
       </button>
       <button ion-item detail-none (click)="nightMode()" [color]="conditionalColoring.background">
@@ -39,7 +40,7 @@
         </ion-label>
       </button>
       <ion-item [color]="conditionalColoring.background">
-        <div [style.font-family]="fontFamily" style="text-align: center; font-size: 1.5em;">
+        <div [style.font-family]="fontFamily" style="text-align: center; font-size: 2em;direction:rtl">
           <aya [fontFamily]="fontFamily" [margin]="2" [value]="sampleChangingFont"></aya>
         </div>
       </ion-item>
