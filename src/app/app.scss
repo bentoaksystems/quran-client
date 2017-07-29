@@ -245,3 +245,117 @@ ion-select{
   margin-right:0px !important;
   align-self: flex-start;
 }
+
+.action-sheet .action-sheet-button:last-child{
+  font-family: 'quran' !important;
+  font-size: 1.3em !important;
+}
+
+.action-sheet .action-sheet-button{
+  font-family: 'quran' !important;
+  font-size: 1.3em !important;
+}
+
+.night_mode .action-sheet-button:last-child{
+  background-color: #474747 !important;
+  color: #b0b6b4;
+}
+
+.night_mode .action-sheet-button{
+  background-color: #474747 !important;
+  color: #b0b6b4;
+}
+
+.night_mode .action-sheet-title{
+  background-color: #323232 !important;
+  color: #b0b6b4;
+}
+
+.day_mode .action-sheet-button:last-child{
+  background-color: #fbfaf8 !important;
+  color: blue;
+}
+
+.day_mode .action-sheet-button{
+  background-color: #fbfaf8 !important;
+  color: blue;
+}
+
+.persian .back-button-icon{
+  -moz-transform: scale(-1, -1) !important;
+  -o-transform: scale(-1, -1) !important;
+  -webkit-transform: scale(-1, -1) !important;
+  transform: scale(-1, -1) !important;
+  margin: 5px !important;
+}
+
+.night_mode .back-button-icon{
+  color: #95506f !important;
+}
+
+.day_mode .back-button-icon{
+  color: #7ec5a5 !important;
+}
+
+.night_mode .back-button-text{
+  color: #95506f !important;
+}
+
+.day_mode .back-button-text{
+  color: #7ec5a5 !important;
+}
+
+.night_mode .toolbar-title{
+  color: #95506f !important;
+}
+
+.night_mode .toolbar{
+  background-color: #323232 !important;
+}
+
+span{
+  font-family: 'quran' !important;
+}
+
+.waiting{
+  font-family: 'quran';
+  font-size: 1.2em;
+}
+
+.night_mode .loading-wrapper{
+  background-color: #323232 !important;
+  color: #b0b6b4;
+}
+
+.alert-title{
+  font-family: 'quran';
+  font-size: 1.4em;
+}
+
+.alert-message{
+  font-family: 'quran';
+  font-size: 1.3em;
+}
+
+.day_mode .loading-wrapper{
+  background-color: #fbfaf8 !important;
+  color: black;
+}
+
+.night_mode .alert-head{
+  background-color: #323232 !important;
+  color: #b0b6b4;
+}
+
+.night_mode .alert-message{
+  background-color: #323232 !important;
+  color: #b0b6b4;
+}
+
+.night_mode .alert-button{
+  background-color: #323232 !important;
+}
+
+.night_mode .alert-button span{
+  color: #b0b6b4;
+}

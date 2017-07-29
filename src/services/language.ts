@@ -96,10 +96,6 @@ const translations = {
     fa: 'ختم های من',
     ar: 'بلدي ختم القرآن',
   },
-  'general specification': {
-    fa: 'اطلاعات عمومی',
-    ar: 'معلومات عامة',
-  },
   'title': {
     fa: 'عنوان',
     ar: 'لقب',
@@ -116,17 +112,13 @@ const translations = {
     fa: 'محدوده',
     ar: 'نطاق',
   },
-  'whole Quran': {
+  'whole quran': {
     fa: 'تمام قرآن',
     ar: 'ختم القرآن كله',
   },
   'repeat': {
     fa: 'تکرار',
     ar: 'کرر',
-  },
-  'date specification': {
-    fa: 'مشخصات زمانی',
-    ar: 'تاريخ المواصفات',
   },
   'start date': {
     fa: 'تاریخ شروع',
@@ -300,9 +292,81 @@ const translations = {
     fa: "ورود",
     ar: "تسجيل الدخول",
   },
-  "you must logged in to join to this khatm": {
+  "not log in yet": {
+    fa: 'هنوز وارد نشدید',
+    ar: 'عدم تسجيل الدخول حتى الآن',
+  },
+  "you must be logged in to join to this khatm": {
     fa: "برای دیدن اطلاعات ختم باید وارد شوید",
     ar: "يجب تسجيل الدخول للانضمام إلى هذا القرآن",
+  },
+  'all': {
+    fa: 'همه',
+    ar: 'الكل',
+  },
+  'commitment pages': {
+    fa: "تعهد صفحات",
+    ar: "صفحات الالتزام",
+  },
+  "commit pages confirmation": {
+    fa: "تأیید تعهد صفحات",
+    ar: "الالتزام بتأكيد الصفحات",
+  },
+  "all changes will be irreversible after you exit. do you sure to exit?": {
+    fa: 'تمام تغییرات پس از خارج شدن بدون بازگشت هستند. آیا برای خارج شدن مطئمن هستید؟',
+    ar: 'كل التغييرات ستكون لا رجعة فيها بعد الخروج. هل أنت متأكد من الخروج؟',
+  },
+  'yes': {
+    fa: 'بله',
+    ar: 'نعم فعلا',
+  },
+  'no': {
+    fa: 'خیر',
+    ar: 'لا',
+  },
+  'cancel': {
+    fa: 'انصراف',
+    ar: 'إلغاء',
+  },
+  "your pages": {
+    fa: "صفحات شما",
+    ar: "صفحاتك",
+  },
+  "general specification": {
+    fa: "مشخصات کلی",
+    ar: "مواصفات عامة",
+  },
+  "date specification": {
+    fa: "مشخصات تاریخ",
+    ar: "مواصفات التاريخ",
+  },
+  "edit": {
+    fa: "ویرایش",
+    ar: "تصحيح",
+  },
+  "please wait until we send you verification code...": {
+    fa: 'لطفاً صبر کنید تا کد تأیید را برایتان ارسال کنیم ...',
+    ar: 'الرجاء الانتظار حتى نرسل لك رمز التحقق ...',
+  },
+  "you cannot join to this khatm unless commit some pages. do you want to join this khatm?": {
+    fa: 'شما تا زمانی که صفحه ای متعهد نشوید نمیتوانید عضو ختم شوید. آیا میخواهید عضو ختم شوید؟',
+    ar: 'لا يمكنك الانضمام إلى هذا القرآن إلا إذا ارتكبت بعض الصفحات. هل تريد الانضمام إلى هذا القرآن؟',
+  },
+  "do you want to save your changes on commit pages?": {
+    fa: 'آیا میخواهید تغییرات تعهد صفحات اعمال شود؟',
+    ar: 'هل تريد حفظ التغييرات في صفحات الالتزام؟',
+  },
+  "confirm commit pages": {
+    fa: 'تأیید تعهد صفحات',
+    ar: 'تأیید تعهد صفحات',
+  },
+  "interested to join": {
+    fa: 'مایل به عضویت هستم',
+    ar: 'مهتم للانضمام',
+  },
+  "uninterested to join": {
+    fa: 'مایل به عضویت نیستم',
+    ar: 'غير مهتم للانضمام',
   },
 };
 
@@ -360,5 +424,21 @@ export class LanguageService {
     }
 
     return moment(date).format('YYYY-MMM-DD');
+  }
+
+  convertDigits(number) {
+    if(this.lang === 'en')
+      return number;
+
+    let persianNumber = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
+
+    let tempNumber = number.toString().split('');
+
+    for(let i = 0; i < tempNumber.length; i++){
+      if(tempNumber[i].charCodeAt(0) >= 48 && tempNumber[i].charCodeAt(0) <= 57)
+        tempNumber[i] = persianNumber[parseInt(tempNumber[i])];
+    }
+
+    return tempNumber.join('');
   }
 }

@@ -1,17 +1,18 @@
 <span [ngStyle]="{'direction': ls.direction()}">
   <ion-header>
-    <ion-navbar>
-      <ion-title>{{ls.translate('commitment')}}</ion-title>
+    <ion-navbar [color]="conditionalColoring.backgroundLighter">
+      <ion-title>{{ls.translate('Commitment Pages')}}</ion-title>
     </ion-navbar>
   </ion-header>
 
-  <ion-content padding>
+  <ion-content padding [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' ">
     <div *ngIf="!isSelect" style="margin-bottom: 50px;">
       <ion-grid>
         <ion-row *ngIf="rowPages.length > 0">
           <ion-col col-12>
-            <ion-label>{{ls.translate('All')}} - ({{selectionCounter}})</ion-label>
-            <ion-checkbox [(ngModel)]="allSelection" (click)="allSelectionChange()"></ion-checkbox>
+            <ion-label *ngIf="ls.direction() === 'ltr'" [color]="conditionalColoring.text">{{ls.translate('All')}} - ({{ls.convertDigits(selectionCounter)}})</ion-label>
+            <ion-label *ngIf="ls.direction() === 'rtl'" [color]="conditionalColoring.text">({{ls.convertDigits(selectionCounter)}}) - {{ls.translate('All')}}</ion-label>
+            <ion-checkbox [(ngModel)]="allSelection" (click)="allSelectionChange()" [color]="conditionalColoring.secondary"></ion-checkbox>
           </ion-col>
         </ion-row>
         <ion-row *ngFor="let rp of rowPages">
@@ -19,11 +20,11 @@
             <button ion-button block
                     *ngIf="p.isread"
                     [style.background-color]="stylingService.nightMode ? '#7b87ad' : '#c5bfb1' "
-                    (click)="commit(p)" (press)="selectRange(p)">{{p.page_number}}</button>
+                    (click)="commit(p)" (press)="selectRange(p)">{{ls.convertDigits(p.page_number)}}</button>
             <button ion-button block
                     *ngIf="!p.isread"
                     [style.background-color]="stylingService.nightMode ? '#95506f' : '#7ec5a5' "
-                    (click)="commit(p)" (press)="selectRange(p)">{{p.page_number}}</button>
+                    (click)="commit(p)" (press)="selectRange(p)">{{ls.convertDigits(p.page_number)}}</button>
           </ion-col>
         </ion-row>
       </ion-grid>

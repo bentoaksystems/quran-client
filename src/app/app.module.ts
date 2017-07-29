@@ -1,4 +1,3 @@
-
 import { BrowserModule } from '@angular/platform-browser';
 import { ErrorHandler, NgModule } from '@angular/core';
 import {IonicApp, IonicErrorHandler, IonicModule, NavController} from 'ionic-angular';
@@ -11,6 +10,8 @@ import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {Clipboard} from "@ionic-native/clipboard";
 import {SocialSharing} from "@ionic-native/social-sharing";
 import {Network} from "@ionic-native/network";
+import {Vibration} from "@ionic-native/vibration";
+
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import {Text} from "../pages/text/text";
@@ -87,6 +88,7 @@ import {BookmarkService} from "../services/bookmark";
     SocialSharing,
     Clipboard,
     Network,
+    Vibration,
   ]
 })
 export class AppModule {

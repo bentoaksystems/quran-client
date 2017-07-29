@@ -15,12 +15,14 @@ import {KhatmService} from "../../services/khatm.service";
 })
 export class Registration implements OnInit{
   @ViewChild(Navbar) navBar: Navbar;
+  @ViewChild('code') code: any;
   email: string = '';
   reEmail: string = '';
   name: string = '';
   showVerify: boolean = false;
   conditionalColoring: any = {
     background: 'normal_back',
+    backgroundLighter: 'normal_back_secondary',
     text: 'noraml_text',
     primary: 'normal_primary',
     secondary: 'normal_secondary'
@@ -39,7 +41,14 @@ export class Registration implements OnInit{
     this.isRegistration = this.navParams['data'].fromButton === 'register';
     this.navBar.setBackButtonText(this.ls.translate('Back'));
 
+    //Style back button
+    if(this.ls.direction() === 'rtl')
+      this.navBar.setElementClass('persian', true);
+    else
+      this.navBar.setElementClass('persian', false);
+
     this.conditionalColoring.background = (this.stylingService.nightMode) ? 'night_back' : 'normal_back';
+    this.conditionalColoring.backgroundLighter = (this.stylingService.nightMode) ? 'night_back_secondary' : 'normal_back_secondary';
     this.conditionalColoring.text = (this.stylingService.nightMode) ? 'night_text' : 'normal_text';
     this.conditionalColoring.primary = (this.stylingService.nightMode) ? 'night_primary' : 'normal_primary';
     this.conditionalColoring.secondary = (this.stylingService.nightMode) ? 'night_secondary' : 'normal_secondary';
@@ -48,15 +57,23 @@ export class Registration implements OnInit{
       (data) => {
         if(data) {
           this.conditionalColoring.background = 'night_back';
+          this.conditionalColoring.backgroundLighter = 'night_back_secondary';
           this.conditionalColoring.text = 'night_text';
           this.conditionalColoring.primary = 'night_primary';
           this.conditionalColoring.secondary = 'night_secondary';
+
+          this.navBar.setElementClass('night_mode', true);
+          this.navBar.setElementClass('day_mode', false);
         }
         else{
           this.conditionalColoring.background = 'normal_back';
+          this.conditionalColoring.backgroundLighter = 'normal_back_secondary';
           this.conditionalColoring.text = 'normal_text';
           this.conditionalColoring.primary = 'normal_primary';
           this.conditionalColoring.secondary = 'normal_secondary';
+
+          this.navBar.setElementClass('night_mode', false);
+          this.navBar.setElementClass('day_mode', true);
         }
       }
     );
@@ -150,7 +167,6 @@ export class Registration implements OnInit{
       return false;
 
     for(let i=0; i<code.length; i++){
-      console.log(code.charCodeAt(i));
       if(code.charCodeAt(i) < 48 || code.charCodeAt(i) > 57)
         return false;
     }
@@ -160,7 +176,8 @@ export class Registration implements OnInit{
 
   setLoading(){
     this.loading = this.loadingCtrl.create({
-      content: (this.isRegistration) ? 'Please wait until we send you verification code...' : 'Please wait...'
+      content: this.ls.translate('Please wait until we send you verification code...'),
+      cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
     });
 
     this.loading.present();

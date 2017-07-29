@@ -1,6 +1,6 @@
 <span [ngStyle]="{'direction': ls.direction()}">
 <ion-header>
-  <ion-navbar>
+  <ion-navbar [color]="conditionalColoring.backgroundLighter">
     <ion-title *ngIf="isRegistration">{{ls.translate('Registration')}}</ion-title>
     <ion-title *ngIf="!isRegistration">{{ls.translate('Sign In')}}</ion-title>
   </ion-navbar>
