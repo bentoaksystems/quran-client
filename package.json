@@ -1,8 +1,8 @@
 {
-    "name": "ionic-hello-world",
-    "version": "0.0.0",
-    "author": "Ionic Framework",
-    "homepage": "http://ionicframework.com/",
+    "name": "quran-together",
+    "version": "0.0.1",
+    "author": "Bent Oak Systems",
+    "homepage": "http://read.quran.parts",
     "private": true,
     "scripts": {
         "clean": "ionic-app-scripts clean",
@@ -82,7 +82,7 @@
             "locator": "ios"
         }
     ],
-    "description": "quran: An Ionic project",
+    "description": "Quran Together",
     "cordova": {
         "plugins": {
             "cordova-plugin-screen-orientation": {},
@@ -96,8 +96,8 @@
             "cordova-plugin-network-information": {},
             "ionic-plugin-deeplinks": {
                 "URL_SCHEME": "quranapp",
-                "DEEPLINK_SCHEME": "https",
-                "DEEPLINK_HOST": "192.168.1.10",
+                "DEEPLINK_SCHEME": "http",
+                "DEEPLINK_HOST": "read.quran.parts",
                 "ANDROID_PATH_PREFIX": "/",
                 "ANDROID_2_PATH_PREFIX": "/",
                 "ANDROID_3_PATH_PREFIX": "/",
