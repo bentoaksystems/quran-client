@@ -9,6 +9,7 @@ import {ScreenOrientation} from "@ionic-native/screen-orientation";
 import {StylingService} from "../../services/styling";
 import {Gesture} from 'ionic-angular';
 import {Observable} from "rxjs/Observable";
+import {BookmarkService} from "../../services/bookmark";
 
 const fonts = ['quran', 'quran-uthmanic', 'quran-uthmanic-bold', 'qalam', 'me-quran'];
 
@@ -64,6 +65,9 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       if (ind !== -1) {
         this._pageIndex = ind;
         this.specifyPage([0, 1]);
+        this.scrollToSuraTop(this.quranService.suraNumber);
+        this.bookmarkService.setPageNumber(p);
+        this.bookmarkService.setScrollLocation(0);
       }
     }
   }
@@ -73,11 +77,15 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     if (pages === null || !pages.length) {
       this._pages = [];
       for (let i = 1; i < 605; i++)this._pages.push(i);
+      if (this.khatmActive) {
+
+      }
       this.khatmActive = false;
     }
     else {
       this._pages = pages;
       this.khatmActive = true;
+      this.scrollPage.scrollTo(0, 0, 0);
     }
     this.getQuran();
   }
@@ -89,7 +97,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   @Output() pageIsRead = new EventEmitter<number>();
   private gesture: Gesture;
 
-  constructor(public zone: NgZone, private quranService: QuranService, private stylingService: StylingService, private platform: Platform, private screenOrientation: ScreenOrientation) {
+  constructor(public zone: NgZone, private quranService: QuranService, private stylingService: StylingService, private platform: Platform, private screenOrientation: ScreenOrientation, private bookmarkService: BookmarkService) {
     if (!this._pages.length)
       this.selectedPages = [];
 
@@ -154,6 +162,13 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
         this.quranPage = p;
       });
 
+    this.bookmarkService.pageNumber$.subscribe(p => {
+      this.quranPage = p;
+    });
+
+    this.bookmarkService.scrollLocation$.subscribe(s => {
+      this.scrollPage.scrollTo(0, s, 0);
+    });
   }
 
   private getQuran() {
@@ -181,6 +196,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     range.forEach(p => {
         if (!this.shownPages[p]) {
           this.shownPages[p] = true;
+          this.scrollLock = true;
         }
       }
     );
@@ -226,14 +242,17 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     this.borders.changes.subscribe(() => {
       this.layerElements = this.borders._results.map(r => r.nativeElement);
       this.scrollLock = false;
+
       //enabling pinch, only for ios devices
       if (this.platform.is('ios')) {
-        let activeLayer = this.layerElements.filter(e => e.id == this.quranPage)[0];
-        if (activeLayer) {
-          this.gesture = new Gesture(activeLayer);
-          this.gesture.listen();
-          this.pinchObservable = Observable.fromEventPattern(handler => this.gesture.on('pinch', handler)).throttleTime(500);
-          this.pinchObservable.subscribe(e => this.pinch(e));
+        let activeLayer = this.layerElements.filter(e => +e.id === this._pageIndex)[0];
+        if (activeLayer !== undefined) {
+          if (activeLayer) {
+            this.gesture = new Gesture(activeLayer);
+            this.gesture.listen();
+            this.pinchObservable = Observable.fromEventPattern(handler => this.gesture.on('pinch', handler)).throttleTime(500);
+            this.pinchObservable.subscribe(e => this.pinch(e));
+          }
         }
       }
     });
@@ -265,12 +284,32 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
         return sumLayerHeights > e.scrollTop;
       });
 
+      if (!this.khatmActive) {
+        this.bookmarkService.setScrollLocation(e.scrollTop - (sumLayerHeights - this.layerHeights[i] + 25));
+      }
+
       if (found && i && +i !== this._pageIndex)
         this.zone.run(() => {
           this.pageIsRead.emit(this._pageIndex);
           this._pageIndex = +i;
+          if (!this.khatmActive) {
+            this.bookmarkService.setPageNumber(this.quranPage);
+          }
           this.specifyPage();
         });
     }
+  }
+
+  private scrollToSuraTop(suraNumber: number) {
+    if(suraNumber) {
+      let subsc = this.quranService.suraTop$.subscribe(res => {
+        if(res.suraNumber == suraNumber && res.scrollTop){
+          subsc.unsubscribe();
+          this.scrollPage.scrollTo(0, res.scrollTop, 0);
+          this.bookmarkService.setScrollLocation(res.scrollTop);
+        }
+      })
+    }
+    this.scrollPage.scrollTo(0, 0, 0);
   }
 }
