@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {StylingService} from "../../services/styling";
 import {ActionSheetController, MenuController} from "ionic-angular";
 import {LanguageService} from "../../services/language";
@@ -15,10 +15,14 @@ const fonts = ['quran', 'quran-uthmanic', 'quran-uthmanic-bold', 'qalam', 'me-qu
   selector: 'left-menu',
   templateUrl: 'left-menu.html'
 })
-export class LeftMenuComponent {
+export class LeftMenuComponent implements OnInit{
+  ngOnInit(): void {
+    this.zoom = 262.5 * Math.pow(1.125, this.stylingService.curZoom);
+  }
+
   sampleChangingFont: any = {"sura":78,"aya":1,"text":"عَمَّ يَتَسَآءَلُونَ"};
   fontFamily = 'quran';
-  zoom = 100;
+  zoom = 262.5;
   naskhIncompatible = false;
 
   langs = [
@@ -49,7 +53,7 @@ export class LeftMenuComponent {
     this.stylingService.zoomChanged$
       .subscribe(
         (zoom) => {
-          this.zoom = 100 * Math.pow(1.125, zoom);
+          this.zoom = 262.5 * Math.pow(1.125, zoom);
         }
       );
   }

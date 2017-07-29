@@ -9,9 +9,10 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' " style="font-family: 'quran' !important; font-size: 1.3em !important;">
+  <ion-content [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' ">
     <ion-list>
       <button ion-item detail-none (click)="changeLanguage()" [color]="stylingService.conditionalColoring.background">
+        <i class="fa fa-language" aria-hidden="true" item-left></i>
         <ion-label [color]="stylingService.conditionalColoring.text">Change App Language</ion-label>
       </button>
       <button ion-item detail-none (click)="nightMode()" [color]="stylingService.conditionalColoring.background">
@@ -39,7 +40,7 @@
         </ion-label>
       </button>
       <ion-item [color]="stylingService.conditionalColoring.background">
-        <div [ngStyle]="{'font-size': zoom + '%', 'text-align': 'center', 'font-family': stylingService.fontFamily}">
+        <div [ngStyle]="{'font-size': zoom + '%', 'text-align': 'center', 'font-family': stylingService.fontFamily, 'direction':'rtl'}">
           <aya [fontFamily]="stylingService.fontFamily" [margin]="2" [value]="sampleChangingFont"></aya>
         </div>
       </ion-item>

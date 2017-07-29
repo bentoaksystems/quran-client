@@ -128,6 +128,6 @@
         ]
     },
     "config": {
-        "ionic_copy": "./scripts/copy-custom-libs.js"
+        "ionic_copy": "./config_scripts/copy.config.js"
     }
 }
