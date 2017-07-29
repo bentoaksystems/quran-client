@@ -3,8 +3,6 @@ import {StylingService} from "../../services/styling";
 import {ActionSheetController, MenuController} from "ionic-angular";
 import {LanguageService} from "../../services/language";
 
-const fonts = ['quran', 'quran-uthmanic', 'quran-uthmanic-bold', 'qalam', 'me-quran'];
-
 /**
  * Generated class for the LeftMenuComponent component.
  *
