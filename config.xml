@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="systems.bentoak.quran-together" version="0.0.1" xmlns="http://www.w3.org/ns/widgets">
+<widget id="com.bentoak.systems.quran-together" version="0.0.1" xmlns="http://www.w3.org/ns/widgets">
     <name>Quran Together</name>
     <description>Quran Together, for social reading of Quran</description>
     <author email="amin.azarbadegan@gmail.com" href="http://read.quran.parts/">Amin Azarbadegan</author>
@@ -83,13 +83,6 @@
     <engine name="ios" spec="^4.4.0" />
     <plugin name="cordova-clipboard" spec="^1.0.0" />
     <plugin name="cordova-plugin-console" spec="^1.0.5" />
-    <plugin name="cordova-plugin-crosswalk-webview" spec="^2.3.0">
-        <variable name="XWALK_VERSION" value="23+" />
-        <variable name="XWALK_LITEVERSION" value="xwalk_core_library_canary:17+" />
-        <variable name="XWALK_COMMANDLINE" value="--disable-pull-to-refresh-effect" />
-        <variable name="XWALK_MODE" value="embedded" />
-        <variable name="XWALK_MULTIPLEAPK" value="true" />
-    </plugin>
     <plugin name="cordova-plugin-device" spec="^1.1.4" />
     <plugin name="cordova-plugin-network-information" spec="^1.3.3" />
     <plugin name="cordova-plugin-screen-orientation" spec="^2.0.1" />
@@ -117,4 +110,11 @@
         <variable name="DEEPLINK_5_HOST" value=" " />
     </plugin>
     <plugin name="ionic-plugin-keyboard" spec="^2.2.1" />
+    <plugin name="cordova-plugin-crosswalk-webview" spec="^2.3.0">
+        <variable name="XWALK_VERSION" value="23+" />
+        <variable name="XWALK_LITEVERSION" value="xwalk_core_library_canary:17+" />
+        <variable name="XWALK_COMMANDLINE" value="--disable-pull-to-refresh-effect" />
+        <variable name="XWALK_MODE" value="embedded" />
+        <variable name="XWALK_MULTIPLEAPK" value="true" />
+    </plugin>
 </widget>
