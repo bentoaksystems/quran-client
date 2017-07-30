@@ -1,7 +1,7 @@
 <div *ngIf="value.bismillah" class="bismillah" #bism>
   <bismillah [value]="value" [margin]="margin"></bismillah>
 </div>
-<span *ngIf="value.aya && !value.bismillah">
+<span *ngIf="value.aya && !value.bismillah" (tap)="selectAya()" [style.backgroundColor]="selected?'rgba(255,255,0,.2)':''">
   <alama *ngIf="sectionCheck(value)"
          [sign]="'&#x06DE;'"
          [tooltipMessage]="sectionCheck(value)"

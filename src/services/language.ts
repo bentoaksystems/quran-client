@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 import {Storage} from "@ionic/storage";
 import * as moment from 'moment';
 import * as momentJalali from 'jalali-moment';
+import {Http} from "@angular/http";
 
 const translations = {
   registration: {
@@ -154,35 +155,35 @@ const translations = {
   },
   'read pages': {
     fa: 'صفحات خوانده شده',
-    ar: 'قراءة صفحات',
+    ar: 'صفحات',
   },
-  'participating numbers': {
+  'participants number': {
     fa: 'تعداد شرکت کنندگان',
     ar: 'أرقام المشاركة',
   },
-  'rest days': {
+  'remaining days': {
     fa: 'روزهای باقی مانده',
-    ar: 'الأيام المتبقية',
+    ar: 'الأيام المبقية',
   },
-  'you read': {
-    fa: 'شما خوانده اید',
-    ar: 'كنت قد قرأت',
+  'pages you read': {
+    fa: 'صفحات خوانده شده شما',
+    ar: 'صفحات أنت قرأت',
   },
-  'remain of your commitments': {
+  'remaineder of your committed pages': {
     fa: 'باقی مانده صفحات شما',
     ar: 'الصفحات المتبقية لك',
   },
   'copy link': {
     fa: 'کپی کردن لینک',
-    ar: 'انسخ الرابط',
+    ar: 'إنسخ الرابط',
   },
-  'share via': {
-    fa: 'اشتراک گذاری در',
-    ar: 'شارك عبر',
+  'share link': {
+    fa: 'اشتراک‌گذاری لینک',
+    ar: 'شارك الرابط',
   },
-  'commit pages': {
-    fa: 'صفحات تعهد شده',
-    ar: 'ارتكاب صفحات',
+  'remainder of your committed pages': {
+    fa: 'باقیمانده صفحات تعهد شده شما',
+    ar: 'بقیة صفحاتك ملتزمة',
   },
   'close': {
     fa: 'بستن',
@@ -190,19 +191,19 @@ const translations = {
   },
   'start khatm': {
     fa: 'شروع ختم',
-    ar: 'بداية ختم القرآن',
+    ar: 'بدء الختم',
   },
   'stop khatm': {
-    fa: 'توقف خواندن',
-    ar: 'توقف ختم القرآن',
+    fa: 'توقف ختم',
+    ar: 'إنهاء الختم',
   },
   'this khatm is not started yet': {
     fa: 'زمان شروع این ختم هنوز فرا نرسیده است',
-    ar: 'منذ بداية ختم القرآن لم يأت بعد',
+    ar: 'لم يأت وقت البداية هذا الختم',
   },
   'create khatm': {
-    fa: 'ساخت ختم',
-    ar: 'خلق ختم القرآن',
+    fa: ' ختم',
+    ar: 'انشاء ختم جديد',
   },
   'back': {
     fa: 'بازگشت',
@@ -233,92 +234,92 @@ const translations = {
     ar: "يتم تمرير تاريخ نهاية خاتم",
   },
   "cannot get khatm details": {
-    fa: "قادر به دریافت اطلاعات ختم نیستم",
+    fa: "اطلاعات ختم دریافت نشد",
     ar: "لا يمكن الحصول على تفاصيل خاتم",
   },
   "the khatm should have a name": {
     fa: "ختم باید دارای یک عنوان باشد",
-    ar: "يجب أن يكون للخاتم اسم",
+    ar: "يجب أن يكون للختم إسم",
   },
   "the end date field cannot be empty": {
     fa: "بخش تاریخ پایانی نمی تواند خالی باشد",
-    ar: "لا يمكن أن يكون حقل تاريخ الانتهاء فارغا",
+    ar: "لا يمكن أن يكون حقل وقت الانهاء فارغا",
   },
   "the start date cannot be later then end date": {
     fa: "تاریخ شروع نمی تواند پس از تاریخ پایان باشد",
-    ar: "لا يمكن أن يكون تاريخ البدء في وقت لاحق ثم تاريخ الانتهاء",
+    ar: "لا يمكن أن يكون وقت البدء یحدث بعد  وقت الانتهاء",
   },
   "please choose sura": {
     fa: "لطفا سوره را انتخاب کنید",
-    ar: "الرجاء اختيار سورة",
+    ar: "الرجاء إختيار سورة",
   },
   "your khatm created successfully": {
     fa: "ختم با موفقیت ساخته شد",
-    ar: "تم إنشاء القرآن الكريم بنجاح",
+    ar: "تم إنشاء الختم بنجاح",
   },
-  "cannot save your khamt now. Please try again": {
-    fa: "در حال حاضر قادر به ذخیره ختم نیستیم. لطفا دوباره اقدام کنید",
-    ar: "لا يمكن حفظ خمت الخاص بك الآن. حاول مرة اخرى",
+  "cannot save your khamt now. please try again": {
+    fa: "ذخیره ختم اکنون ممکن نیست. لطفا بعدا دوباره سعی کنید",
+    ar: "لا يمكن حفظ الختم الآن. حاول مرة اخرى",
   },
   "please choose valid start date": {
     fa: "لطفا تاریخ شروع را انتخاب کنید",
-    ar: "الرجاء اختيار تاريخ بدء صالح",
+    ar: "الرجاء إختيار وقت للبدء",
   },
   "please choose the valid start date": {
     fa: "لطفا تاریخ شروع معتبری انتخاب کنید",
-    ar: "الرجاء اختيار تاريخ البدء الصحيح",
+    ar: "الرجاء إختيار وقت للبدء صحيحة",
   },
   "please choose the valid end date": {
     fa: "لطفا تاریخ پایان معتبری انتخاب کنید",
-    ar: "الرجاء اختيار تاريخ الانتهاء الصحيح",
+    ar: "الرجاء إختيار وقت للإنهاء صحيحة",
   },
   "the duration cannot be greater than 10 years": {
     fa: "مدت زمان نمی تواند بیش از 10 سال باشد",
     ar: "مدة لا يمكن أن تكون أكبر من 10 عاما",
   },
-  "the duration value cannot be negative": {
+  "the duration cannot be negative": {
     fa: "مدت زمان نمی تواند مقدار منفی داشته باشد",
-    ar: "لا يمكن أن تكون قيمة المدة سالبة",
+    ar: "لا يمكن أن تكون المدة عدد سلبی",
   },
-  "the start date cannot be less than current date": {
-    fa: "تاریخ شروع نمی تواند پیش تر از امروز باشد",
-    ar: "لا يمكن أن يكون تاريخ البدء أقل من التاريخ الحالي",
+  "the start date cannot be before today": {
+    fa: "تاریخ شروع نمی تواند قبل از امروز باشد",
+    ar: "لا يمكن أن يكون تاريخ البدء قبل الیوم",
   },
-  "the end date cannot be less than current date": {
+  "the end date cannot be before today": {
     fa: "تاریخ پایان نمی تواند پیش از امروز باشد",
-    ar: "لا يمكن أن يكون تاريخ الانتهاء أقل من التاريخ الحالي",
+    ar: "لا يمكن أن يكون وقت الانهاء قبل الیوم",
   },
   "sign in": {
     fa: "ورود",
     ar: "تسجيل الدخول",
   },
-  "not log in yet": {
+  "not logged in yet": {
     fa: 'هنوز وارد نشدید',
     ar: 'عدم تسجيل الدخول حتى الآن',
   },
   "you must be logged in to join to this khatm": {
     fa: "برای دیدن اطلاعات ختم باید وارد شوید",
-    ar: "يجب تسجيل الدخول للانضمام إلى هذا القرآن",
+    ar: "يجب تسجيل الدخول للانضمام إلى الختم",
   },
   'all': {
     fa: 'همه',
     ar: 'الكل',
   },
-  'commitment pages': {
+  'committed pages': {
     fa: "تعهد صفحات",
-    ar: "صفحات الالتزام",
+    ar: "صفحات الملتزمة",
   },
-  "commit pages confirmation": {
+  "confirm committed pages": {
     fa: "تأیید تعهد صفحات",
-    ar: "الالتزام بتأكيد الصفحات",
+    ar: "تأكيد الصفحات الملتزمة",
   },
-  "all changes will be irreversible after you exit. do you sure to exit?": {
-    fa: 'تمام تغییرات پس از خارج شدن بدون بازگشت هستند. آیا برای خارج شدن مطئمن هستید؟',
-    ar: 'كل التغييرات ستكون لا رجعة فيها بعد الخروج. هل أنت متأكد من الخروج؟',
+  "changes will be irreversible after exit, are you sure?": {
+    fa: 'تغییرات پس از خارج شدن قابل بازگشت نیستند. مطئمن هستید؟',
+    ar: 'التغييرات ستكون لا رجعة فيها بعد الخروج. هل أنت متأكد من الخروج؟',
   },
   'yes': {
     fa: 'بله',
-    ar: 'نعم فعلا',
+    ar: 'نعم',
   },
   'no': {
     fa: 'خیر',
@@ -338,7 +339,7 @@ const translations = {
   },
   "date specification": {
     fa: "مشخصات تاریخ",
-    ar: "مواصفات التاريخ",
+    ar: "مواصفات الوقت",
   },
   "edit": {
     fa: "ویرایش",
@@ -348,25 +349,25 @@ const translations = {
     fa: 'لطفاً صبر کنید تا کد تأیید را برایتان ارسال کنیم ...',
     ar: 'الرجاء الانتظار حتى نرسل لك رمز التحقق ...',
   },
-  "you cannot join to this khatm unless commit some pages. do you want to join this khatm?": {
+  "you cannot join to this khatm unless you commit some pages. do you want to join this khatm?": {
     fa: 'شما تا زمانی که صفحه ای متعهد نشوید نمیتوانید عضو ختم شوید. آیا میخواهید عضو ختم شوید؟',
-    ar: 'لا يمكنك الانضمام إلى هذا القرآن إلا إذا ارتكبت بعض الصفحات. هل تريد الانضمام إلى هذا القرآن؟',
+    ar: 'لا يمكنك الانضمام إلى هذا القرآن إلا إذا ارتكبت بعض الصفحات. هل تريد الانضمام إلى هذا الختم؟',
   },
-  "do you want to save your changes on commit pages?": {
-    fa: 'آیا میخواهید تغییرات تعهد صفحات اعمال شود؟',
-    ar: 'هل تريد حفظ التغييرات في صفحات الالتزام؟',
+  "do you want to save your changes in committed pages?": {
+    fa: 'آیا می‌خواهید تغییرات در صفحات تعهد شده اعمال شود؟',
+    ar: 'هل تريد حفظ التغييرات في الصفحات الالملتزمة؟',
   },
   "confirm commit pages": {
     fa: 'تأیید تعهد صفحات',
-    ar: 'تأیید تعهد صفحات',
+    ar: 'تأکيد للإلتزام الصفحات',
   },
   "interested to join": {
     fa: 'مایل به عضویت هستم',
-    ar: 'مهتم للانضمام',
+    ar: 'أنا مهتم للإنضمام',
   },
   "uninterested to join": {
     fa: 'مایل به عضویت نیستم',
-    ar: 'غير مهتم للانضمام',
+    ar: 'أنا ممانع للإنضمام',
   },
 };
 
@@ -378,20 +379,32 @@ const directionRTL = {
 
 @Injectable()
 export class LanguageService {
+  qt: any = {};
   private _lang='en';
-  set lang(l){
-    this._lang=l;
-    this.storage.set('language',l);
+  set lang(l) {
+    this._lang = l;
+    this.storage.set('language', l);
+    this.getTranslation(l);
   }
+
   get lang(){
     return this._lang
   };
 
-  constructor(private storage: Storage){
+  constructor(private storage: Storage, private http : Http){
     this.storage.get('language')
-      .then(l => this._lang = l)
+      .then(l => {
+        this._lang = l;
+        this.getTranslation(l);
+      })
       .catch(err=>console.log(err));
   }
+  private getTranslation(l) {
+    this.http.request(`assets/${l}.trans.json`)
+      .map(res => res.json())
+      .subscribe(qt => this.qt = qt);
+  }
+
   translate(label) {
     if(this.lang === 'en')
       return label;

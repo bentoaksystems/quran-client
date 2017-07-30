@@ -155,17 +155,17 @@
         <p [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(endDateDisplay)}}</p>
       </ion-item>
         <ion-item [color]="stylingService.conditionalColoring.background">
-        <h2>{{ls.translate('Rest Days')}}</h2>
+        <h2>{{ls.translate('Remaining Days')}}</h2>
         <p [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(rest_days)}}</p>
       </ion-item>
         <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
                   [color]="stylingService.conditionalColoring.background">
-        <h2>{{ls.translate('You Read')}}</h2>
+        <h2>{{ls.translate('Pages You Read')}}</h2>
         <p [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.you_read)}}</p>
       </ion-item>
         <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
                   [color]="stylingService.conditionalColoring.background">
-        <h2>{{ls.translate('Remain of your commitments')}}</h2>
+        <h2>{{ls.translate('Remainder of your committed pages')}}</h2>
         <p [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.you_unread)}}</p>
       </ion-item>
       </ion-list>
@@ -177,12 +177,12 @@
         </ion-col>
         <ion-col col6>
           <button ion-button block (click)="shareVia()"
-                  [color]="stylingService.conditionalColoring.primary">{{ls.translate('Share Via')}}</button>
+                  [color]="stylingService.conditionalColoring.primary">{{ls.translate('Share Link')}}</button>
         </ion-col>
       </ion-row>
         <ion-row *ngIf="khatmIsStarted">
           <ion-col col-5>
-            <ion-label [color]="stylingService.conditionalColoring.text">{{ls.translate('Commit Pages')}}</ion-label>
+            <ion-label [color]="stylingService.conditionalColoring.text">{{ls.translate('Committed Pages')}}</ion-label>
           </ion-col>
           <ion-col col-5>
             <ion-input [color]="stylingService.conditionalColoring.background"

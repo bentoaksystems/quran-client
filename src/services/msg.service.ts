@@ -17,28 +17,39 @@ const duration={
 
 @Injectable()
 export class MsgService{
+  tsCtrl: any;
   constructor(private toastCtrl: ToastController,
               private ls: LanguageService){
 
   }
 
-  showMessage(type: string, text: string, hasCloseButton: boolean = false){
-    var tsCtrl;
-    if(hasCloseButton)
-      tsCtrl = this.toastCtrl.create({
+  showMessage(type: string, text: string, hasCloseButton: boolean = false, callback = ()=>{}){
+    this.dismiss();
+
+    if(hasCloseButton) {
+      this.tsCtrl = this.toastCtrl.create({
         message: text,
         showCloseButton: true,
         position: 'bottom',
-        cssClass: 'msg_'+this.ls.direction() + ' ' + (css[type]?css[type]:'normal')
+        closeButtonText: 'X',
+        duration: 0,
+        cssClass: 'msg_' + this.ls.direction() + ' ' + (css[type] ? css[type] : 'normal')
       });
+      this.tsCtrl.onDidDismiss(callback);
+    }
     else
-      tsCtrl = this.toastCtrl.create({
+      this.tsCtrl = this.toastCtrl.create({
         message: text,
         position: 'bottom',
         cssClass: 'msg_'+this.ls.direction() + ' ' + (css[type]?css[type]:'normal'),
         duration: duration[type]
       });
 
-    tsCtrl.present();
+    this.tsCtrl.present();
+  }
+
+  dismiss() {
+    if(this.tsCtrl)
+      this.tsCtrl.dismiss();
   }
 }
