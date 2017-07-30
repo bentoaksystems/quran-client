@@ -223,8 +223,8 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
 
     let suraNames = suras.map(e => e.name);
 
-    let suraName = suraNames[1] ? suraNames[1]: suraNames[0];//suraNames.pop();
-    let suraOrder = suraOrders[1] ? suraOrders[1] : suraOrders[0];
+    let suraName = (this.pageAyas[this._pages[this._pageIndex]][0].bismillah === true) ?  suraNames[0] : (suraNames[1] ? suraNames[1] : suraNames[0]);
+    let suraOrder = (this.pageAyas[this._pages[this._pageIndex]][0].bismillah === true) ?  suraOrders[0] : (suraOrders[1] ? suraOrders[1] : suraOrders[0]);
     this.suraName = suraName;
     this.suraOrder = suraOrder;
   }
