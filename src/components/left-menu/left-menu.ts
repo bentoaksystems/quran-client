@@ -41,14 +41,18 @@ export class LeftMenuComponent implements OnInit{
       acronym: 'ar',
       name: 'العربية'
     },
-    // {
-    //   acronym: 'ur',
-    //   name:'اُردُو'
-    // },
-    // {
-    //   acronym: 'id',
-    //   name: 'Malay'
-    // },
+    {
+      acronym: 'ur',
+      name:'اُردُو'
+    },
+    {
+      acronym: 'id',
+      name: 'Malay'
+    },
+    {
+      acronym: 'tr',
+      name: 'Türkçe',
+    },
     {
       acronym: 'fa',
       name: 'فارسی'
