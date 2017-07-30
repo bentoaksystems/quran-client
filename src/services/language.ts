@@ -180,9 +180,9 @@ const translations = {
     fa: 'اشتراک گذاری در',
     ar: 'شارك عبر',
   },
-  'commit pages': {
-    fa: 'صفحات تعهد شده',
-    ar: 'ارتكاب صفحات',
+  'my commitment pages': {
+    fa: 'صفحات تعهد شده من',
+    ar: 'صفحات التزامي',
   },
   'close': {
     fa: 'بستن',
@@ -367,6 +367,42 @@ const translations = {
   "uninterested to join": {
     fa: 'مایل به عضویت نیستم',
     ar: 'غير مهتم للانضمام',
+  },
+  "commitments": {
+    fa: 'تعهدات',
+    ar: 'إلتزامات',
+  },
+  "sharing": {
+    fa: 'به اشتراک گذاری',
+    ar: 'مشاركة',
+  },
+  "reading": {
+    fa: 'قرائت',
+    ar: 'قراءة',
+  },
+  "your commitment page number is changed. would you like to save it?": {
+    fa: "تعداد صفحات تعهد شده شما تغییر کرده است. آیا مایلید تغییرات اعمال شود؟",
+    ar: "تم تغيير رقم صفحة الالتزام. هل ترغب في حفظه؟",
+  },
+  "manually": {
+    fa: 'دستی',
+    ar: 'يدويا',
+  },
+  "automatic": {
+    fa: 'خودکار',
+    ar: 'أوتوماتيكي',
+  },
+  "please wait until we get your commitment pages...": {
+    fa: "لطفاً صبر کنید تا صفحات تعهد شده شما را بدست آوریم...",
+    ar: "يرجى الانتظار حتى نحصل على صفحات الالتزام...",
+  },
+  "please wait until we get khatm details...": {
+    fa: "لطفاً صبر کنید تا اطلاعات ختم را بدست آوریم...",
+    ar: "يرجى الانتظار حتى نحصل على تفاصيل القرآن ...",
+  },
+  "please wait until we get your khatms...": {
+    fa: "لطفاً صبر کنید تا ختم های شما را دریافت کنیم...",
+    ar: "يرجى الانتظار حتى نحصل على القرآنک...",
   },
 };
 

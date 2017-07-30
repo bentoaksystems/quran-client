@@ -213,7 +213,8 @@ div.border-night{
 .select-text{
   mins-width:0px;
   width:0px;
-  text-overflow:none;
+  -ms-text-overflow: unset;
+  text-overflow: unset;
 }
 ion-select{
   width:0px;
@@ -376,3 +377,15 @@ ion-select{
   background-color: #fbfaf8 !important;
 }
 
+.scroll-content{
+  margin:0px !important;
+}
+
+.commit-page .text-input{
+  text-align: center;
+  font-size: 130%;
+  border: inset 1px;
+  border-radius: 7px;
+  margin: 4px 0px;
+  padding: 8px 0px;
+}

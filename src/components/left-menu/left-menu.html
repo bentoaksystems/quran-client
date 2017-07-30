@@ -40,8 +40,8 @@
         </ion-label>
       </button>
       <ion-item [color]="stylingService.conditionalColoring.background">
-        <div [ngStyle]="{'font-size': zoom + '%', 'text-align': 'center', 'font-family': stylingService.fontFamily, 'direction':'rtl'}">
-          <aya [fontFamily]="stylingService.fontFamily" [margin]="2" [value]="sampleChangingFont"></aya>
+        <div [ngStyle]="{'font-size': zoom + '%', 'text-align': 'center', 'font-family': fontFamily, 'direction':'rtl'}">
+          <aya [fontFamily]="fontFamily" [margin]="2" [value]="sampleChangingFont"></aya>
         </div>
       </ion-item>
     </ion-list>
