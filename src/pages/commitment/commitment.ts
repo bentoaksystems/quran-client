@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {IonicPage, NavController, NavParams, Navbar, AlertController} from 'ionic-angular';
+import {IonicPage, NavController, NavParams, Navbar, AlertController, LoadingController} from 'ionic-angular';
 import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {StylingService} from "../../services/styling";
@@ -26,10 +26,19 @@ export class CommitmentPage implements OnInit{
   constructor(public navCtrl: NavController, public navParams: NavParams,
               private ls: LanguageService, private khatmService: KhatmService,
               private stylingService: StylingService, private alertCtrl: AlertController,
-              private msgService: MsgService, private vibration: Vibration) {}
+              private msgService: MsgService, private vibration: Vibration,
+              private loadingCtrl: LoadingController) {}
 
   ngOnInit(){
     this.navBar.setBackButtonText(this.ls.translate('Back'));
+
+    //Create loading
+    let waiting_loading = this.loadingCtrl.create({
+      content: this.ls.translate('Please wait until we get your commitment pages...'),
+      cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
+    });
+
+    waiting_loading.present();
 
     //Style back button
     if(this.ls.direction() === 'rtl')
@@ -71,8 +80,12 @@ export class CommitmentPage implements OnInit{
           }
         });
         this.createRows();
+        waiting_loading.dismiss();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+        waiting_loading.dismiss();
+      });
 
 
     this.navBar.backButtonClick = (e:UIEvent) => {

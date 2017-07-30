@@ -86,7 +86,9 @@ export class AuthService {
       if(!isRegistration){
         this.httpService.postData('user/exist', {email: userEmail}, false).subscribe(
           (data) => {
-            if(data.json().exist)
+            if(data.status === 500)
+              reject('You are offline now. Please connect to network');
+            else if(data.json().exist)
               this.register_signin(userEmail, userName)
                 .then(res => resolve(res))
                 .catch(err => reject(err));
@@ -101,7 +103,9 @@ export class AuthService {
       else{
         this.httpService.postData('user/exist', {email: userEmail}, false).subscribe(
           (data) => {
-            if(!data.json().exist)
+            if(data.status === 500)
+              reject('You are offline now. Please connect to network');
+            else if(!data.json().exist)
               this.register_signin(userEmail, userName)
                 .then(res => resolve(res))
                 .catch(err => reject(err));

@@ -2,7 +2,7 @@
  * Created by Ali on 5/21/2017.
  */
 import {Injectable} from "@angular/core";
-import {Http, Response, Headers} from "@angular/http";
+import {Http, Response, Headers, ResponseOptions} from "@angular/http";
 import {Observable} from "rxjs";
 import {Network} from "@ionic-native/network";
 import {Storage} from "@ionic/storage";
@@ -37,6 +37,9 @@ export class HttpService{
   }
 
   postData(address, data, needAuthDetails: boolean) : Observable<Response>{
+    if(this.isDisconnected)
+      return Observable.of(new Response(new ResponseOptions({body: JSON.stringify('You are offline now. Please connect to network'), status: 500})));
+
     let headers = new Headers();
     if(needAuthDetails){
       headers.append('email', (this.user === null) ? null : this.user.email);
@@ -49,6 +52,9 @@ export class HttpService{
   }
 
   putData(address, data, needAuthDetails: boolean) : Observable<Response> {
+    if(this.isDisconnected)
+      return Observable.of(new Response(new ResponseOptions({body: JSON.stringify('You are offline now. Please connect to network'), status: 500})));
+
     let headers = new Headers();
     if(needAuthDetails){
       headers.append('email', (this.user === null) ? null : this.user.email);
@@ -61,6 +67,9 @@ export class HttpService{
   }
 
   getData(address, needAuthDetails: boolean) : Observable<Response>{
+    if(this.isDisconnected)
+      return Observable.of(new Response(new ResponseOptions({body: JSON.stringify('You are offline now. Please connect to network'), status: 500})));
+
     let headers = new Headers();
     if(needAuthDetails){
       headers.append('email', (this.user === null) ? null : this.user.email);
@@ -73,6 +82,9 @@ export class HttpService{
   }
 
   deleteData(address, needAuthDetails: boolean, email = null, token = null) : Observable<Response>{
+    if(this.isDisconnected)
+      return Observable.of(new Response(new ResponseOptions({body: JSON.stringify('You are offline now. Please connect to network'), status: 500})));
+
     let headers = new Headers();
     if(needAuthDetails){
       headers.append('email', (this.user === null) ? null : this.user.email);
@@ -273,6 +285,9 @@ export class HttpService{
     return new Promise((resolve, reject) => {
       this.storage.get('khatms')
         .then(res => {
+          if(res === null)
+            return Promise.resolve(null);
+
           let khids = res.map(el => el.khid);
           let promiseList = [Promise.resolve(null)];
 
@@ -282,6 +297,9 @@ export class HttpService{
           return Promise.all(promiseList);
         })
         .then(res => {
+          if(res === null)
+            return Promise.resolve(null);
+
           let promiseList = [];
           let data = res.filter(el => el !== null);
 

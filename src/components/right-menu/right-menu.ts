@@ -1,4 +1,5 @@
 import {Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
+import {LoadingController} from 'ionic-angular';
 
 import {AuthService} from "../../services/auth.service";
 import {Registration} from "../../pages/registration/registration";
@@ -20,7 +21,7 @@ export class RightMenuComponent implements OnInit{
 
   constructor(private authService: AuthService, private ls:LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
-              private stylingService: StylingService) {}
+              private stylingService: StylingService, private loadingCtrl: LoadingController) {}
 
   openPage(desPage, viewKhatm = null, fromButton = null){
     var target;
@@ -62,16 +63,30 @@ export class RightMenuComponent implements OnInit{
   }
 
   ngOnInit(){
+    let waiting_loading = this.loadingCtrl.create({
+      content: this.ls.translate('Please wait until we get your khatms...'),
+      cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
+    });
+
+    if(this.authService.isLoggedIn.getValue())
+      waiting_loading.present();
+
     this.khatmService.khatms.subscribe(
       (data) => {
           this.khatms = [];
           if(data !== null)
             for(let item of data)
               this.khatms.push(item);
+
+          if(this.authService.isLoggedIn.getValue())
+            waiting_loading.dismiss();
         },
       (err) => {
           console.log(err.message);
           this.msgService.showMessage('error', err.message);
+
+          if(this.authService.isLoggedIn.getValue())
+            waiting_loading.dismiss();
         }
     );
   }
