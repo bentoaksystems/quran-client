@@ -213,7 +213,8 @@ div.border-night{
 .select-text{
   mins-width:0px;
   width:0px;
-  text-overflow:none;
+  -ms-text-overflow: unset;
+  text-overflow: unset;
 }
 ion-select{
   width:0px;
