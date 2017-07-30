@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="systems.bentoak.quran-together" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.bentoak.systems.quran-together" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Quran Together</name>
     <description>Quran Together, for social reading of Quran</description>
     <author email="amin.azarbadegan@gmail.com" href="http://read.quran.parts/">Amin Azarbadegan</author>
@@ -25,6 +25,7 @@
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="loadUrlTimeoutValue" value="300000" />
     <preference name="AndroidLaunchMode" value="singleTask" />
+    <preference name="KeyboardDisplayRequiresUserAction" value="false" />
     <platform name="android">
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />

@@ -4,6 +4,7 @@ import {Storage} from "@ionic/storage";
 
 @Injectable()
 export class StylingService {
+  _ffstr: any;
   constructor(private storage: Storage){
     ['curZoom','nightMode','fontFamily'].forEach(key=>{
        this.storage.get(key)
@@ -25,11 +26,19 @@ export class StylingService {
   private curZoomStream = new ReplaySubject<number>(1);
   private nightModeStream = new ReplaySubject<boolean>(1);
   private fontFamilyStream = new ReplaySubject<number>(1);
+  private fontFamilyStrStream = new ReplaySubject<string>();
 
   zoomChanged$ = this.curZoomStream.asObservable();
   nightMode$ = this.nightModeStream.asObservable();
   fontChanged$ = this.fontFamilyStream.asObservable();
-  fontFamily='quran';
+  fontFamily$ = this.fontFamilyStrStream.asObservable();
+  set fontFamily(str){
+    this._ffstr= (str === null || str === undefined) ? 'quran-uthmanic' : str;
+    this.fontFamilyStrStream.next(str);
+  };
+  get fontFamily(){
+    return this._ffstr;
+  }
   conditionalColoring: any = {
     background: 'normal_back',
     backgroundLighter: 'normal_back_secondary',

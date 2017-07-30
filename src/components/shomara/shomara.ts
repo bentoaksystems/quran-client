@@ -13,7 +13,7 @@ import {Component, Input, OnInit} from '@angular/core';
 export class Shomara implements OnInit{
   private _an;
   ayanumberAr: string;
-  private _ff;
+  private _ff = 'qalam';
   @Input()
   set ayanumber(x){
     this._an = x;
@@ -29,7 +29,10 @@ export class Shomara implements OnInit{
     this.ayanumberAr = this.ayanumber.toLocaleString(this.fontFamily==='qalam'?'fa':'ar');
   }
   get fontFamily() {
-    return this._ff;
+    if(this._ff === null)
+      return 'qalam';
+    else
+      return this._ff;
   }
 
   get needntBorder(){
