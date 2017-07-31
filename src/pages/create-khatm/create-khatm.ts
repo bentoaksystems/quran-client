@@ -211,8 +211,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   ngAfterViewInit(){
-    console.log(this.commitPageInput);
-    this.commitPageInput._elementRef.nativeElement.firstElementChild.focus();
+    if(this.commitPageInput) {
+      this.commitPageInput._elementRef.nativeElement.firstElementChild.focus();
+    }
   }
 
   submit(){
