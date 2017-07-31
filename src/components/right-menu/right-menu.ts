@@ -63,13 +63,17 @@ export class RightMenuComponent implements OnInit{
   }
 
   ngOnInit(){
-    let waiting_loading = this.loadingCtrl.create({
-      content: this.ls.translate('Please wait until we get your khatms...'),
-      cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
-    });
+    let waiting_loading;
+    let isPresent = false;
 
-    if(this.authService.isLoggedIn.getValue())
+    if(this.authService.isLoggedIn.getValue()){
+      isPresent = true;
+      waiting_loading = this.loadingCtrl.create({
+        content: this.ls.translate('Please wait until we get your khatms...'),
+        cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
+      });
       waiting_loading.present();
+    }
 
     this.khatmService.khatms.subscribe(
       (data) => {
@@ -78,14 +82,14 @@ export class RightMenuComponent implements OnInit{
             for(let item of data)
               this.khatms.push(item);
 
-          if(this.authService.isLoggedIn.getValue())
+          if(isPresent)
             waiting_loading.dismiss();
         },
       (err) => {
           console.log(err.message);
           this.msgService.showMessage('error', err.message);
 
-          if(this.authService.isLoggedIn.getValue())
+          if(isPresent)
             waiting_loading.dismiss();
         }
     );

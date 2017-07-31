@@ -318,7 +318,8 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
 
       if (found && i && +i !== this._pageIndex)
         this.zone.run(() => {
-          this.pageIsRead.emit(this._pageIndex);
+          if(+i >= this._pageIndex && this.khatmActive)
+            this.pageIsRead.emit(this._pageIndex);
           this._pageIndex = +i;
           if (!this.khatmActive) {
             this.bookmarkService.setPageNumber(this.quranPage);
