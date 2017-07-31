@@ -306,7 +306,7 @@ const translations = {
     ar: 'الكل',
   },
   'committed pages': {
-    fa: "تعهد صفحات",
+    fa: "صفحات تعهد شده",
     ar: "صفحات الملتزمة",
   },
   "confirm committed pages": {

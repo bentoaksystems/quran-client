@@ -10,6 +10,8 @@ import {StylingService} from "../../services/styling";
 import {Gesture} from 'ionic-angular';
 import {Observable} from "rxjs/Observable";
 import {BookmarkService} from "../../services/bookmark";
+import {QuranReference} from "../../services/quran-data";
+import {MsgService} from "../../services/msg.service";
 
 const fonts = ['quran', 'quran-uthmanic', 'quran-uthmanic-bold', 'qalam', 'me-quran'];
 
@@ -19,6 +21,7 @@ const fonts = ['quran', 'quran-uthmanic', 'quran-uthmanic-bold', 'qalam', 'me-qu
 })
 export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   repeatIndex: any[] = [];
+  selectedAya: QuranReference = {aya: null, sura: null, substrIndex: null};
   scrollLock: boolean = false;
   private _pageIndex = 0;
   layerHeights: any = {};
@@ -48,6 +51,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild('scrollPage') scrollPage;
   @ViewChildren('border') borders;
   private layerIndices: string[] = [];
+  private scrollSmallLock: boolean = false;
 
   get quranPage(): number {
     return this._pages[this._pageIndex];
@@ -78,13 +82,15 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       this._pages = [];
       for (let i = 1; i < 605; i++)this._pages.push(i);
       if (this.khatmActive) {
-
+        this.scrollLock = true;
       }
       this.khatmActive = false;
     }
     else {
       this._pages = pages;
+      this._pageIndex = 0;
       this.khatmActive = true;
+      this.scrollLock = true;
       this.scrollPage.scrollTo(0, 0, 0);
     }
     this.getQuran();
@@ -97,7 +103,13 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   @Output() pageIsRead = new EventEmitter<number>();
   private gesture: Gesture;
 
-  constructor(public zone: NgZone, private quranService: QuranService, private stylingService: StylingService, private platform: Platform, private screenOrientation: ScreenOrientation, private bookmarkService: BookmarkService) {
+  constructor(public zone: NgZone,
+              private quranService: QuranService,
+              private stylingService: StylingService,
+              private platform: Platform,
+              private screenOrientation: ScreenOrientation,
+              private bookmarkService: BookmarkService,
+              private msg: MsgService) {
     if (!this._pages.length)
       this.selectedPages = [];
 
@@ -118,7 +130,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       fitScreen();
     });
     this.screenOrientation.onChange().subscribe(() => {
-      setTimeout(fitScreen, 1000)
+      setTimeout(fitScreen, 0)
     });
     if (!this.naskhIncompatible)
       this.fontFamily = 'quran-uthmanic';
@@ -133,6 +145,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     this.stylingService.zoomChanged$
       .subscribe(
         (zoom) => {
+          this.scrollSmallLock = true;
           this.zoom = 100 * Math.pow(1.125, zoom);
         }
       );
@@ -150,6 +163,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
               f++;
             } while (tempFont && tempFont === this.fontFamily || (this.naskhIncompatible && this.isUthmanic(tempFont)));
             if (tempFont !== this.fontFamily) {
+              this.scrollSmallLock = true;
               this.fontFamily = tempFont;
               this.stylingService.fontFamily = tempFont;
             }
@@ -162,13 +176,26 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
         this.quranPage = p;
       });
 
-    this.bookmarkService.pageNumber$.subscribe(p => {
+    let bp = this.bookmarkService.pageNumber$.subscribe(p => {
       this.quranPage = p;
+      bp.unsubscribe();
     });
 
-    this.bookmarkService.scrollLocation$.subscribe(s => {
+    let bl = this.bookmarkService.scrollLocation$.subscribe(s => {
       this.scrollPage.scrollTo(0, s, 0);
+      bl.unsubscribe();
     });
+  }
+
+  onAyaSelected(e) {
+    if (e.selected) {
+      this.selectedAya.aya = e.aya.aya;
+      this.selectedAya.sura = e.aya.sura;
+    }
+    else if (this.selectedAya.aya === e.aya.aya && this.selectedAya.sura === e.aya.sura) {
+      this.selectedAya.aya = null;
+      this.selectedAya.sura = null;
+    }
   }
 
   private getQuran() {
@@ -209,7 +236,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       }
       let st = this.scrollPage.getContentDimensions().scrollTop - sumHeight;
       if (st >= 0) {
-        this.scrollLock = true;
+        this.scrollSmallLock = true;
         setTimeout(() => this.scrollPage.scrollTo(0, st, 0, () => console.log('scrolled to', st)), 100);
         for (let key in this.shownPages) {
           if (!range.includes(+key))
@@ -260,6 +287,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
 
   ngAfterViewChecked() {
     this.layerHeights = {};
+    this.scrollSmallLock = false;
     this.layerElements.forEach(e => {
       this.layerHeights[e.id] = e.offsetHeight + 25;
     });
@@ -275,7 +303,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   onScroll(e) {
-    if (!this.scrollLock) {
+    if (!this.scrollLock && !this.scrollSmallLock) {
       let i = '', sumLayerHeights = 0;
 
       let found = this.layerIndices.some(key => {
@@ -300,10 +328,14 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
+  menuToggle() {
+    this.msg.dismiss();
+  }
+
   private scrollToSuraTop(suraNumber: number) {
-    if(suraNumber) {
+    if (suraNumber) {
       let subsc = this.quranService.suraTop$.subscribe(res => {
-        if(res.suraNumber == suraNumber && res.scrollTop){
+        if (res.suraNumber == suraNumber && res.scrollTop) {
           subsc.unsubscribe();
           this.scrollPage.scrollTo(0, res.scrollTop, 0);
           this.bookmarkService.setScrollLocation(res.scrollTop);
