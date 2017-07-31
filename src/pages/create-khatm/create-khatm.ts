@@ -21,7 +21,7 @@ import {Registration} from "../registration/registration";
 export class CreateKhatmPage implements OnInit, AfterViewInit{
   @ViewChild(Navbar) navBar: Navbar;
   @ViewChild('commitPageInput') commitPageInput;
-  basicShareLink: string = 'http://www.read.quran.parts/khatm/';
+  basicShareLink: string = 'http://read.quran.parts/khatm/';
   khatmIsStarted: boolean = true;
   isSubmitted: boolean = false;
   name: string = '';

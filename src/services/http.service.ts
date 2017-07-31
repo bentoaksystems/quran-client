@@ -27,9 +27,10 @@ export class HttpService{
 
     this.network.onConnect().subscribe(
         () => {
+          this.isDisconnected = false;
           if(this.user !== null){
             this.sendDiff()
-              .then(() => this.isDisconnected = false)
+              .then(() => {})
               .catch(err => console.log(err));
           }
         }
