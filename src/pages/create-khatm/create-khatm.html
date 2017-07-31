@@ -163,8 +163,8 @@
           </ion-col>
           <ion-col col-4>
             <ion-label [color]="stylingService.conditionalColoring.text">
-              <span *ngIf="!isManuallyCommit">{{ls.translate('Manually')}}</span>
-              <span *ngIf="isManuallyCommit">{{ls.translate('Automatic')}}</span>
+              <span *ngIf="isManuallyCommit">{{ls.translate('Manually')}}</span>
+              <span *ngIf="!isManuallyCommit">{{ls.translate('Automatic')}}</span>
             </ion-label>
           </ion-col>
           <ion-col col-2>

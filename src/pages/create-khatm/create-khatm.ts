@@ -549,8 +549,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
               }
               else{
                 this.khatm.commitment_pages = parseInt(this.khatm.commitment_pages) - (parseInt(this.khatm.you_unread) - parseInt(res));
-                this.khatm.you_unread = (newValNum === 0) ? null : res;
                 this.msgService.showMessage('inform', (parseInt(this.khatm.you_unread) - parseInt(res)) + ' ' + this.ls.translate('pages get down from your commitments'));
+                this.khatm.you_unread = (newValNum === 0) ? null : res;
               }
             }
 
