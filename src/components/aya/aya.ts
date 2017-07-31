@@ -1,5 +1,7 @@
-import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
 import {QuranService} from "../../services/quran.service";
+import {MsgService} from "../../services/msg.service";
+import {LanguageService} from "../../services/language";
 
 /**
  * Generated class for the Aya component.
@@ -11,26 +13,36 @@ import {QuranService} from "../../services/quran.service";
   selector: 'aya',
   templateUrl: 'aya.html'
 })
-export class Aya implements AfterViewInit{
+export class Aya implements AfterViewInit {
   @Input() value;
   @Input() fontFamily;
   @Input() margin;
   @ViewChild('bism') bism;
+  @Output() onselect = new EventEmitter<any>();
+  private _selected: boolean = false;
+  @Input()
+  get selected() {
+    return this._selected;
+  }
 
-  constructor(private quranService:QuranService) {
+  set selected(s) {
+    this._selected = s;
+  }
+
+  constructor(private quranService: QuranService, private msg: MsgService, private l: LanguageService) {
   }
 
   ngAfterViewInit(): void {
-    if(this.value.bismillah)
+    if (this.value.bismillah)
       this.quranService.suraTop(this.value.sura, this.bism.nativeElement.offsetTop + this.bism.nativeElement.offsetHeight);
   }
 
-  sajdaCheck(obj){
+  sajdaCheck(obj) {
     var ind = this.quranService.sajdaCheck(obj);
     var type;
-    if(ind === -1)
+    if (ind === -1)
       type = false;
-    else if(ind < 11)
+    else if (ind < 11)
       type = 'recommended';
     else
       type = 'obligatory';
@@ -38,12 +50,12 @@ export class Aya implements AfterViewInit{
     return type;
   }
 
-  sectionCheck(obj):any{
+  sectionCheck(obj): any {
     var ind = this.quranService.qhizbCheck(obj);
     var type;
-    if(ind===-1)
+    if (ind === -1)
       type = false;
-    switch(ind % 8){
+    switch (ind % 8) {
       case 0:
         type = 'juz';
         break;
@@ -66,8 +78,22 @@ export class Aya implements AfterViewInit{
     return type;
   }
 
-  hizbJuzNumberCheck(obj):any{
+  hizbJuzNumberCheck(obj): any {
     var qhizbInd = this.quranService.qhizbCheck(obj);
-    return {qhizbNum : qhizbInd}
+    return {qhizbNum: qhizbInd}
+  }
+
+  selectAya() {
+    if (!this.selected) {
+      this.selected = true;
+      this.onselect.next({aya:this.value,selected:true});
+      let trans = this.l.qt[this.value.sura + '_' + this.value.aya];
+      if (trans) {
+        this.msg.showMessage('inform', trans, true, () => {
+          this._selected = false;
+          this.onselect.next({aya:this.value,selected:false})
+        });
+      }
+    }
   }
 }
