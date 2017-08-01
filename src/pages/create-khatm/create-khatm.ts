@@ -1,4 +1,4 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import {IonicPage, NavController, NavParams, LoadingController, Navbar, AlertController, App} from 'ionic-angular';
 import {SocialSharing} from '@ionic-native/social-sharing';
 import {Clipboard} from "@ionic-native/clipboard";
@@ -18,10 +18,10 @@ import {Registration} from "../registration/registration";
   selector: 'page-create-khatm',
   templateUrl: 'create-khatm.html',
 })
-export class CreateKhatmPage implements OnInit{
+export class CreateKhatmPage implements OnInit, AfterViewInit{
   @ViewChild(Navbar) navBar: Navbar;
-  @ViewChild('commitPageInput') commitPageInput: HTMLFormElement;
-  basicShareLink: string = 'https://www.read.quran.parts/khatm/';
+  @ViewChild('commitPageInput') commitPageInput;
+  basicShareLink: string = 'http://www.read.quran.parts/khatm/';
   khatmIsStarted: boolean = true;
   isSubmitted: boolean = false;
   name: string = '';
@@ -46,6 +46,7 @@ export class CreateKhatmPage implements OnInit{
   isChangingCommitments: boolean =  false;
   isMember: boolean = false;
   isCommit: boolean = false;
+  isManuallyCommit: boolean = false;
 
   constructor(public navCtrl: NavController, private navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
@@ -59,6 +60,12 @@ export class CreateKhatmPage implements OnInit{
 
   ngOnInit(){
     this.navBar.setBackButtonText(this.ls.translate('Back'));
+
+    let waiting_loading = this.loadingCtrl.create({
+      content: this.ls.translate('Please wait until we get khatm details...'),
+      cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
+    });
+    let waitingIsShown: boolean = false;
 
     //Style back button
     if(this.ls.direction() === 'rtl')
@@ -105,10 +112,17 @@ export class CreateKhatmPage implements OnInit{
       let stillNotLoggedIn: boolean = true;
       let visited: boolean = false;
 
+      if(this.authService.isLoggedIn.getValue()){
+        waiting_loading.present();
+        waitingIsShown = true;
+      }
+
       this.authService.isLoggedIn.subscribe(
         (status) => {
           if (status) {
             stillNotLoggedIn = false;
+            if(!waitingIsShown)
+              waiting_loading.present();
             this.khatmService.getKhatm(link)
               .then(res => {
                 this.khatm = res;
@@ -127,6 +141,8 @@ export class CreateKhatmPage implements OnInit{
                   this.rest_days++;
 
                 this.isMember = (this.khatm.you_read !== null && this.khatm.you_unread !== null);
+
+                waiting_loading.dismiss();
               })
               .catch(err => {
                 if (err === 'expired')
@@ -134,6 +150,8 @@ export class CreateKhatmPage implements OnInit{
                 else {
                   this.msgService.showMessage('error', this.ls.translate('Cannot get khatm details'));
                 }
+
+                waiting_loading.dismiss();
               });
           }
           else if (!status && !visited) {
@@ -185,8 +203,16 @@ export class CreateKhatmPage implements OnInit{
       }
     );
 
+    this.isManuallyCommit = this.khatmService.isManuallyCommit;
+
     this.navBar.backButtonClick = (e:UIEvent) => {
       this.checkOnLeft();
+    }
+  }
+
+  ngAfterViewInit(){
+    if(this.commitPageInput) {
+      this.commitPageInput._elementRef.nativeElement.firstElementChild.focus();
     }
   }
 
@@ -632,5 +658,39 @@ export class CreateKhatmPage implements OnInit{
       this.khatmService.loadKhatms();
       this.navCtrl.pop();
     }
+  }
+
+  checkCommitmentStatus(value){
+    if(parseInt(value) !== parseInt(this.khatm.you_unread))
+      this.alertCtrl.create({
+        title: this.ls.translate('Confirm Commit Pages'),
+        message: this.ls.translate('Your commitment page number is changed. Would you like to save it?'),
+        buttons: [
+          {
+            text: this.ls.translate('Yes'),
+            handler: () => {
+              this.changeCommitPages(value);
+            }
+          },
+          {
+            text: this.ls.translate('No'),
+            handler: () => {
+              this.commitPageInput.value = this.khatm.you_unread;
+              this.isChangingCommitments = false;
+            }
+          }
+        ],
+        cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' alert',
+        enableBackdropDismiss: false
+      }).present();
+  }
+
+  toggleKhatmStatus(){
+    this.khatmService.isManuallyCommit = this.isManuallyCommit;
+
+    if(this.isManuallyCommit)
+      this.msgService.showMessage('inform', this.ls.translate('Note: ??????????????????????'), true);
+    else
+      this.msgService.showMessage('inform', this.ls.translate('Note: ??????????????????????'), true);
   }
 }

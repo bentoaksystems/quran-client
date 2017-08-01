@@ -58,7 +58,7 @@ export class HomePage implements OnInit{
   }
 
   readPage(page_index){
-    if(this.khatm !== null) {
+    if(!this.khatmService.isManuallyCommit && this.khatm !== null) {
       this.vibration.vibrate(100);
       this.khatmService.updateKhatmDetails(this.khatm.khid, true);
       this.khatmService.commitPages(this.khatm.khid, [this.khatmPagesInfo[page_index]], true);

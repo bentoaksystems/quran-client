@@ -14,12 +14,21 @@ import {LanguageService} from "../../services/language";
   templateUrl: 'left-menu.html'
 })
 export class LeftMenuComponent implements OnInit{
+  fontFamily: string = 'quran-uthmanic';
+
   ngOnInit(): void {
     this.zoom = 262.5 * Math.pow(1.125, this.stylingService.curZoom);
+
+    this.stylingService.fontFamily$.subscribe(
+      (font) => {
+        console.log('font:', font);
+        if(font !== null && font !== undefined)
+          this.fontFamily = font;
+      }
+    )
   }
 
   sampleChangingFont: any = {"sura":78,"aya":1,"text":"عَمَّ يَتَسَآءَلُونَ"};
-  fontFamily = 'quran';
   zoom = 262.5;
   naskhIncompatible = false;
 
@@ -32,14 +41,18 @@ export class LeftMenuComponent implements OnInit{
       acronym: 'ar',
       name: 'العربية'
     },
-    // {
-    //   acronym: 'ur',
-    //   name:'اُردُو'
-    // },
-    // {
-    //   acronym: 'id',
-    //   name: 'Malay'
-    // },
+    {
+      acronym: 'ur',
+      name:'اُردُو'
+    },
+    {
+      acronym: 'id',
+      name: 'Malay'
+    },
+    {
+      acronym: 'tr',
+      name: 'Türkçe',
+    },
     {
       acronym: 'fa',
       name: 'فارسی'
