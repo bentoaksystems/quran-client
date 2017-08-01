@@ -46,7 +46,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   isChangingCommitments: boolean =  false;
   isMember: boolean = false;
   isCommit: boolean = false;
-  isManuallyCommit: boolean = false;
+  isAutomaticCommit: boolean = true;
 
   constructor(public navCtrl: NavController, private navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
@@ -111,6 +111,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
 
       let stillNotLoggedIn: boolean = true;
       let visited: boolean = false;
+      let authAlert;
+      let authAlertIsShown: boolean = false;
 
       if(this.authService.isLoggedIn.getValue()){
         waiting_loading.present();
@@ -121,6 +123,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         (status) => {
           if (status) {
             stillNotLoggedIn = false;
+            if(authAlertIsShown)
+              authAlert.dismiss();
             if(!waitingIsShown)
               waiting_loading.present();
             this.khatmService.getKhatm(link)
@@ -159,7 +163,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             setTimeout(() => {
               if (stillNotLoggedIn && !this.authService.isLoggedIn.getValue()) {
                 stillNotLoggedIn = false;
-                this.alertCtrl.create({
+                authAlert = this.alertCtrl.create({
                   title: this.ls.translate('Not log in yet'),
                   message: this.ls.translate('You must be logged in to join to this khatm'),
                   buttons: [
@@ -183,9 +187,11 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
                     }
                   ],
                   cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' alert'
-                }).present();
+                });
+                authAlertIsShown = true;
+                authAlert.present();
               }
-            }, 1000)
+            }, 1500)
           }
         });
     }
@@ -203,7 +209,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       }
     );
 
-    this.isManuallyCommit = this.khatmService.isManuallyCommit;
+    this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
 
     this.navBar.backButtonClick = (e:UIEvent) => {
       this.checkOnLeft();
@@ -496,7 +502,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   shareVia(){
-    let message: string = (this.khatm.creator_shown) ? this.khatm.owner_name + " invite you" : "You invited";
+    let message: string = (this.authService.user.getValue().name !== null) ? this.authService.user.getValue().name + " invite you" : "You invited";
     message += " to join to '" + this.khatm.khatm_name + "' khatm";
 
     let link: any = this.basicShareLink + this.khatm.share_link;
@@ -661,7 +667,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   checkCommitmentStatus(value){
-    if(parseInt(value) !== parseInt(this.khatm.you_unread))
+    if(value !== null && parseInt(value) !== parseInt(this.khatm.you_unread))
       this.alertCtrl.create({
         title: this.ls.translate('Confirm Commit Pages'),
         message: this.ls.translate('Your commitment page number is changed. Would you like to save it?'),
@@ -686,9 +692,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   toggleKhatmStatus(){
-    this.khatmService.isManuallyCommit = this.isManuallyCommit;
+    this.khatmService.isAutomaticCommit = this.isAutomaticCommit;
 
-    if(this.isManuallyCommit)
+    if(this.isAutomaticCommit)
       this.msgService.showMessage('inform', this.ls.translate('Note: ??????????????????????'), true);
     else
       this.msgService.showMessage('inform', this.ls.translate('Note: ??????????????????????'), true);

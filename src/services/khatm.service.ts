@@ -12,7 +12,7 @@ import {HttpService} from "./http.service";
 export class KhatmService {
   khatms: BehaviorSubject<any> = new BehaviorSubject([]);
   activeKhatm: BehaviorSubject<any> = new BehaviorSubject(null);
-  isManuallyCommit: boolean = false;
+  isAutomaticCommit: boolean = true;
 
   constructor(private httpService: HttpService, private storage: Storage) {}
 

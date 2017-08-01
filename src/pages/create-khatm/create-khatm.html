@@ -163,12 +163,12 @@
           </ion-col>
           <ion-col col-4>
             <ion-label [color]="stylingService.conditionalColoring.text">
-              <span *ngIf="isManuallyCommit">{{ls.translate('Manually')}}</span>
-              <span *ngIf="!isManuallyCommit">{{ls.translate('Automatic')}}</span>
+              <span *ngIf="!isAutomaticCommit">{{ls.translate('Manually')}}</span>
+              <span *ngIf="isAutomaticCommit">{{ls.translate('Automatic')}}</span>
             </ion-label>
           </ion-col>
           <ion-col col-2>
-            <ion-toggle [(ngModel)]="isManuallyCommit" [color]="stylingService.conditionalColoring.primary" (ngModelChange)="toggleKhatmStatus()"></ion-toggle>
+            <ion-toggle [(ngModel)]="isAutomaticCommit" [color]="stylingService.conditionalColoring.primary" (ngModelChange)="toggleKhatmStatus()"></ion-toggle>
           </ion-col>
         </ion-row>
         <ion-row *ngIf="khatmIsStarted">
