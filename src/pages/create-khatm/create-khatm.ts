@@ -227,8 +227,6 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     this.rangeDisplay = (this.range === 'whole') ? 'Whole Quran' : 'Specific Sura';
     this.isSubmitted = false;
 
-    console.log('NUMBER: ' + this.suraNumber);
-
     //Check validation
     if(this.name === null || this.name === '')
       this.msgService.showMessage('warn', this.ls.translate('The khatm should have a name'));
