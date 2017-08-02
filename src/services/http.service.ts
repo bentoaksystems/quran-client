@@ -20,7 +20,6 @@ export class HttpService{
 
     this.network.onConnect().subscribe(
         () => {
-          this.isDisconnected = false;
           if(this.user !== null){
             this.sendDiff()
               .then(() => console.log('diff is sent'))
