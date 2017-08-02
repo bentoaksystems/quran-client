@@ -136,7 +136,7 @@ export class CommitmentPage implements OnInit{
     });
   }
 
-  commit(page){
+  commit(page, fromAll: boolean = false){
     this.anyPagesCommitted = true;
 
     if(this.startRange !== null)
@@ -149,6 +149,9 @@ export class CommitmentPage implements OnInit{
       this.khatmService.commitPages(this.khatm.khid, [page], page.isread);
 
       this.selectionCounter = (page.isread) ? this.selectionCounter + 1 : this.selectionCounter - 1;
+
+      if(!fromAll)
+        this.msgService.showMessage('inform', this.ls.translate('Page') + ' ' + page.page_number + ' ' + this.ls.translate('marked as') + ' ' + this.ls.translate((page.isread ? 'read' : 'unread')));
 
       this.vibration.vibrate(100);
       this.checkAllSelection();
@@ -209,7 +212,14 @@ export class CommitmentPage implements OnInit{
       let targetPages = pages.filter(el => el.isread === this.startRange.isread);
 
       this.khatmService.commitPages(this.khatm.khid, targetPages, this.startRange.isread)
-          .then((res) => {this.vibration.vibrate(100)})
+          .then((res) => {
+            this.vibration.vibrate(100);
+            this.msgService.showMessage('inform', this.ls.translate('Pages from') + ' ' +
+                                        this.startRange.page_number + ' ' +
+                                        this.ls.translate('to') + ' ' +
+                                        this.ls.translate('marked as') + ' ' +
+                                        this.ls.translate(this.startRange.isread ? 'read' : 'unread'));
+          })
           .catch((err) => {
             this.msgService.showMessage('error', 'Cannot save your changes. Please try again.', true);
           });
@@ -226,13 +236,17 @@ export class CommitmentPage implements OnInit{
   allSelectionChange(){
     let currentReadStatus = false;
 
-    if(this.allSelection)
+    if(this.allSelection) {
       currentReadStatus = false;
-    else
+      this.msgService.showMessage('inform', this.ls.translate('All pages marked as read'));
+    }
+    else {
       currentReadStatus = true;
+      this.msgService.showMessage('inform', this.ls.translate('All pages marked as unread'));
+    }
 
     let needChange = this.allCommitments.filter(el => el.isread === currentReadStatus);
-    needChange.forEach(el => this.commit(el));
+    needChange.forEach(el => this.commit(el, true));
   }
 
   checkAllSelection(){
@@ -240,6 +254,6 @@ export class CommitmentPage implements OnInit{
 
     this.allCommitments.forEach(el => all_isread = all_isread && el.isread);
 
-    this.allSelection = all_isread
+    this.allSelection = all_isread;
   }
 }

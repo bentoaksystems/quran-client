@@ -77,24 +77,43 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
 
     if(link === undefined || link === null){
       this.isNew = this.navParams.get('isNew');
-      this.khatm = this.navParams.get('khatm');
+      // this.khatm = this.navParams.get('khatm');
+      this.khatm = null;
+      let tempShareLink = this.navParams.get('khatm');
       this.isMember = this.navParams.get('isMember');
 
-      if(this.khatm !== null){
-        // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
-        // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
-        this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
-        this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+      if(tempShareLink !== null){
+        waiting_loading.present();
 
-        let mDate = moment(this.currentDate);
-        if(moment(this.khatm.start_date) > mDate)
-          this.khatmIsStarted = false;
-        else
-          this.khatmIsStarted = true;
+        this.khatmService.getKhatm(tempShareLink)
+          .then(res => {
+            this.khatm = res;
 
-        this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
-        if(this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
-          this.rest_days++;
+            // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
+            // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
+            this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
+            this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+
+            let mDate = moment(this.currentDate);
+            if(moment(this.khatm.start_date) > mDate)
+              this.khatmIsStarted = false;
+            else
+              this.khatmIsStarted = true;
+
+            this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
+            if(this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
+              this.rest_days++;
+
+            if(this.khatmService.activeKhatm.getValue() !== null && this.khatmService.activeKhatm.getValue().khid === this.khatm.khid)
+              this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
+
+            waiting_loading.dismiss();
+          })
+          .catch(err => {
+            this.khatm = null;
+            this.msgService.showMessage('error', this.ls.translate('Cannot get khatm details'));
+            waiting_loading.dismiss();
+          });
       }
       else{
         this.startDate = this.currentDate.getFullYear() + '-' +
@@ -145,6 +164,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
                   this.rest_days++;
 
                 this.isMember = (this.khatm.you_read !== null && this.khatm.you_unread !== null);
+
+                if(this.khatmService.activeKhatm.getValue() !== null && this.khatmService.activeKhatm.getValue().khid === this.khatm.khid)
+                  this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
 
                 waiting_loading.dismiss();
               })
@@ -208,9 +230,6 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         }
       }
     );
-
-    if(this.khatmService.activeKhatm.getValue() !== null && this.khatmService.activeKhatm.getValue().khid === this.khatm.khid)
-      this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
 
     this.navBar.backButtonClick = (e:UIEvent) => {
       this.checkOnLeft();
@@ -365,6 +384,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
           }
           else
             this.endDate = this.castDate(this.getDate(startDate, this.duration, null));
+        }
+        else{
+          this.endDate = this.startDate;
         }
       }
     }
