@@ -49,7 +49,9 @@ export class MsgService{
   }
 
   dismiss() {
-    if(this.tsCtrl)
+    if(this.tsCtrl) {
       this.tsCtrl.dismiss();
+      this.tsCtrl = null;
+    }
   }
 }

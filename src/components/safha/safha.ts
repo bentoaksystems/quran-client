@@ -240,6 +240,10 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
             if (curAyaIndex + 1 < this.ayas.length) {
               let nextAya = this.ayas[curAyaIndex + 1];
               this.selectedAya = {sura: nextAya.sura, aya: nextAya.aya, substrIndex: null};
+              let bs = this.bookmarkService.scrollLocation$.subscribe(s=>{
+                this.scrollPage.scrollTo(0,s,0);
+                bs.unsubscribe();
+              });
               this.play(this.selectedAya);
             }
           });
