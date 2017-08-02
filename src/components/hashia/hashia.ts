@@ -72,31 +72,33 @@ export class Hashia implements OnInit {
   }
 
   changeSura(event) {
-    let suraPopOver = this.popoverCtrl.create(SuraList, {
-      suras: this.suras,
-      disabled: this.disabled,
-      selectedSura: this._so
-    },{
-      cssClass: (this.stylingService.nightMode) ? 'night_mode' : 'day_mode'
-    });
-
-    suraPopOver.present({
-      ev: event
-    });
+    if(!this.disabled){
+      let suraPopOver = this.popoverCtrl.create(SuraList, {
+        suras: this.suras,
+        disabled: this.disabled,
+        selectedSura: this._so
+      },{
+        cssClass: (this.stylingService.nightMode) ? 'night_mode' : 'day_mode'
+      });
+      suraPopOver.present({
+        ev: event
+      });
+    }
   }
 
   changeJuz(event) {
-    let juzPopOver = this.popoverCtrl.create(JuzList, {
-      juzes: this.juzes,
-      disabled: this.disabled,
-      selectedJuz: this.pageJuzNumber
-    },{
-      cssClass: (this.stylingService.nightMode) ? 'night_mode' : 'day_mode'
-    });
-
-    juzPopOver.present({
-      ev: event
-    });
+    if(!this.disabled){
+      let juzPopOver = this.popoverCtrl.create(JuzList, {
+        juzes: this.juzes,
+        disabled: this.disabled,
+        selectedJuz: this.pageJuzNumber
+      },{
+        cssClass: (this.stylingService.nightMode) ? 'night_mode' : 'day_mode'
+      });
+      juzPopOver.present({
+        ev: event
+      });
+    }
   }
 
   changePage() {

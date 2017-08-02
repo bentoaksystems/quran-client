@@ -83,6 +83,9 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       for (let i = 1; i < 605; i++)this._pages.push(i);
       if (this.khatmActive) {
         this.scrollLock = true;
+        this.scrollPage.scrollTo(0, this.bookmarkService.scrollLocation, 0);
+        this.quranPage = this.bookmarkService.pageNumber;
+        console.log(this.bookmarkService.pageNumber,this.bookmarkService.scrollLocation)
       }
       this.khatmActive = false;
     }
@@ -318,7 +321,8 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
 
       if (found && i && +i !== this._pageIndex)
         this.zone.run(() => {
-          this.pageIsRead.emit(this._pageIndex);
+          if(+i >= this._pageIndex && this.khatmActive)
+            this.pageIsRead.emit(this._pageIndex);
           this._pageIndex = +i;
           if (!this.khatmActive) {
             this.bookmarkService.setPageNumber(this.quranPage);
