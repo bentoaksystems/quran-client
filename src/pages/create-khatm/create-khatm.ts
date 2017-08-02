@@ -46,7 +46,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   isChangingCommitments: boolean =  false;
   isMember: boolean = false;
   isCommit: boolean = false;
-  isAutomaticCommit: boolean = true;
+  isAutomaticCommit: boolean = false;
 
   constructor(public navCtrl: NavController, private navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
@@ -209,7 +209,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       }
     );
 
-    this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
+    if(this.khatmService.activeKhatm.getValue() !== null && this.khatmService.activeKhatm.getValue().khid === this.khatm.khid)
+      this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
 
     this.navBar.backButtonClick = (e:UIEvent) => {
       this.checkOnLeft();
@@ -542,6 +543,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         this.isChangingCommitments = false;
       }
       else {
+        loading.present();
+
         this.khatmService.getPages(newValNum, this.khatm.khid, type, this.isMember)
           .then((res: any) => {
             if(res !== null){
@@ -584,7 +587,12 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     this.navCtrl.push(CommitmentPage, {khatm: this.khatm, isSelect: isSelect});
   }
 
-  start_stop_Khatm(){
+  start_stop_Khatm(action){
+    if(action === 'start')
+      this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
+    else
+      this.isAutomaticCommit = false;
+
     this.khatmService.start_stop_Khatm(this.khatm);
 
     if(this.khatmService.activeKhatm.getValue() !== null)

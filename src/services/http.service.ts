@@ -182,7 +182,11 @@ export class HttpService{
           this.modifyCommitmentsStorage('diff_khatm', khatm_id, pages, 'add')
             .then(res => {
               returnValue = res;
-              return this.modifyKhatmsStorage(khatm_id, isread);
+
+              if(res)
+                return this.modifyKhatmsStorage(khatm_id, isread, pages.length);
+              else
+                return Promise.resolve();
             })
             .then(res => resolve(returnValue))
             .catch(err => reject(err));
@@ -191,7 +195,11 @@ export class HttpService{
           this.modifyCommitmentsStorage('diff_khatm', khatm_id, pages, 'delete')
             .then(res => {
               returnValue = res;
-              return this.modifyKhatmsStorage(khatm_id, isread);
+
+              if(res)
+                return this.modifyKhatmsStorage(khatm_id, isread, pages.length);
+              else
+                return Promise.resolve();
             })
             .then(res => resolve(returnValue))
             .catch(err => reject(err));
@@ -206,7 +214,11 @@ export class HttpService{
               this.modifyCommitmentsStorage('khatm', khatm_id, pages, 'delete')
                 .then(res => {
                   returnValue = res;
-                  return this.modifyKhatmsStorage(khatm_id, isread);
+
+                  if(res)
+                    return this.modifyKhatmsStorage(khatm_id, isread, pages.length);
+                  else
+                    return Promise.resolve();
                 })
                 .then(res => resolve(returnValue))
                 .catch(err => reject(err));
@@ -215,7 +227,11 @@ export class HttpService{
               this.modifyCommitmentsStorage('khatm', khatm_id, pages, 'add')
                 .then(res => {
                   returnValue = res;
-                  return this.modifyKhatmsStorage(khatm_id, isread);
+
+                  if(res)
+                    return this.modifyKhatmsStorage(khatm_id, isread, pages.length);
+                  else
+                    return Promise.resolve();
                 })
                 .then(res => resolve(returnValue))
                 .catch(err => reject(err));
@@ -231,8 +247,12 @@ export class HttpService{
 
   modifyCommitmentsStorage(storageName, khatm_id, pages, action) {
     return new Promise((resolve, reject) => {
+      let isValueChange: boolean = true;
+
       this.storage.get(storageName + '_' + khatm_id)
         .then((value) => {
+          let firstValueLen = value.length;
+
           if (value != null) {
             if (action === 'add') {
               value = value.concat(pages);
@@ -251,13 +271,15 @@ export class HttpService{
             value = pages;
           }
 
+          isValueChange = (value.length !== firstValueLen);
+
           if (value.length === 0)
             return this.storage.remove(storageName + '_' + khatm_id);
           else
             return this.storage.set(storageName + '_' + khatm_id, value);
         })
         .then((res) => {
-          resolve();
+          resolve(isValueChange);
         })
         .catch((err) => {
           reject(err);
@@ -265,15 +287,15 @@ export class HttpService{
     });
   }
 
-  modifyKhatmsStorage(khatm_id, isread){
+  modifyKhatmsStorage(khatm_id, isread, pageNumbers){
     return new Promise((resolve, reject) => {
       this.storage.get('khatms')
         .then(res => {
           let khatm = res.find(el => el.khid === khatm_id);
 
-          khatm.you_read = (isread) ? parseInt(khatm.you_read) + 1 : parseInt(khatm.you_read) - 1;
-          khatm.you_unread = (isread) ? parseInt(khatm.you_unread) - 1 : parseInt(khatm.you_unread) + 1;
-          khatm.read_pages = (isread) ? parseInt(khatm.read_pages) + 1 : parseInt(khatm.read_pages) - 1;
+          khatm.you_read = (isread) ? parseInt(khatm.you_read) + pageNumbers : parseInt(khatm.you_read) - pageNumbers;
+          khatm.you_unread = (isread) ? parseInt(khatm.you_unread) - pageNumbers : parseInt(khatm.you_unread) + pageNumbers;
+          khatm.read_pages = (isread) ? parseInt(khatm.read_pages) + pageNumbers : parseInt(khatm.read_pages) - pageNumbers;
 
           return this.storage.set('khatms', res);
         })
