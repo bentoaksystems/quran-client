@@ -31,7 +31,6 @@ export class Aya implements AfterViewInit {
   set selected(s) {
     if(s!==this._selected) {
       if(s) {
-        this.showTranslation();
         if (this.text)
           this.bookmark.scrollLocationStream.next(this.text.nativeElement.offsetTop);
       }

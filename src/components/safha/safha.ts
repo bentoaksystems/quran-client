@@ -58,6 +58,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   private layerIndices: string[] = [];
   private removeTopPages: boolean = false;
   private playing: boolean = false;
+  private preloaded: any = {};
 
   get quranPage(): any {
     return this._pages[this._pageIndex];
@@ -208,6 +209,10 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     if (e.selected) {
       this.selectedAya.aya = e.aya.aya;
       this.selectedAya.sura = e.aya.sura;
+      let bs = this.bookmarkService.scrollLocation$.subscribe(s => {
+        this.scrollPage.scrollTo(0, s, 0);
+        bs.unsubscribe();
+      });
     }
     else if (e.selected === false && this.selectedAya.aya === e.aya.aya && this.selectedAya.sura === e.aya.sura) {
       this.selectedAya.aya = null;
@@ -232,23 +237,24 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       }
       let id = `${zeroPad(e.sura)}${zeroPad(e.aya)}.mp3`;
       let alink = `/assets/recitation/${id}`;
+      let play = () => this.audio.play(id, () => {
+        let curAyaIndex = this.ayas.findIndex(r => r.sura === this.selectedAya.sura && r.aya === this.selectedAya.aya);
+        if (curAyaIndex + 1 < this.ayas.length) {
+          let nextAya = this.ayas[curAyaIndex + 1];
+          this.selectedAya = {sura: nextAya.sura, aya: nextAya.aya, substrIndex: null};
+          this.play(this.selectedAya);
+        }
+      });
 
-      this.audio.preloadComplex(id, alink, 1, 1, 0)
-        .then(() => {
-          this.audio.play(id, () => {
-            let curAyaIndex = this.ayas.findIndex(r => r.sura === this.selectedAya.sura && r.aya === this.selectedAya.aya);
-            if (curAyaIndex + 1 < this.ayas.length) {
-              let nextAya = this.ayas[curAyaIndex + 1];
-              this.selectedAya = {sura: nextAya.sura, aya: nextAya.aya, substrIndex: null};
-              let bs = this.bookmarkService.scrollLocation$.subscribe(s=>{
-                this.scrollPage.scrollTo(0,s,0);
-                bs.unsubscribe();
-              });
-              this.play(this.selectedAya);
-            }
-          });
-        })
-        .catch(err => console.log(err));
+      if (this.preloaded[id])
+        play();
+      else
+        this.audio.preloadComplex(id, alink, 1, 1, 0)
+          .then(() => {
+            play();
+            this.preloaded[id] = true;
+          })
+          .catch(err => console.log(err));
 
     }
   }
