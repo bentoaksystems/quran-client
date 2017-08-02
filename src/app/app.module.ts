@@ -32,6 +32,7 @@ import {LanguageService} from "../services/language";
 import {KhatmService} from "../services/khatm.service";
 import {CommitmentPage} from "../pages/commitment/commitment";
 import {BookmarkService} from "../services/bookmark";
+import {NativeAudio} from "@ionic-native/native-audio";
 
 @NgModule({
   declarations: [
@@ -86,6 +87,7 @@ import {BookmarkService} from "../services/bookmark";
     Clipboard,
     Network,
     Vibration,
+    NativeAudio,
   ]
 })
 export class AppModule {
