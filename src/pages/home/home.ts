@@ -25,23 +25,21 @@ export class HomePage implements OnInit{
           //Get khatm commitment pages
           this.khatmService.loadCommitments(this.khatm.khid)
             .then(res => {
-              this.khatmPagesInfo = res;
-              this.khatmPages = this.khatmPagesInfo
-                .sort((a, b) => {
-                  if(a.repeat_number > b.repeat_number)
+              this.khatmPagesInfo = res.sort((a, b) => {
+                if(a.repeat_number > b.repeat_number)
+                  return 1;
+                else if(a.repeat_number < b.repeat_number)
+                  return -1;
+                else {
+                  if(a.page_number > b.page_number)
                     return 1;
-                  else if(a.repeat_number < b.repeat_number)
+                  else if(a.page_number < b.page_number)
                     return -1;
-                  else {
-                    if(a.page_number > b.page_number)
-                      return 1;
-                    else if(a.page_number < b.page_number)
-                      return -1;
-                    else
-                      return 0;
-                  }
-                })
-                .map(el => el.page_number);
+                  else
+                    return 0;
+                }
+              });
+              this.khatmPages = this.khatmPagesInfo.map(el => el.page_number);
             })
             .catch(err => {
               this.khatmPages = [];
@@ -58,7 +56,7 @@ export class HomePage implements OnInit{
   }
 
   readPage(page_index){
-    if(!this.khatmService.isManuallyCommit && this.khatm !== null) {
+    if(this.khatmService.isAutomaticCommit && this.khatm !== null && this.khatmService.activeKhatm.getValue().khid === this.khatm.khid) {
       this.vibration.vibrate(100);
       this.khatmService.updateKhatmDetails(this.khatm.khid, true);
       this.khatmService.commitPages(this.khatm.khid, [this.khatmPagesInfo[page_index]], true);
