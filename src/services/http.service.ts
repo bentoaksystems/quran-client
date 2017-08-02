@@ -251,7 +251,7 @@ export class HttpService{
 
       this.storage.get(storageName + '_' + khatm_id)
         .then((value) => {
-          let firstValueLen = value.length;
+          let firstValueLen = (value === null) ? 0 : value.length;
 
           if (value != null) {
             if (action === 'add') {
@@ -272,6 +272,9 @@ export class HttpService{
           }
 
           isValueChange = (value.length !== firstValueLen);
+
+          if(action === 'update')
+            isValueChange = true;
 
           if (value.length === 0)
             return this.storage.remove(storageName + '_' + khatm_id);

@@ -369,6 +369,42 @@ const translations = {
     fa: 'مایل به عضویت نیستم',
     ar: 'أنا ممانع للإنضمام',
   },
+  "page": {
+    fa: 'صفحه',
+    ar: 'صفحة',
+  },
+  "marked as": {
+    fa: 'علامت زده شد به عنوان',
+    ar: 'تم وضع علامة باسم',
+  },
+  "unread": {
+    fa: 'خوانده نشده',
+    ar: 'غير مقروء',
+  },
+  "read": {
+    fa: 'خوانده شده',
+    ar: 'اقرأ',
+  },
+  "pages from": {
+    fa: 'صفحات از',
+    ar: 'صفحات من',
+  },
+  "to": {
+    fa: 'تا',
+    ar: 'إلى',
+  },
+  "all pages marked as read": {
+    fa: 'تمام صفحات به عنوان خوانده شده علامت زده شدند',
+    ar: 'تم وضع علامة على جميع الصفحات كمقروءة',
+  },
+  "all pages marked as unread": {
+    fa: 'تمام صفحات به عنوان خوانده نشده علامت زده شدند',
+    ar: 'تم وضع علامة على جميع الصفحات كغير مقروءة',
+  },
+  "no khatm found": {
+    fa: 'هیچ ختمی یافت نشد',
+    ar: 'لم تجد القرآن',
+  },
 };
 
 const directionRTL = {
@@ -394,7 +430,9 @@ export class LanguageService {
   constructor(private storage: Storage, private http : Http){
     this.storage.get('language')
       .then(l => {
-        this._lang = l;
+        if(l && l!==this._lang)
+          this._lang = l;
+
         this.getTranslation(l);
       })
       .catch(err=>console.log(err));
