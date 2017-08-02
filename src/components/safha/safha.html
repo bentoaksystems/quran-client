@@ -34,7 +34,7 @@
 
       <div class="internal quran" [ngClass]="[fontFamily+'Font']"
            [ngStyle]="{'margin':margin + 'px','font-family':fontFamily}">
-        <aya *ngFor="let aya of pageAyas[page]" [value]="aya" [fontFamily]="fontFamily" [margin]="margin" (onselect)="onAyaSelected($event)" [selected]="aya.sura===selectedAya.sura && aya.aya==selectedAya.aya"></aya>
+        <aya *ngFor="let aya of pageAyas[page]" [value]="aya" [fontFamily]="fontFamily" [margin]="margin" (onselect)="onAyaSelected($event)" [selected]="aya.sura===selectedAya.sura && aya.aya==selectedAya.aya" [playing]="playing"></aya>
       </div>
     </div>
     <hr [class.khatmActive]="khatmActive" [class.regular]="!khatmActive">
