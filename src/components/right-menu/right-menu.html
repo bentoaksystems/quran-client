@@ -1,37 +1,49 @@
 <span [ngStyle]="{'direction':ls.direction()}">
   <ion-content [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8' ">
-    <ion-grid>
+    <ion-grid *ngIf="!isLoggedIn">
       <ion-row>
         <ion-col col-6>
           <button [color]="stylingService.conditionalColoring.primary" ion-button menuClose *ngIf="!isLoggedIn" block (click)="openPage('register', null, 'register')">{{ls.translate('Register')}}</button>
-          <button [color]="stylingService.conditionalColoring.primary" ion-button menuClose *ngIf="isLoggedIn" block (click)="logout()">{{ls.translate('Logout')}}</button>
+          <!--<button [color]="stylingService.conditionalColoring.primary" ion-button menuClose *ngIf="isLoggedIn" block (click)="sync()">-->
+            <!--<i class="fa fa-refresh" aria-hidden="true"></i>-->
+          <!--</button>-->
+          <!--<button [color]="stylingService.conditionalColoring.primary" ion-button menuClose *ngIf="isLoggedIn" block (click)="logout()">{{ls.translate('Logout')}}</button>-->
         </ion-col>
         <ion-col col-6>
           <button [color]="stylingService.conditionalColoring.primary" ion-button menuClose *ngIf="!isLoggedIn" block (click)="openPage('register', null, 'signIn')">{{ls.translate('Sign in')}}</button>
-          <button [color]="stylingService.conditionalColoring.primary" ion-button menuClose *ngIf="isLoggedIn" block (click)="openPage('khatm')">{{ls.translate('Create Khatm')}}</button>
+          <!--<button [color]="stylingService.conditionalColoring.primary" ion-button menuClose *ngIf="isLoggedIn" block (click)="openPage('khatm')">{{ls.translate('Create Khatm')}}</button>-->
         </ion-col>
       </ion-row>
     </ion-grid>
-    <hr/>
-    <ion-list *ngIf="isLoggedIn && khatms.length > 0">
+    <ion-list *ngIf="isLoggedIn">
       <ion-list-header [color]="stylingService.conditionalColoring.backgroundLighter">
-        <ion-label [color]="stylingService.conditionalColoring.text">
+        <h1 [ngStyle]="{'color': stylingService.conditionalColoring.text}">
           {{ls.translate('My Khatms')}}
-        </ion-label>
+        </h1>
+        <button ion-button icon-only clear item-end (click)="sync()">
+          <ion-icon name="refresh" [color]="stylingService.conditionalColoring.text"></ion-icon>
+        </button>
+        <button ion-button icon-only clear item-end (click)="openPage('khatm')">
+          <ion-icon name="add" [color]="stylingService.conditionalColoring.text"></ion-icon>
+        </button>
       </ion-list-header>
-      <button *ngFor="let khatm of khatms" ion-item
-              detail-none
-              [color]="stylingService.conditionalColoring.background"
-              (press)="start_stop_khatm(khatm)" (click)="openPage('khatm', khatm)"
-              [ngClass]="{active_night: khatmService.activeKhatm.getValue() !== null &&
-                                        khatmService.activeKhatm.getValue().khid === khatm.khid &&
-                                        stylingService.nightMode,
-                          active_normal: khatmService.activeKhatm.getValue() !== null &&
-                                         khatmService.activeKhatm.getValue().khid === khatm.khid &&
-                                         !stylingService.nightMode}">
-          <ion-label [color]="stylingService.conditionalColoring.text">
-            {{khatm.khatm_name}}
+          <ion-label style="text-align: center" *ngIf="khatms.length === 0"
+               [color]="stylingService.conditionalColoring.text">
+            {{ls.translate('No khatm found')}}
           </ion-label>
+          <button *ngFor="let khatm of khatms" ion-item
+                  detail-none
+                  [color]="stylingService.conditionalColoring.background"
+                  (press)="start_stop_khatm(khatm)" (tap)="openPage('khatm', khatm)"
+                  [ngClass]="{active_night: khatmService.activeKhatm.getValue() !== null &&
+                                            khatmService.activeKhatm.getValue().khid === khatm.khid &&
+                                            stylingService.nightMode,
+                              active_normal: khatmService.activeKhatm.getValue() !== null &&
+                                             khatmService.activeKhatm.getValue().khid === khatm.khid &&
+                                             !stylingService.nightMode}">
+              <ion-label [color]="stylingService.conditionalColoring.text">
+                {{khatm.khatm_name}}
+        </ion-label>
       </button>
     </ion-list>
   </ion-content>

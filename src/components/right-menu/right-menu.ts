@@ -17,7 +17,7 @@ import {StylingService} from "../../services/styling";
 export class RightMenuComponent implements OnInit{
   @Input() isLoggedIn: boolean;
   @Output() switchView = new EventEmitter<any>();
-  khatms: any;
+  khatms: any = [];
 
   constructor(private authService: AuthService, private ls:LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
@@ -37,7 +37,7 @@ export class RightMenuComponent implements OnInit{
       if(viewKhatm !== null){
         params = {
           isNew: false,
-          khatm: viewKhatm,
+          khatm: viewKhatm.share_link,
           isMember: true,
         }
       }
@@ -63,13 +63,17 @@ export class RightMenuComponent implements OnInit{
   }
 
   ngOnInit(){
-    let waiting_loading = this.loadingCtrl.create({
-      content: this.ls.translate('Please wait until we get your khatms...'),
-      cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
-    });
+    let waiting_loading;
+    let isPresent = false;
 
-    if(this.authService.isLoggedIn.getValue())
+    if(this.authService.isLoggedIn.getValue()){
+      isPresent = true;
+      waiting_loading = this.loadingCtrl.create({
+        content: this.ls.translate('Please wait until we get your khatms...'),
+        cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
+      });
       waiting_loading.present();
+    }
 
     this.khatmService.khatms.subscribe(
       (data) => {
@@ -78,14 +82,14 @@ export class RightMenuComponent implements OnInit{
             for(let item of data)
               this.khatms.push(item);
 
-          if(this.authService.isLoggedIn.getValue())
+          if(isPresent)
             waiting_loading.dismiss();
         },
       (err) => {
           console.log(err.message);
           this.msgService.showMessage('error', err.message);
 
-          if(this.authService.isLoggedIn.getValue())
+          if(isPresent)
             waiting_loading.dismiss();
         }
     );
@@ -99,5 +103,17 @@ export class RightMenuComponent implements OnInit{
   start_stop_khatm(khatm){
     this.switchView.emit({shouldClose: true});
     this.khatmService.start_stop_Khatm(khatm);
+  }
+
+  sync(){
+    let waiting_loading = this.loadingCtrl.create({
+      content: this.ls.translate('Please wait until we get your khatms...'),
+      cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
+    });
+    waiting_loading.present();
+
+    this.khatmService.loadKhatms();
+
+    waiting_loading.dismiss();
   }
 }

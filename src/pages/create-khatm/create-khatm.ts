@@ -21,7 +21,7 @@ import {Registration} from "../registration/registration";
 export class CreateKhatmPage implements OnInit, AfterViewInit{
   @ViewChild(Navbar) navBar: Navbar;
   @ViewChild('commitPageInput') commitPageInput;
-  basicShareLink: string = 'http://www.read.quran.parts/khatm/';
+  basicShareLink: string = 'http://read.quran.parts/khatm/';
   khatmIsStarted: boolean = true;
   isSubmitted: boolean = false;
   name: string = '';
@@ -46,7 +46,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   isChangingCommitments: boolean =  false;
   isMember: boolean = false;
   isCommit: boolean = false;
-  isManuallyCommit: boolean = false;
+  isAutomaticCommit: boolean = false;
 
   constructor(public navCtrl: NavController, private navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
@@ -77,24 +77,43 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
 
     if(link === undefined || link === null){
       this.isNew = this.navParams.get('isNew');
-      this.khatm = this.navParams.get('khatm');
+      // this.khatm = this.navParams.get('khatm');
+      this.khatm = null;
+      let tempShareLink = this.navParams.get('khatm');
       this.isMember = this.navParams.get('isMember');
 
-      if(this.khatm !== null){
-        // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
-        // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
-        this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
-        this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+      if(tempShareLink !== null){
+        waiting_loading.present();
 
-        let mDate = moment(this.currentDate);
-        if(moment(this.khatm.start_date) > mDate)
-          this.khatmIsStarted = false;
-        else
-          this.khatmIsStarted = true;
+        this.khatmService.getKhatm(tempShareLink)
+          .then(res => {
+            this.khatm = res;
 
-        this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
-        if(this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
-          this.rest_days++;
+            // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
+            // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
+            this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
+            this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+
+            let mDate = moment(this.currentDate);
+            if(moment(this.khatm.start_date) > mDate)
+              this.khatmIsStarted = false;
+            else
+              this.khatmIsStarted = true;
+
+            this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
+            if(this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
+              this.rest_days++;
+
+            if(this.khatmService.activeKhatm.getValue() !== null && this.khatmService.activeKhatm.getValue().khid === this.khatm.khid)
+              this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
+
+            waiting_loading.dismiss();
+          })
+          .catch(err => {
+            this.khatm = null;
+            this.msgService.showMessage('error', this.ls.translate('Cannot get khatm details'));
+            waiting_loading.dismiss();
+          });
       }
       else{
         this.startDate = this.currentDate.getFullYear() + '-' +
@@ -111,6 +130,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
 
       let stillNotLoggedIn: boolean = true;
       let visited: boolean = false;
+      let authAlert;
+      let authAlertIsShown: boolean = false;
 
       if(this.authService.isLoggedIn.getValue()){
         waiting_loading.present();
@@ -121,6 +142,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         (status) => {
           if (status) {
             stillNotLoggedIn = false;
+            if(authAlertIsShown)
+              authAlert.dismiss();
             if(!waitingIsShown)
               waiting_loading.present();
             this.khatmService.getKhatm(link)
@@ -142,6 +165,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
 
                 this.isMember = (this.khatm.you_read !== null && this.khatm.you_unread !== null);
 
+                if(this.khatmService.activeKhatm.getValue() !== null && this.khatmService.activeKhatm.getValue().khid === this.khatm.khid)
+                  this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
+
                 waiting_loading.dismiss();
               })
               .catch(err => {
@@ -159,7 +185,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             setTimeout(() => {
               if (stillNotLoggedIn && !this.authService.isLoggedIn.getValue()) {
                 stillNotLoggedIn = false;
-                this.alertCtrl.create({
+                authAlert = this.alertCtrl.create({
                   title: this.ls.translate('Not log in yet'),
                   message: this.ls.translate('You must be logged in to join to this khatm'),
                   buttons: [
@@ -183,9 +209,11 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
                     }
                   ],
                   cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' alert'
-                }).present();
+                });
+                authAlertIsShown = true;
+                authAlert.present();
               }
-            }, 1000)
+            }, 1500)
           }
         });
     }
@@ -202,8 +230,6 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         }
       }
     );
-
-    this.isManuallyCommit = this.khatmService.isManuallyCommit;
 
     this.navBar.backButtonClick = (e:UIEvent) => {
       this.checkOnLeft();
@@ -359,6 +385,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
           else
             this.endDate = this.castDate(this.getDate(startDate, this.duration, null));
         }
+        else{
+          this.endDate = this.startDate;
+        }
       }
     }
     else if(this.lastFocus === 'end'){
@@ -494,7 +523,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   shareVia(){
-    let message: string = (this.khatm.creator_shown) ? this.khatm.owner_name + " invite you" : "You invited";
+    let message: string = (this.authService.user.getValue().name !== null) ? this.authService.user.getValue().name + " invite you" : "You invited";
     message += " to join to '" + this.khatm.khatm_name + "' khatm";
 
     let link: any = this.basicShareLink + this.khatm.share_link;
@@ -534,6 +563,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         this.isChangingCommitments = false;
       }
       else {
+        loading.present();
+
         this.khatmService.getPages(newValNum, this.khatm.khid, type, this.isMember)
           .then((res: any) => {
             if(res !== null){
@@ -548,8 +579,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
               }
               else{
                 this.khatm.commitment_pages = parseInt(this.khatm.commitment_pages) - (parseInt(this.khatm.you_unread) - parseInt(res));
-                this.khatm.you_unread = (newValNum === 0) ? null : res;
                 this.msgService.showMessage('inform', (parseInt(this.khatm.you_unread) - parseInt(res)) + ' ' + this.ls.translate('pages get down from your commitments'));
+                this.khatm.you_unread = (newValNum === 0) ? null : res;
               }
             }
 
@@ -576,7 +607,12 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     this.navCtrl.push(CommitmentPage, {khatm: this.khatm, isSelect: isSelect});
   }
 
-  start_stop_Khatm(){
+  start_stop_Khatm(action){
+    if(action === 'start')
+      this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
+    else
+      this.isAutomaticCommit = false;
+
     this.khatmService.start_stop_Khatm(this.khatm);
 
     if(this.khatmService.activeKhatm.getValue() !== null)
@@ -659,7 +695,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   checkCommitmentStatus(value){
-    if(parseInt(value) !== parseInt(this.khatm.you_unread))
+    if(value !== null && parseInt(value) !== parseInt(this.khatm.you_unread))
       this.alertCtrl.create({
         title: this.ls.translate('Confirm Commit Pages'),
         message: this.ls.translate('Your commitment page number is changed. Would you like to save it?'),
@@ -684,9 +720,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   toggleKhatmStatus(){
-    this.khatmService.isManuallyCommit = this.isManuallyCommit;
+    this.khatmService.isAutomaticCommit = this.isAutomaticCommit;
 
-    if(this.isManuallyCommit)
+    if(this.isAutomaticCommit)
       this.msgService.showMessage('inform', this.ls.translate('Note: ??????????????????????'), true);
     else
       this.msgService.showMessage('inform', this.ls.translate('Note: ??????????????????????'), true);
