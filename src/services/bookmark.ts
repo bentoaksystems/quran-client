@@ -22,7 +22,7 @@ export class BookmarkService {
   scrollLocation = 0;
 
   private pageNumberStream = new ReplaySubject<number>(1);
-  private scrollLocationStream = new ReplaySubject<boolean>(1);
+  scrollLocationStream = new ReplaySubject<boolean>(1);
 
   pageNumber$ = this.pageNumberStream.asObservable();
   scrollLocation$ = this.scrollLocationStream.asObservable();
