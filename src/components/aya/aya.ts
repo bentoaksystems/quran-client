@@ -17,6 +17,7 @@ export class Aya implements AfterViewInit {
   @Input() value;
   @Input() fontFamily;
   @Input() margin;
+  @Input() playing;
   @ViewChild('bism') bism;
   @Output() onselect = new EventEmitter<any>();
   private _selected: boolean = false;
@@ -34,7 +35,7 @@ export class Aya implements AfterViewInit {
 
   ngAfterViewInit(): void {
     if (this.value.bismillah)
-      this.quranService.suraTop(this.value.sura, this.bism.nativeElement.offsetTop + this.bism.nativeElement.offsetHeight);
+      setTimeout(()=>this.quranService.suraTop(this.value.sura, this.bism.nativeElement.offsetTop),300);
   }
 
   sajdaCheck(obj) {
@@ -83,6 +84,7 @@ export class Aya implements AfterViewInit {
     return {qhizbNum: qhizbInd}
   }
 
+
   selectAya() {
     if (!this.selected) {
       this.selected = true;
@@ -94,6 +96,9 @@ export class Aya implements AfterViewInit {
           this.onselect.next({aya:this.value,selected:false})
         });
       }
+    }
+    else {
+      this.onselect.next({aya: this.value, playStop: true});
     }
   }
 }

@@ -13,24 +13,16 @@ export class HttpService{
   // serverAddress: string = isDevMode()?'http://192.168.1.10:3000/api':
   //    'https://quran-together.herokuapp.com/api';
   serverAddress: string = 'http://read.quran.parts/api';
-  isDisconnected: boolean = false;
   user: any = null;
 
   constructor(private http: Http, private network: Network,
               private storage: Storage){
-    if(this.network.type === 'none')
-      this.isDisconnected = true;
-
-    this.network.onDisconnect().subscribe(
-        () => this.isDisconnected = true
-    );
 
     this.network.onConnect().subscribe(
         () => {
-          this.isDisconnected = false;
           if(this.user !== null){
             this.sendDiff()
-              .then(() => {})
+              .then(() => console.log('diff is sent'))
               .catch(err => console.log(err));
           }
         }
@@ -38,7 +30,7 @@ export class HttpService{
   }
 
   postData(address, data, needAuthDetails: boolean) : Observable<Response>{
-    if(this.isDisconnected)
+    if(this.network.type === 'none')
       return Observable.of(new Response(new ResponseOptions({body: JSON.stringify('You are offline now. Please connect to network'), status: 500})));
 
     let headers = new Headers();
@@ -53,7 +45,7 @@ export class HttpService{
   }
 
   putData(address, data, needAuthDetails: boolean) : Observable<Response> {
-    if(this.isDisconnected)
+    if(this.network.type === 'none')
       return Observable.of(new Response(new ResponseOptions({body: JSON.stringify('You are offline now. Please connect to network'), status: 500})));
 
     let headers = new Headers();
@@ -68,7 +60,7 @@ export class HttpService{
   }
 
   getData(address, needAuthDetails: boolean) : Observable<Response>{
-    if(this.isDisconnected)
+    if(this.network.type === 'none')
       return Observable.of(new Response(new ResponseOptions({body: JSON.stringify('You are offline now. Please connect to network'), status: 500})));
 
     let headers = new Headers();
@@ -83,7 +75,7 @@ export class HttpService{
   }
 
   deleteData(address, needAuthDetails: boolean, email = null, token = null) : Observable<Response>{
-    if(this.isDisconnected)
+    if(this.network.type === 'none')
       return Observable.of(new Response(new ResponseOptions({body: JSON.stringify('You are offline now. Please connect to network'), status: 500})));
 
     let headers = new Headers();
@@ -99,7 +91,7 @@ export class HttpService{
 
   getKhatms(): any{
     return new Promise((resolve, reject) => {
-      if(this.isDisconnected){
+      if(this.network.type === 'none'){
         this.storage.get('khatms')
           .then(res => resolve(res))
           .catch(err => reject(err));
@@ -129,7 +121,7 @@ export class HttpService{
 
   getCommitments(khatm_id): any{
     return new Promise((resolve, reject) => {
-      if(this.isDisconnected){
+      if(this.network.type === 'none'){
         let mainValue = null;
         let diffValue = null;
 
@@ -177,7 +169,7 @@ export class HttpService{
     return new Promise((resolve, reject) => {
       let returnValue = null;
 
-      if(this.isDisconnected){
+      if(this.network.type === 'none'){
         if(isread){
           this.modifyCommitmentsStorage('diff_khatm', khatm_id, pages, 'add')
             .then(res => {
@@ -251,7 +243,7 @@ export class HttpService{
 
       this.storage.get(storageName + '_' + khatm_id)
         .then((value) => {
-          let firstValueLen = value.length;
+          let firstValueLen = (value === null) ? 0 : value.length;
 
           if (value != null) {
             if (action === 'add') {
@@ -272,6 +264,9 @@ export class HttpService{
           }
 
           isValueChange = (value.length !== firstValueLen);
+
+          if(action === 'update')
+            isValueChange = true;
 
           if (value.length === 0)
             return this.storage.remove(storageName + '_' + khatm_id);

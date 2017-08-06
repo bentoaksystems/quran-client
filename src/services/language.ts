@@ -163,11 +163,11 @@ const translations = {
   },
   'remaining days': {
     fa: 'روزهای باقی مانده',
-    ar: 'الأيام المبقية',
+    ar: 'الأيام المتبقية',
   },
-  'pages you read': {
-    fa: 'صفحات خوانده شده شما',
-    ar: 'صفحات أنت قرأت',
+  'number of pages you read': {
+    fa: 'تعداد صفحات خوانده شده شما',
+    ar: 'أرقام الصفحات ما أنت قرأت',
   },
   'remaineder of your committed pages': {
     fa: 'باقی مانده صفحات شما',
@@ -225,11 +225,11 @@ const translations = {
     fa: "صفحات از تعهد شما برداشته شد",
     ar: "صفحات الحصول على أسفل من الالتزامات الخاصة بك",
   },
-  "cannot assign you requested pages now": {
+  "cannot assign requested pages to you at the moment": {
     fa: "در حال حاضر نمی توانیم صفحات درخواست شده به شما اختصاص دهیم",
     ar: "لا يمكن تعيين الصفحات المطلوبة الآن",
   },
-  "the khatm end date is passed": {
+  "the khatm end date is in the past": {
     fa: "تاریخ پایان این ختم گذشته است",
     ar: "يتم تمرير تاريخ نهاية خاتم",
   },
@@ -369,6 +369,42 @@ const translations = {
     fa: 'مایل به عضویت نیستم',
     ar: 'أنا ممانع للإنضمام',
   },
+  "page": {
+    fa: 'صفحه',
+    ar: 'صفحة',
+  },
+  "marked as": {
+    fa: 'علامت زده شد به عنوان',
+    ar: 'تم وضع علامة باسم',
+  },
+  "unread": {
+    fa: 'خوانده نشده',
+    ar: 'غير مقروء',
+  },
+  "read": {
+    fa: 'خوانده شده',
+    ar: 'اقرأ',
+  },
+  "pages from": {
+    fa: 'صفحات از',
+    ar: 'صفحات من',
+  },
+  "to": {
+    fa: 'تا',
+    ar: 'إلى',
+  },
+  "all pages marked as read": {
+    fa: 'تمام صفحات به عنوان خوانده شده علامت زده شدند',
+    ar: 'تم وضع علامة على جميع الصفحات كمقروءة',
+  },
+  "all pages marked as unread": {
+    fa: 'تمام صفحات به عنوان خوانده نشده علامت زده شدند',
+    ar: 'تم وضع علامة على جميع الصفحات كغير مقروءة',
+  },
+  "no khatm found": {
+    fa: 'هیچ ختمی یافت نشد',
+    ar: 'لم تجد القرآن',
+  },
 };
 
 const directionRTL = {
@@ -394,6 +430,8 @@ export class LanguageService {
   constructor(private storage: Storage, private http : Http){
     this.storage.get('language')
       .then(l => {
+        if(!l)
+          l = 'en';
         this._lang = l;
         this.getTranslation(l);
       })

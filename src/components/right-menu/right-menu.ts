@@ -17,7 +17,7 @@ import {StylingService} from "../../services/styling";
 export class RightMenuComponent implements OnInit{
   @Input() isLoggedIn: boolean;
   @Output() switchView = new EventEmitter<any>();
-  khatms: any;
+  khatms: any = [];
 
   constructor(private authService: AuthService, private ls:LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
@@ -37,7 +37,7 @@ export class RightMenuComponent implements OnInit{
       if(viewKhatm !== null){
         params = {
           isNew: false,
-          khatm: viewKhatm,
+          khatm: viewKhatm.share_link,
           isMember: true,
         }
       }
@@ -103,5 +103,17 @@ export class RightMenuComponent implements OnInit{
   start_stop_khatm(khatm){
     this.switchView.emit({shouldClose: true});
     this.khatmService.start_stop_Khatm(khatm);
+  }
+
+  sync(){
+    let waiting_loading = this.loadingCtrl.create({
+      content: this.ls.translate('Please wait until we get your khatms...'),
+      cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
+    });
+    waiting_loading.present();
+
+    this.khatmService.loadKhatms();
+
+    waiting_loading.dismiss();
   }
 }

@@ -21,7 +21,6 @@ export class LeftMenuComponent implements OnInit{
 
     this.stylingService.fontFamily$.subscribe(
       (font) => {
-        console.log('font:', font);
         if(font !== null && font !== undefined)
           this.fontFamily = font;
       }
