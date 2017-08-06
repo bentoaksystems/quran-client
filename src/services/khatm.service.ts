@@ -76,20 +76,7 @@ export class KhatmService {
   }
 
   getKhatm(khatm_link){
-    return new Promise((resolve, reject) => {
-      this.httpService.getData('khatm/link/' + khatm_link, true).subscribe(
-        (res) => {
-          let data = res.json();
-          let mDate = moment(new Date());
-
-          if (moment(data[0].end_date).diff(mDate, 'days') >= 0)
-            resolve(data[0]);
-          else
-            reject('expired');
-        },
-        (err) => reject(err)
-      );
-    })
+    return this.httpService.getKhatm(khatm_link);
   }
 
   storeKhatmPages(khatm_id, pages, action) {
