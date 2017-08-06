@@ -2,6 +2,7 @@ import {AfterViewInit, Component, EventEmitter, Input, Output, ViewChild} from '
 import {QuranService} from "../../services/quran.service";
 import {MsgService} from "../../services/msg.service";
 import {LanguageService} from "../../services/language";
+import {BookmarkService} from "../../services/bookmark";
 
 /**
  * Generated class for the Aya component.
@@ -19,6 +20,7 @@ export class Aya implements AfterViewInit {
   @Input() margin;
   @Input() playing;
   @ViewChild('bism') bism;
+  @ViewChild('text') text;
   @Output() onselect = new EventEmitter<any>();
   private _selected: boolean = false;
   @Input()
@@ -27,15 +29,21 @@ export class Aya implements AfterViewInit {
   }
 
   set selected(s) {
-    this._selected = s;
+    if(s!==this._selected) {
+      if(s) {
+        if (this.text)
+          this.bookmark.scrollLocationStream.next(this.text.nativeElement.offsetTop);
+      }
+      this._selected = s;
+    }
   }
 
-  constructor(private quranService: QuranService, private msg: MsgService, private l: LanguageService) {
+  constructor(private quranService: QuranService, private msg: MsgService, private l: LanguageService, private bookmark: BookmarkService) {
   }
 
   ngAfterViewInit(): void {
     if (this.value.bismillah)
-      setTimeout(()=>this.quranService.suraTop(this.value.sura, this.bism.nativeElement.offsetTop),300);
+      setTimeout(() => this.quranService.suraTop(this.value.sura, this.bism.nativeElement.offsetTop), 300);
   }
 
   sajdaCheck(obj) {
@@ -84,18 +92,21 @@ export class Aya implements AfterViewInit {
     return {qhizbNum: qhizbInd}
   }
 
+  showTranslation() {
+    let trans = this.l.qt[this.value.sura + '_' + this.value.aya];
+    if (trans)
+      this.msg.showMessage('inform', trans, true, () => {
+        this._selected = false;
+        this.onselect.next({aya: this.value, selected: false})
+      });
+  }
 
   selectAya() {
     if (!this.selected) {
       this.selected = true;
-      this.onselect.next({aya:this.value,selected:true});
-      let trans = this.l.qt[this.value.sura + '_' + this.value.aya];
-      if (trans) {
-        this.msg.showMessage('inform', trans, true, () => {
-          this._selected = false;
-          this.onselect.next({aya:this.value,selected:false})
-        });
-      }
+      this.onselect.next({aya: this.value, selected: true});
+
+      this.showTranslation();
     }
     else {
       this.onselect.next({aya: this.value, playStop: true});

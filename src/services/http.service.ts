@@ -299,6 +299,35 @@ export class HttpService{
     });
   }
 
+  getKhatm(share_link){
+    return new Promise((resolve, reject) => {
+      if(this.network.type === 'none'){
+        this.storage.get('khatms')
+          .then(res => {
+            let khatm = res.find(el => el.share_link === share_link);
+            resolve(khatm);
+          })
+          .catch(err => {
+            reject(err);
+          })
+      }
+      else{
+        this.getData('khatm/link/' + share_link, true).subscribe(
+          (res) => {
+            let data = res.json();
+            let mDate = moment(new Date());
+
+            if (moment(data[0].end_date).diff(mDate, 'days') >= 0)
+              resolve(data[0]);
+            else
+              reject('expired');
+          },
+          (err) => reject(err)
+        );
+      }
+    })
+  }
+
   sendDiff(): any{
     return new Promise((resolve, reject) => {
       this.storage.get('khatms')
