@@ -20,10 +20,10 @@
         <h1 [ngStyle]="{'color': stylingService.conditionalColoring.text}">
           {{ls.translate('My Khatms')}}
         </h1>
-        <button ion-button icon-only clear item-end (click)="sync()">
+        <button ion-button icon-only clear item-end (click)="sync()" class="right-menu-icon-buttons">
           <ion-icon name="refresh" [color]="stylingService.conditionalColoring.text"></ion-icon>
         </button>
-        <button ion-button icon-only clear item-end (click)="openPage('khatm')">
+        <button ion-button icon-only clear item-end (click)="openPage('khatm')" class="right-menu-icon-buttons">
           <ion-icon name="add" [color]="stylingService.conditionalColoring.text"></ion-icon>
         </button>
       </ion-list-header>

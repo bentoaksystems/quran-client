@@ -234,7 +234,7 @@
           <ion-label style="font-size: 0.8em;">{{ls.translate('Rest Days')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(rest_days)}}</ion-label>
         </ion-item>
-        <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
+        <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null"
                   [color]="stylingService.conditionalColoring.background">
           <ion-label style="font-size: 0.8em;">{{ls.translate('You Read')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.you_read)}}</ion-label>
