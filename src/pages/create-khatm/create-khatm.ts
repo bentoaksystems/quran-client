@@ -94,6 +94,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
             this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
 
+            this.khatm.you_unread = parseInt(this.khatm.you_unread) === 0 ? null : this.khatm.you_unread;
+
             let mDate = moment(this.currentDate);
             if(moment(this.khatm.start_date) > mDate)
               this.khatmIsStarted = false;
@@ -592,10 +594,11 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             //Stop loading controller
             loading.dismiss();
             this.isChangingCommitments = false;
+            this.commitPageInput.value = this.khatm.you_unread;
 
             console.log(err.message);
-            this.msgService.showMessage('error', JSON.stringify(err), true);
             this.msgService.showMessage('warn', this.ls.translate('Cannot assign you requested pages'));
+            this.msgService.showMessage('error', JSON.stringify(err), true);
           });
       }
     }
@@ -695,7 +698,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   checkCommitmentStatus(value){
-    if(value !== null && parseInt(value) !== parseInt(this.khatm.you_unread))
+    if(value !== null && parseInt(value) !== parseInt(this.khatm.you_unread) && (this.khatm.you_unread !== null || (this.khatm.you_unread === null && (parseInt(value) !== 0 && value !== ''))))
       this.alertCtrl.create({
         title: this.ls.translate('Confirm Commit Pages'),
         message: this.ls.translate('Your commitment page number is changed. Would you like to save it?'),
@@ -723,8 +726,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     this.khatmService.isAutomaticCommit = this.isAutomaticCommit;
 
     if(this.isAutomaticCommit)
-      this.msgService.showMessage('inform', this.ls.translate('Note: ??????????????????????'), true);
+      this.msgService.showMessage('inform', this.ls.translate('Note: Automatically mark any pages you read as read on "reading khatm" mode'), true);
     else
-      this.msgService.showMessage('inform', this.ls.translate('Note: ??????????????????????'), true);
+      this.msgService.showMessage('inform', this.ls.translate('Note: No pages mark as read on "reading khatm" mode. You should commit them manually from "committed pages" button'), true);
   }
 }
