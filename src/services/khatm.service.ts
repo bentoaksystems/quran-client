@@ -50,21 +50,25 @@ export class KhatmService {
       this.httpService.postData('khatm/commitment/auto', {khid: khatm_id, pages: number}, true)
         .subscribe(
           (res) => {
-            let data = res.json();
+            if(res.status === 500)
+              reject(res.json());
+            else{
+              let data = res.json();
 
-            if (data === null)
-              resolve(null);
-            else {
-              let numberOfFinal = (type === 'delete') ? number : data.length;
+              if (data === null)
+                resolve(null);
+              else {
+                let numberOfFinal = (type === 'delete') ? number : data.length;
 
-              if(!isMember)
-                resolve(numberOfFinal);
-              else
+                if(!isMember)
+                  resolve(numberOfFinal);
+                else
                 //Save/Update page numbers
-                this.storeKhatmPages(khatm_id, data, type)
-                  .then((re) => this.updateKhatmCommtiments(khatm_id, numberOfFinal))
-                  .then((r) => resolve(numberOfFinal))
-                  .catch((er) => reject(er));
+                  this.storeKhatmPages(khatm_id, data, type)
+                    .then((re) => this.updateKhatmCommtiments(khatm_id, numberOfFinal))
+                    .then((r) => resolve(numberOfFinal))
+                    .catch((er) => reject(er));
+              }
             }
           },
           (err) => {
