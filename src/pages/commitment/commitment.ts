@@ -34,7 +34,7 @@ export class CommitmentPage implements OnInit{
 
     //Create loading
     let waiting_loading = this.loadingCtrl.create({
-      content: this.ls.translate('Please wait until we get your commitment pages...'),
+      content: this.ls.translate('Please wait until your committed pages are loaded ...'),
       cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
     });
 
@@ -96,8 +96,8 @@ export class CommitmentPage implements OnInit{
 
       if(this.anyPagesCommitted)
         this.alertCtrl.create({
-          title: this.ls.translate('Commit Pages Confirmation'),
-          message: this.ls.translate('All changes will be irreversible after you exit. Do you sure to exit?'),
+          title: this.ls.translate('Confirm committed pages'),
+          message: this.ls.translate("Changes will be irreversible after exit, are you sure?"),
           buttons: [
             {
               text: this.ls.translate('Yes'),

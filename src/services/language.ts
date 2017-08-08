@@ -95,7 +95,7 @@ const translations = {
   },
   'my khatms': {
     fa: 'ختم های من',
-    ar: 'بلدي ختم القرآن',
+    ar: 'بلدي الأختام القرآن',
   },
   'title': {
     fa: 'عنوان',
@@ -169,10 +169,6 @@ const translations = {
     fa: 'تعداد صفحات خوانده شده شما',
     ar: 'أرقام الصفحات ما أنت قرأت',
   },
-  'remaineder of your committed pages': {
-    fa: 'باقی مانده صفحات شما',
-    ar: 'الصفحات المتبقية لك',
-  },
   'copy link': {
     fa: 'کپی کردن لینک',
     ar: 'إنسخ الرابط',
@@ -197,7 +193,7 @@ const translations = {
     fa: 'توقف ختم',
     ar: 'إنهاء الختم',
   },
-  'this khatm is not started yet': {
+  'start time for this khatm is in future': {
     fa: 'زمان شروع این ختم هنوز فرا نرسیده است',
     ar: 'لم يأت وقت البداية هذا الختم',
   },
@@ -209,7 +205,11 @@ const translations = {
     fa: 'بازگشت',
     ar: 'الى الخلف',
   },
-  "please wait until save changes": {
+  'Please wait until your committed pages are loaded ...':{
+    fa:"لطفاّ صبر کنید تا صفحات تهعد شده شما بارگذاری شود...",
+    ar:"يرجى الانتظار...",
+  },
+  "please wait until changes are saved": {
     fa: "لطفا صبر کنید تا تغییرات را اعمال کنیم",
     ar: "يرجى الانتظار حتى يتم حفظ التغييرات",
   },
@@ -217,11 +217,11 @@ const translations = {
     fa: "متأسفانه تمام صفحات اختصاص یافته اند",
     ar: "معذرة. جميع الصفحات ملتزمة",
   },
-  "pages are assigned to you":{
+  "the pages are assigned to you":{
     fa: "صفحات به شما اختصاص یافت",
     ar: "يتم تعيين الصفحات لك",
   },
-  "pages get down from your commitments":{
+  "The pages were removed from your commitments":{
     fa: "صفحات از تعهد شما برداشته شد",
     ar: "صفحات الحصول على أسفل من الالتزامات الخاصة بك",
   },
@@ -241,11 +241,11 @@ const translations = {
     fa: "ختم باید دارای یک عنوان باشد",
     ar: "يجب أن يكون للختم إسم",
   },
-  "the end date field cannot be empty": {
+  "the end date field cannot be left blank": {
     fa: "بخش تاریخ پایانی نمی تواند خالی باشد",
     ar: "لا يمكن أن يكون حقل وقت الانهاء فارغا",
   },
-  "the start date cannot be later then end date": {
+  "the start date cannot be later than end date": {
     fa: "تاریخ شروع نمی تواند پس از تاریخ پایان باشد",
     ar: "لا يمكن أن يكون وقت البدء یحدث بعد  وقت الانتهاء",
   },
@@ -253,23 +253,27 @@ const translations = {
     fa: "لطفا سوره را انتخاب کنید",
     ar: "الرجاء إختيار سورة",
   },
-  "your khatm created successfully": {
+  "your khatm is created successfully": {
     fa: "ختم با موفقیت ساخته شد",
     ar: "تم إنشاء الختم بنجاح",
   },
-  "cannot save your khamt now. please try again": {
+  "please wait until your khatms are loaded ...":{
+    fa:"لطفاً صبر کنید تا ختم‌های شما بارگذاری شوند...",
+    ar:"يرجي الإنتظار حتی تحميل أختامك"
+  },
+  "cannot save your khatm now. please try again": {
     fa: "ذخیره ختم اکنون ممکن نیست. لطفا بعدا دوباره سعی کنید",
     ar: "لا يمكن حفظ الختم الآن. حاول مرة اخرى",
   },
-  "please choose valid start date": {
-    fa: "لطفا تاریخ شروع را انتخاب کنید",
-    ar: "الرجاء إختيار وقت للبدء",
+  'Number of your committed pages is changed. Would you like to save it?':{
+    fa:"تعداد صفحات تعهد شده شما تغییر کرده، تمایل دارید آن را ذخیره کنید؟",
+    ar:"لقد تغير عدد صفحاتك ملتزمة، هل ترجی حفظه؟"
   },
-  "please choose the valid start date": {
+  "please choose a valid start date": {
     fa: "لطفا تاریخ شروع معتبری انتخاب کنید",
     ar: "الرجاء إختيار وقت للبدء صحيحة",
   },
-  "please choose the valid end date": {
+  "please choose a valid end date": {
     fa: "لطفا تاریخ پایان معتبری انتخاب کنید",
     ar: "الرجاء إختيار وقت للإنهاء صحيحة",
   },
@@ -289,6 +293,22 @@ const translations = {
     fa: "تاریخ پایان نمی تواند پیش از امروز باشد",
     ar: "لا يمكن أن يكون وقت الانهاء قبل الیوم",
   },
+  "manual":{
+    fa:"دستی",
+    ar:"اليدوي"
+  },
+  "autmatic":{
+    fa:"خودکار",
+    ar:"التلقائي",
+  },
+  'Note: In automatic mode the pages will be marked as "read" once you scroll them up':{
+    fa:"در حالت خودکار صفحاتی که از آن‌‌ها رد می‌شوید به عنوان صفحات «خوانده شده» علامت می‌خورند.",
+    ar:'في الوضع التلقائي سيتم وضع علامة على الصفحات على أنها "مقروء" بمجرد التمرير لهم',
+  },
+  'Note: In manual mode you should comeb back to the khatm page and mark the pages as "read" yourself':{
+    fa:"در حالت دستی باید خودتان به صفحه ختم برگردید و صفحات خوانده شده را علامت بزنید.",
+    ar:'قي الوضع اليدوي يجب أن تعود إلى صفحة الختم و تضع علامة علی الصفحات بأنها"مقروء" نفسك'
+  },
   "sign in": {
     fa: "ورود",
     ar: "تسجيل الدخول",
@@ -297,7 +317,7 @@ const translations = {
     fa: 'هنوز وارد نشدید',
     ar: 'عدم تسجيل الدخول حتى الآن',
   },
-  "you must be logged in to join to this khatm": {
+  "you must log in to join this khatm": {
     fa: "برای دیدن اطلاعات ختم باید وارد شوید",
     ar: "يجب تسجيل الدخول للانضمام إلى الختم",
   },
@@ -351,7 +371,7 @@ const translations = {
   },
   "you cannot join to this khatm unless you commit some pages. do you want to join this khatm?": {
     fa: 'شما تا زمانی که صفحه ای متعهد نشوید نمیتوانید عضو ختم شوید. آیا میخواهید عضو ختم شوید؟',
-    ar: 'لا يمكنك الانضمام إلى هذا القرآن إلا إذا ارتكبت بعض الصفحات. هل تريد الانضمام إلى هذا الختم؟',
+    ar: 'لا يمكنك الانضمام إلى هذا الختم إلا إذا ارتكبت بعض الصفحات. هل تريد الانضمام إلى هذا الختم؟',
   },
   "do you want to save your changes in committed pages?": {
     fa: 'آیا می‌خواهید تغییرات در صفحات تعهد شده اعمال شود؟',
@@ -401,9 +421,9 @@ const translations = {
     fa: 'تمام صفحات به عنوان خوانده نشده علامت زده شدند',
     ar: 'تم وضع علامة على جميع الصفحات كغير مقروءة',
   },
-  "no khatm found": {
+  "no khatm is found": {
     fa: 'هیچ ختمی یافت نشد',
-    ar: 'لم تجد القرآن',
+    ar: 'لم وُجد ختمٌ',
   },
 };
 
@@ -467,14 +487,15 @@ export class LanguageService {
   convertDate(date){
     if(this._lang === 'fa'){
       momentJalali.loadPersian(true);
-      return momentJalali(date).format('jYYYY-jMMMM-jD');
+      return momentJalali(date).format('jD jMMMM jYYYY');
     }
     else if(this._lang === 'ar'){
+      momentJalali.loadPersian(false);
       var hijri = require('./date-convertor');
       return hijri.convertToHijri(date);
     }
-
-    return moment(date).format('YYYY-MMM-DD');
+    moment.locale('en-GB');
+    return moment(date).format('D MMMM YYYY');
   }
 
   convertDigits(number) {

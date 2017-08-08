@@ -62,7 +62,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     this.navBar.setBackButtonText(this.ls.translate('Back'));
 
     let waiting_loading = this.loadingCtrl.create({
-      content: this.ls.translate('Please wait until we get khatm details...'),
+      content: this.ls.translate('Please wait until your khatms are loaded ...'),
       cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
     });
     let waitingIsShown: boolean = false;
@@ -172,7 +172,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
               })
               .catch(err => {
                 if (err === 'expired')
-                  this.msgService.showMessage('error', this.ls.translate('The khatm end date is passed'));
+                  this.msgService.showMessage('error', this.ls.translate('The khatm end date is in the past'));
                 else {
                   this.msgService.showMessage('error', this.ls.translate('Cannot get khatm details'));
                 }
@@ -186,8 +186,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
               if (stillNotLoggedIn && !this.authService.isLoggedIn.getValue()) {
                 stillNotLoggedIn = false;
                 authAlert = this.alertCtrl.create({
-                  title: this.ls.translate('Not log in yet'),
-                  message: this.ls.translate('You must be logged in to join to this khatm'),
+                  title: this.ls.translate('Not logged in yet'),
+                  message: this.ls.translate('You must log in to join this khatm'),
                   buttons: [
                     {
                       text: 'Register',
@@ -250,9 +250,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     if(this.name === null || this.name === '')
       this.msgService.showMessage('warn', this.ls.translate('The khatm should have a name'));
     else if(this.endDate === null)
-      this.msgService.showMessage('warn', this.ls.translate('The end date field cannot be empty'));
+      this.msgService.showMessage('warn', this.ls.translate('The end date field cannot be left blank'));
     else if(this.endDate < this.startDate)
-      this.msgService.showMessage('warn', this.ls.translate('The start date cannot be later then end date'));
+      this.msgService.showMessage('warn', this.ls.translate('The start date cannot be later than end date'));
     else if(this.range === 'sura' && (this.suraNumber === null || this.suraNumber === 0))
       this.msgService.showMessage('warn', this.ls.translate('Please choose sura'));
     else {
@@ -297,11 +297,11 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
 
     this.khatmService.createKhatm(khatmData)
         .then((res) => {
-          this.msgService.showMessage('inform', this.ls.translate('Your khatm created successfully'));
+          this.msgService.showMessage('inform', this.ls.translate('Your khatm is created successfully'));
           this.navCtrl.pop();
         })
         .catch((err) => {
-          this.msgService.showMessage('warn', this.ls.translate('Cannot save your khamt now. Please try again'));
+          this.msgService.showMessage('warn', this.ls.translate('Cannot save your khatm now. Please try again'));
         })
   }
 
@@ -333,20 +333,20 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     //Check start date validation
     if(this.isFirstLess(startDate, currentDate)){
       this.startDate = this.castDate(currentDate);
-      this.msgService.showMessage('warn', this.ls.translate('Please choose valid start date'), true);
+      this.msgService.showMessage('warn', this.ls.translate('Please choose a valid start date'), true);
       this.submitDisability = true;
       return;
     }
 
     //Check all date validation
     if(!moment(this.startDate).isValid){
-      this.msgService.showMessage('warn', this.ls.translate('Please choose the valid start date'), true);
+      this.msgService.showMessage('warn', this.ls.translate('Please choose a valid start date'), true);
       this.startDate = null;
       this.submitDisability = true;
       return;
     }
     else if(!moment(this.endDate).isValid){
-      this.msgService.showMessage('warn', this.ls.translate('Please choose the valid end date'), true);
+      this.msgService.showMessage('warn', this.ls.translate('Please choose a valid end date'), true);
       this.endDate = null;
       this.submitDisability = true;
       return;
@@ -356,7 +356,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       if(currentFocus === 'start'){
         if(this.isFirstLess(startDate, currentDate)){
           this.startDate = this.castDate(currentDate);
-          this.msgService.showMessage('warn', this.ls.translate('Please choose the valid start date'), true);
+          this.msgService.showMessage('warn', this.ls.translate('Please choose a valid start date'), true);
           this.submitDisability = true;
           return;
         }
@@ -394,7 +394,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       if(currentFocus === 'start'){
         if(this.isFirstLess(startDate, currentDate)){
           this.startDate = this.castDate(currentDate);
-          this.msgService.showMessage('warn', 'Please choose the valid start date', true);
+          this.msgService.showMessage('warn', 'Please choose a valid start date', true);
           this.submitDisability = true;
           return;
         }
@@ -435,7 +435,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     else if(this.lastFocus === 'duration'){
       if(currentFocus === 'start'){
         if(this.isFirstLess(startDate, currentDate)){
-          this.msgService.showMessage('warn', this.ls.translate('The start date cannot be less than current date'), true);
+          this.msgService.showMessage('warn', this.ls.translate('The start date cannot be before today'), true);
           this.startDate = this.castDate(currentDate);
           this.submitDisability = true;
           return;
@@ -446,7 +446,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       else if(currentFocus === 'end'){
         if(this.isFirstLess(endDate, currentDate)){
           this.endDate = null;
-          this.msgService.showMessage('warn', this.ls.translate('The end date cannot be less than current date'), true);
+          this.msgService.showMessage('warn', this.ls.translate('The end date cannot be before today'), true);
           this.submitDisability = true;
           return;
         }
@@ -551,7 +551,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     if(newVal !== null && newVal !== undefined && newValNum !== this.khatm.you_unread) {
       //Start loading controller
       let loading = this.loadingCtrl.create({
-        content: this.ls.translate('Please wait until save changes') + ' ...'
+        content: this.ls.translate('please wait until changes are saved') + ' ...'
       });
 
       //update commit page for khatm
@@ -575,11 +575,11 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
               if(type === 'add'){
                 this.khatm.commitment_pages = parseInt(this.khatm.commitment_pages) + parseInt(res);
                 this.khatm.you_unread = (newValNum === 0) ? null : (parseInt(this.khatm.you_unread) + parseInt(res));
-                this.msgService.showMessage('inform', res + ' ' + this.ls.translate('pages are assigned to you'));
+                this.msgService.showMessage('inform', res + ' ' + this.ls.translate('The pages are assigned to you'));
               }
               else{
                 this.khatm.commitment_pages = parseInt(this.khatm.commitment_pages) - (parseInt(this.khatm.you_unread) - parseInt(res));
-                this.msgService.showMessage('inform', (parseInt(this.khatm.you_unread) - parseInt(res)) + ' ' + this.ls.translate('pages get down from your commitments'));
+                this.msgService.showMessage('inform', (parseInt(this.khatm.you_unread) - parseInt(res)) + ' ' + this.ls.translate('The pages were removed from your commitments'));
                 this.khatm.you_unread = (newValNum === 0) ? null : res;
               }
             }
@@ -698,7 +698,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     if(value !== null && parseInt(value) !== parseInt(this.khatm.you_unread))
       this.alertCtrl.create({
         title: this.ls.translate('Confirm Commit Pages'),
-        message: this.ls.translate('Your commitment page number is changed. Would you like to save it?'),
+        message: this.ls.translate('Number of your committed pages is changed. Would you like to save it?'),
         buttons: [
           {
             text: this.ls.translate('Yes'),
@@ -723,8 +723,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     this.khatmService.isAutomaticCommit = this.isAutomaticCommit;
 
     if(this.isAutomaticCommit)
-      this.msgService.showMessage('inform', this.ls.translate('Note: ??????????????????????'), true);
+      this.msgService.showMessage('inform', this.ls.translate('Note: In automatic mode the pages will be marked as "read" once you scroll them up'), true);
     else
-      this.msgService.showMessage('inform', this.ls.translate('Note: ??????????????????????'), true);
+      this.msgService.showMessage('inform', this.ls.translate('Note: In manual mode you should comeb back to the khatm page and mark the pages as "read" yourself'), true);
   }
 }

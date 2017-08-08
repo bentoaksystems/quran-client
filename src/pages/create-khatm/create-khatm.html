@@ -163,7 +163,7 @@
           </ion-col>
           <ion-col col-4>
             <ion-label [color]="stylingService.conditionalColoring.text">
-              <span *ngIf="(khatmService.activeKhatm.getValue() === null || khatmService.activeKhatm.getValue().khid !== khatm.khid) || !isAutomaticCommit">{{ls.translate('Manually')}}</span>
+              <span *ngIf="(khatmService.activeKhatm.getValue() === null || khatmService.activeKhatm.getValue().khid !== khatm.khid) || !isAutomaticCommit">{{ls.translate('Manual')}}</span>
               <span *ngIf="(khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid) && isAutomaticCommit">{{ls.translate('Automatic')}}</span>
             </ion-label>
           </ion-col>
@@ -181,13 +181,13 @@
         </ion-col>
         <ion-col col6>
           <button ion-button block (click)="shareVia()"
-                  [color]="stylingService.conditionalColoring.primary">{{ls.translate('Share Via')}}</button>
+                  [color]="stylingService.conditionalColoring.primary">{{ls.translate('Share Link')}}</button>
         </ion-col>
       </ion-row>
         <ion-row *ngIf="!khatmIsStarted">
             <ion-col col-12>
               <ion-label style="text-align: center"
-                         [color]="stylingService.conditionalColoring.text">{{ls.translate('This khatm is not started yet')}}</ion-label>
+                         [color]="stylingService.conditionalColoring.text">{{ls.translate('Start time for this khatm is in future')}}</ion-label>
             </ion-col>
           </ion-row>
         <ion-row>
@@ -204,10 +204,6 @@
             {{ls.translate('Khatm information')}}
           </ion-label>
         </ion-list-header>
-        <ion-item [color]="stylingService.conditionalColoring.background">
-          <ion-label style="font-size: 0.8em;">{{ls.translate('Name')}}</ion-label>
-          <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.khatm_name}}</ion-label>
-        </ion-item>
         <ion-item *ngIf="khatm.creator_shown" [color]="stylingService.conditionalColoring.background">
           <ion-label style="font-size: 0.8em;">{{ls.translate('Owner')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{khatm.owner_name}}</ion-label>
@@ -223,7 +219,7 @@
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.read_pages)}}</ion-label>
         </ion-item>
         <ion-item [color]="stylingService.conditionalColoring.background">
-          <ion-label style="overflow: visible; font-size: 0.8em;">{{ls.translate('Participating numbers')}}</ion-label>
+          <ion-label style="overflow: visible; font-size: 0.8em;">{{ls.translate('Participants Number')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.participatings)}}</ion-label>
         </ion-item>
         <ion-item [color]="stylingService.conditionalColoring.background">
@@ -231,17 +227,17 @@
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(endDateDisplay)}}</ion-label>
         </ion-item>
         <ion-item [color]="stylingService.conditionalColoring.background">
-          <ion-label style="font-size: 0.8em;">{{ls.translate('Rest Days')}}</ion-label>
+          <ion-label style="font-size: 0.8em;">{{ls.translate('Remaining Days')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(rest_days)}}</ion-label>
         </ion-item>
         <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
                   [color]="stylingService.conditionalColoring.background">
-          <ion-label style="font-size: 0.8em;">{{ls.translate('You Read')}}</ion-label>
+          <ion-label style="font-size: 0.8em;">{{ls.translate('Number of Pages you Read')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.you_read)}}</ion-label>
         </ion-item>
         <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
                   [color]="stylingService.conditionalColoring.background">
-          <ion-label style="overflow: visible; font-size: 0.8em">{{ls.translate('Remain of your commitments')}}</ion-label>
+          <ion-label style="overflow: visible; font-size: 0.8em">{{ls.translate('remainder of your committed pages')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.you_unread)}}</ion-label>
         </ion-item>
       </ion-list>
