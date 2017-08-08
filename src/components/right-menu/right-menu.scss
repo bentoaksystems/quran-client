@@ -6,4 +6,12 @@ right-menu {
   .active_normal{
     background-color: #c5bfb1;
   }
+  .khatm-title{
+    padding: 10px 12px !important;
+    font-size: 180% !important;
+    height: auto !important;
+  }
+  .item-md .item-button[icon-only] ion-icon {
+    font-size:120%;
+  }
 }

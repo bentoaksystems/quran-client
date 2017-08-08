@@ -25,6 +25,7 @@ const zeroPad = num => {
   templateUrl: 'safha.html',
 })
 export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
+  private to: any;
   repeatIndex: any[] = [];
   selectedAya: QuranReference = {aya: null, sura: null, substrIndex: null};
   scrollLock: boolean = false;
@@ -89,7 +90,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       this._pages = [];
       for (let i = 1; i < 605; i++)this._pages.push(i);
       if (this.khatmActive) {
-        this.scrollLock = true;
+        this.lockScroll();
         this.shownPages = {};
         this.layerHeights = {};
         this.layerElements = [];
@@ -102,10 +103,21 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       this._pages = pages;
       this._pageIndex = 0;
       this.khatmActive = true;
-      this.scrollLock = true;
+      this.lockScroll();
       this.scrollPage.scrollTo(0, 0, 0);
       this.getQuran();
     }
+  }
+
+  private lockScroll() {
+    this.scrollLock = true;
+    if (this.to)
+      clearTimeout(this.to);
+
+    this.to = setTimeout(() => {
+      this.to = null;
+      this.scrollLock = false;
+    }, 300);
   }
 
   get selectedPages(): number[] {
@@ -158,7 +170,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     this.stylingService.zoomChanged$
       .subscribe(
         (zoom) => {
-          this.scrollLock = true;
+          this.lockScroll();
           this.zoom = 100 * Math.pow(1.125, zoom);
           this.removeTopPages = true;
           this.specifyPage([0, 1]);
@@ -178,7 +190,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
               f++;
             } while (tempFont && tempFont === this.fontFamily || (this.naskhIncompatible && this.isUthmanic(tempFont)));
             if (tempFont !== this.fontFamily) {
-              this.scrollLock = true;
+              this.lockScroll();
               this.removeTopPages = true;
               this.fontFamily = tempFont;
               this.stylingService.fontFamily = tempFont;
@@ -228,7 +240,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
-  private play(e) {
+  private play(e, curAyaIndex = this.ayas.findIndex(r => r.sura === this.selectedAya.sura && r.aya === this.selectedAya.aya)) {
     if (this.playing) {
       if (!e.aya) {//for Bismillah
         e.aya = 1;
@@ -237,11 +249,10 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       let id = `${zeroPad(e.sura)}${zeroPad(e.aya)}.mp3`;
       let alink = `/assets/recitation/${id}`;
       let play = () => this.audio.play(id, () => {
-        let curAyaIndex = this.ayas.findIndex(r => r.sura === this.selectedAya.sura && r.aya === this.selectedAya.aya);
         if (curAyaIndex + 1 < this.ayas.length) {
           let nextAya = this.ayas[curAyaIndex + 1];
           this.selectedAya = {sura: nextAya.sura, aya: nextAya.aya, substrIndex: null};
-          this.play(this.selectedAya);
+          this.play(nextAya, curAyaIndex + 1);
         }
       });
 
@@ -283,7 +294,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     range.forEach(p => {
         if (!this.shownPages[p]) {
           this.shownPages[p] = true;
-          this.scrollLock = true;
+          this.lockScroll();
         }
       }
     );
@@ -296,7 +307,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       }
       let st = this.scrollPage.getContentDimensions().scrollTop - sumHeight;
       if (st >= 0) {
-        this.scrollLock = true;
+        this.lockScroll();
         setTimeout(() => this.scrollPage.scrollTo(0, st, 0), 100);
         for (let key in this.shownPages) {
           if (!range.includes(+key))
@@ -325,25 +336,27 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
     return ind;
   }
 
-  ngAfterViewInit() {
-    this.borders.changes.subscribe(() => {
-      this.layerElements = this.borders._results.map(r => r.nativeElement);
-      this.scrollLock = false;
-      this.removeTopPages = false;
+  private registerBorders() {
+    this.layerElements = this.borders._results.map(r => r.nativeElement);
+    this.scrollLock = false;
+    this.removeTopPages = false;
 
-      //enabling pinch, only for ios devices
-      if (this.platform.is('ios')) {
-        let activeLayer = this.layerElements.filter(e => +e.id === this._pageIndex)[0];
-        if (activeLayer !== undefined) {
-          if (activeLayer) {
-            this.gesture = new Gesture(activeLayer);
-            this.gesture.listen();
-            this.pinchObservable = Observable.fromEventPattern(handler => this.gesture.on('pinch', handler)).throttleTime(500);
-            this.pinchObservable.subscribe(e => this.pinch(e));
-          }
+    //enabling pinch, only for ios devices
+    if (this.platform.is('ios')) {
+      let activeLayer = this.layerElements.filter(e => +e.id === this._pageIndex)[0];
+      if (activeLayer !== undefined) {
+        if (activeLayer) {
+          this.gesture = new Gesture(activeLayer);
+          this.gesture.listen();
+          this.pinchObservable = Observable.fromEventPattern(handler => this.gesture.on('pinch', handler)).throttleTime(500);
+          this.pinchObservable.subscribe(e => this.pinch(e));
         }
       }
-    });
+    }
+  }
+
+  ngAfterViewInit() {
+    this.borders.changes.subscribe(() => this.registerBorders());
   }
 
   ngAfterViewChecked() {
@@ -369,7 +382,9 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   onScroll(e) {
     if (!this.scrollLock) {
       let i = '', sumLayerHeights = 0;
-
+      if (!this.layerElements.length) {
+        this.registerBorders();
+      }
       let found = this.layerIndices.some(key => {
         i = key;
         sumLayerHeights += this.layerHeights[key];
@@ -382,7 +397,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
 
       if (found && i && +i !== this._pageIndex) {
         this.zone.run(() => {
-          if(+i >= this._pageIndex && this.khatmActive)
+          if (this.khatmActive && +i >= this._pageIndex)
             this.pageIsRead.emit(this._pageIndex);
           this._pageIndex = +i;
           if (!this.khatmActive) {
@@ -390,6 +405,9 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
           }
           this.specifyPage();
         });
+      }
+      if(this.khatmActive && !found && i && +i === this.selectedPages.length - 1) {
+        this.pageIsRead.emit(this._pageIndex);
       }
     }
   }
