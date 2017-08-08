@@ -29,7 +29,7 @@
       </ion-list-header>
           <ion-label style="text-align: center" *ngIf="khatms.length === 0"
                [color]="stylingService.conditionalColoring.text">
-            {{ls.translate('No khatm found')}}
+            {{ls.translate('No khatm is found')}}
           </ion-label>
           <button *ngFor="let khatm of khatms" ion-item
                   detail-none
