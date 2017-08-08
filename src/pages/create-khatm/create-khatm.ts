@@ -586,6 +586,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
               }
             }
 
+            return this.khatmService.getKhatmPages(this.khatm.khid);
+          })
+          .then(res => {
             //Stop loading controller
             loading.dismiss();
             this.isChangingCommitments = false;
