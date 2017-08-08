@@ -299,6 +299,35 @@ export class HttpService{
     });
   }
 
+  getKhatm(share_link){
+    return new Promise((resolve, reject) => {
+      if(this.network.type === 'none'){
+        this.storage.get('khatms')
+          .then(res => {
+            let khatm = res.find(el => el.share_link === share_link);
+            resolve(khatm);
+          })
+          .catch(err => {
+            reject(err);
+          })
+      }
+      else{
+        this.getData('khatm/link/' + share_link, true).subscribe(
+          (res) => {
+            let data = res.json();
+            let mDate = moment(new Date());
+
+            if (moment(data[0].end_date).diff(mDate, 'days') >= 0)
+              resolve(data[0]);
+            else
+              reject('expired');
+          },
+          (err) => reject(err)
+        );
+      }
+    })
+  }
+
   sendDiff(): any{
     return new Promise((resolve, reject) => {
       this.storage.get('khatms')
@@ -324,26 +353,12 @@ export class HttpService{
           if(data.length === 0)
             promiseList.push(Promise.resolve());
           else{
-            let readPages = [];
-
             data.forEach(cel => {
-              readPages = readPages.concat(cel.map(el => el.cid));
+              let readPages = [];
+              readPages = cel.map(el => el.cid);
+
+              promiseList.push(this.postData('khatm/commitment/commit', {cids: readPages, isread: true}, true).toPromise());
             });
-
-            promiseList.push(this.postData('khatm/commitment/commit', {cids: readPages, isread: true}, true).toPromise());
-
-            // let unreadPages = [];
-            //
-            // data.forEach(cel => {
-            //   readPages = readPages.concat(cel.filter(el => el.isread === true).map(el => el.cid));
-            //   unreadPages = unreadPages.concat(cel.filter(el => el.isread === false).map(el => el.cid));
-            // });
-            //
-            // if(readPages.length > 0)
-            //   promiseList.push(this.postData('khatm/commitment/commit', {cids: readPages, isread: true}, true).toPromise());
-            //
-            // if(unreadPages.length > 0)
-            //   promiseList.push(this.postData('khatm/commitment/commit', {cids: unreadPages, isread: false}, true).toPromise());
           }
 
           return Promise.all(promiseList);
@@ -358,7 +373,7 @@ export class HttpService{
   getFinalResult(mainValue, diffValue): any{
     if(diffValue !== null){
       diffValue.forEach(el => {
-        mainValue.find(item => item.cid === el.cid).isread = el.isread;
+        mainValue.find(item => item.cid === el.cid).isread = true;
       });
     }
 

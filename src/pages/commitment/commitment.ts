@@ -136,7 +136,7 @@ export class CommitmentPage implements OnInit{
     });
   }
 
-  commit(page, fromAll: boolean = false){
+  commit(page){
     this.anyPagesCommitted = true;
 
     if(this.startRange !== null)
@@ -150,8 +150,7 @@ export class CommitmentPage implements OnInit{
 
       this.selectionCounter = (page.isread) ? this.selectionCounter + 1 : this.selectionCounter - 1;
 
-      if(!fromAll)
-        this.msgService.showMessage('inform', this.ls.translate('Page') + ' ' + page.page_number + ' ' + this.ls.translate('marked as') + ' ' + this.ls.translate((page.isread ? 'read' : 'unread')));
+      this.msgService.showMessage('inform', this.ls.translate('Page') + ' ' + page.page_number + ' ' + this.ls.translate('marked as') + ' ' + this.ls.translate((page.isread ? 'read' : 'unread')));
 
       this.vibration.vibrate(100);
       this.checkAllSelection();
@@ -246,7 +245,24 @@ export class CommitmentPage implements OnInit{
     }
 
     let needChange = this.allCommitments.filter(el => el.isread === currentReadStatus);
-    needChange.forEach(el => this.commit(el, true));
+
+    if(needChange.length > 0)
+      this.anyPagesCommitted = true;
+
+    needChange.forEach(page => {
+      page.isread = !page.isread;
+      this.khatm.you_read = (page.isread) ? parseInt(this.khatm.you_read) + 1 : parseInt(this.khatm.you_read) - 1;
+      this.khatm.you_unread = (page.isread) ? parseInt(this.khatm.you_unread) - 1 : parseInt(this.khatm.you_unread) + 1;
+      this.khatm.read_pages = (page.isread) ? parseInt(this.khatm.read_pages) + 1 : parseInt(this.khatm.read_pages) - 1;
+
+      this.selectionCounter = (page.isread) ? this.selectionCounter + 1 : this.selectionCounter - 1;
+    });
+
+    //Send need change pages to server
+    this.khatmService.commitPages(this.khatm.khid, needChange, !currentReadStatus);
+
+    this.vibration.vibrate(100);
+    this.checkAllSelection();
   }
 
   checkAllSelection(){

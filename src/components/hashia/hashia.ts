@@ -1,7 +1,9 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Content, Keyboard, NavParams, PopoverController, ViewController} from "ionic-angular";
+import {Storage} from "@ionic/storage";
+
 import {QuranService} from "../../services/quran.service";
 import {StylingService} from "../../services/styling";
-import {Keyboard, NavParams, PopoverController} from "ionic-angular";
 
 
 @Component({
@@ -75,8 +77,7 @@ export class Hashia implements OnInit {
     if(!this.disabled){
       let suraPopOver = this.popoverCtrl.create(SuraList, {
         suras: this.suras,
-        disabled: this.disabled,
-        selectedSura: this._so
+        disabled: this.disabled
       },{
         cssClass: (this.stylingService.nightMode) ? 'night_mode' : 'day_mode'
       });
@@ -90,8 +91,7 @@ export class Hashia implements OnInit {
     if(!this.disabled){
       let juzPopOver = this.popoverCtrl.create(JuzList, {
         juzes: this.juzes,
-        disabled: this.disabled,
-        selectedJuz: this.pageJuzNumber
+        disabled: this.disabled
       },{
         cssClass: (this.stylingService.nightMode) ? 'night_mode' : 'day_mode'
       });
@@ -128,33 +128,50 @@ export class Hashia implements OnInit {
 @Component({
   selector: 'sura-list',
   template: `
-    <ion-list>
-      <button ion-item detail-none icon-start *ngFor="let sura of suras" (click)="changeSura(sura)"
-              [color]="stylingService.conditionalColoring.backgroundLighter"
-              style="font-family: 'quran'; font-size: 1.2em; text-align: right;">
-        {{sura.numberAr}}. {{sura.name}}
-        <ion-icon name="checkmark" *ngIf="selectedSura === sura.number"></ion-icon>
-      </button>
-    </ion-list>
+    <ion-content #content>
+      <ion-list>
+        <button ion-item detail-none icon-start [id]="'item' + sura.number" *ngFor="let sura of suras" (click)="changeSura(sura)"
+                [color]="stylingService.conditionalColoring.backgroundLighter"
+                style="font-family: 'quran'; font-size: 1.2em; text-align: right;">
+          {{sura.numberAr}}. {{sura.name}}
+          <ion-icon name="checkmark" *ngIf="selectedSura === sura.number"></ion-icon>
+        </button>
+      </ion-list>
+    </ion-content>
   `
 })
 export class SuraList implements OnInit{
+  @ViewChild('content') content: Content;
   suras;
   disabled;
   selectedSura = 1;
 
   constructor(private quranService: QuranService, private params: NavParams,
-              private stylingService: StylingService){}
+              private stylingService: StylingService, private storage: Storage,
+              private viewCtrl: ViewController){}
 
   ngOnInit(){
+    this.storage.get('selected_sura')
+      .then(res => {
+        this.selectedSura = (res) ? res : 1;
+        this.scrollToItem(this.selectedSura);
+      })
+      .catch(err => this.selectedSura = 1);
+
     this.suras = this.params.get('suras');
     this.disabled = this.params.get('disabled');
-    this.selectedSura = this.params.get('selectedSura');
+  }
+
+  scrollToItem(itemNumber){
+    let yOffset = document.getElementById('item' + itemNumber).offsetTop;
+    this.content.scrollTo(0, yOffset);
   }
 
   changeSura(sura){
     this.selectedSura = sura.number;
+    this.storage.set('selected_sura', this.selectedSura);
     this.quranService.goTo('sura', sura.number);
+    this.viewCtrl.dismiss();
   }
 }
 
@@ -162,7 +179,7 @@ export class SuraList implements OnInit{
   selector: 'juz-list',
   template: `
     <ion-list>
-      <button ion-item detail-none icon-start *ngFor="let juz of juzes" (click)="changeJuz(juz)"
+      <button ion-item detail-none icon-start id="item{{juz.number}}" *ngFor="let juz of juzes" (click)="changeJuz(juz)"
               [color]="stylingService.conditionalColoring.backgroundLighter"
               style="font-family: 'quran'; font-size: 1.2em; text-align: right;">
         جزء {{juz.numberAr}}
@@ -177,16 +194,22 @@ export class JuzList implements OnInit{
   selectedJuz = 1;
 
   constructor(private quranService: QuranService, private params: NavParams,
-              private stylingService: StylingService){}
+              private stylingService: StylingService, private storage: Storage,
+              private viewCtrl: ViewController){}
 
   ngOnInit(){
+    this.storage.get('selected_juz')
+      .then(res => this.selectedJuz = (res) ? res : 1)
+      .catch(err => this.selectedJuz = 1);
+
     this.juzes = this.params.get('juzes');
     this.disabled = this.params.get('disabled');
-    this.selectedJuz = this.params.get('selectedJuz');
   }
 
   changeJuz(juz){
     this.selectedJuz = juz.number;
+    this.storage.set('selected_juz', this.selectedJuz);
     this.quranService.goTo('juz', juz.number);
+    this.viewCtrl.dismiss();
   }
 }
