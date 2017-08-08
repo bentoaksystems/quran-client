@@ -129,17 +129,9 @@ export class Hashia implements OnInit {
   selector: 'sura-list',
   template: `
     <ion-content #content>
-      <!--<ion-list>-->
-        <!--<button ion-item detail-none icon-start [id]="'item' + sura.number" *ngFor="let sura of suras" (click)="changeSura(sura)"-->
-                <!--[color]="stylingService.conditionalColoring.backgroundLighter"-->
-                <!--style="font-family: 'quran'; font-size: 1.2em; text-align: right;">-->
-          <!--{{sura.numberAr}}. {{sura.name}}-->
-          <!--<ion-icon name="checkmark" *ngIf="selectedSura === sura.number"></ion-icon>-->
-        <!--</button>-->
-      <!--</ion-list>-->
-      
-      <ion-list [virtualScroll]="suras">
-        <button detail-none icon-start *virtualItem="let sura" [id]="'item' + sura.number" (click)="changeSura(sura)"
+      <ion-list>
+        <button ion-item detail-none icon-start [id]="'item' + sura.number" *ngFor="let sura of suras" (click)="changeSura(sura)"
+                [color]="stylingService.conditionalColoring.backgroundLighter"
                 style="font-family: 'quran'; font-size: 1.2em; text-align: right;">
           {{sura.numberAr}}. {{sura.name}}
           <ion-icon name="checkmark" *ngIf="selectedSura === sura.number"></ion-icon>
@@ -172,9 +164,7 @@ export class SuraList implements OnInit{
 
   scrollToItem(itemNumber){
     let yOffset = document.getElementById('item' + itemNumber).offsetTop;
-    // console.log(yOffset);
     this.content.scrollTo(0, yOffset);
-    console.log('ScrollOffset:', yOffset);
   }
 
   changeSura(sura){
