@@ -373,7 +373,7 @@ export class HttpService{
   getFinalResult(mainValue, diffValue): any{
     if(diffValue !== null){
       diffValue.forEach(el => {
-        mainValue.find(item => item.cid === el.cid).isread = el.isread;
+        mainValue.find(item => item.cid === el.cid).isread = true;
       });
     }
 
