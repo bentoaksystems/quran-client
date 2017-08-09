@@ -706,8 +706,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     this.khatmService.isAutomaticCommit = this.isAutomaticCommit;
 
     if(this.isAutomaticCommit)
-      this.msgService.showMessage('inform', this.ls.translate('Note: In automatic mode the pages will be marked as "read" once you scroll them up'), true);
+      this.msgService.showMessage('inform', this.ls.translate('In automatic mode the pages will be marked as "read" once you scroll them up'), true);
     else
-      this.msgService.showMessage('inform', this.ls.translate('Note: In manual mode you should comeb back to the khatm page and mark the pages as "read" yourself'), true);
+      this.msgService.showMessage('inform', this.ls.translate('In manual mode you should come back to the khatm page and mark the pages as "read" yourself'), true);
   }
 }
