@@ -35,7 +35,9 @@
   font-family: 'me-quran';
   src: url('../assets/me_quran_volt_newmet.ttf')
 }
-
+.toggle-ios {
+  display: block; // for ios theme or mode
+}
 .button-ios {
   margin: 0px !important;
 }
