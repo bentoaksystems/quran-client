@@ -106,8 +106,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             if(this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
               this.rest_days++;
 
-            if(this.khatmService.activeKhatm.getValue() !== null && this.khatmService.activeKhatm.getValue().khid === this.khatm.khid)
-              this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
+            this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
 
             waiting_loading.dismiss();
           })
@@ -167,8 +166,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
 
                 this.isMember = (this.khatm.you_read !== null && this.khatm.you_unread !== null);
 
-                if(this.khatmService.activeKhatm.getValue() !== null && this.khatmService.activeKhatm.getValue().khid === this.khatm.khid)
-                  this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
+                this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
 
                 waiting_loading.dismiss();
               })
@@ -614,14 +612,11 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   start_stop_Khatm(action){
-    if(action === 'start')
-      this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
-    else
-      this.isAutomaticCommit = false;
+    this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
 
     this.khatmService.start_stop_Khatm(this.khatm);
 
-    if(this.khatmService.activeKhatm.getValue() !== null)
+    if(action === 'start')
       this.navCtrl.popToRoot();
   }
 
@@ -647,31 +642,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   checkOnLeft(){
     if((this.isChangingCommitments && !this.isCommit) || (!this.isMember && !this.isChangingCommitments && !this.isCommit)){
       if(this.isMember){
-        this.alertCtrl.create({
-          title: this.ls.translate('Confirm Commit Pages'),
-          message: this.ls.translate('Do you want to save your changes on commit pages?'),
-          buttons: [
-            {
-              text: this.ls.translate('Cancel'),
-              role: 'cancel'
-            },
-            {
-              text: this.ls.translate('No'),
-              handler: () => {
-                this.khatmService.loadKhatms();
-                this.navCtrl.pop();
-              }
-            },
-            {
-              text: this.ls.translate('Yes'),
-              handler: () => {
-                console.log(this.commitPageInput);
-                this.changeCommitPages(this.commitPageInput.value);
-              }
-            }
-          ],
-          cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' alert'
-        }).present();
+        this.undoPageChange();
+        this.navCtrl.pop();
       }
       else{
         this.alertCtrl.create({
@@ -723,6 +695,11 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' alert',
         enableBackdropDismiss: false
       }).present();
+  }
+
+  undoPageChange(){
+    this.commitPageInput.value = this.khatm.you_unread;
+    this.isChangingCommitments = false;
   }
 
   toggleKhatmStatus(){
