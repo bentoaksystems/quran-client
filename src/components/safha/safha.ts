@@ -60,6 +60,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   private removeTopPages: boolean = false;
   private playing: boolean = false;
   private preloaded: any = {};
+  private suraNumbers: any = [];
 
   get quranPage(): any {
     return this._pages[this._pageIndex];
@@ -279,6 +280,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
           this.selectedPages.forEach(page => {
             let ayas = this.quranService.applySectionFilter('page', this.ayas, page);
             this.pageAyas[page] = ayas;
+            this.suraNumbers = this.pageAyas[this._pages[this._pageIndex]].map(e => e.sura).filter((e, i, v) => v.indexOf(e) === i);
             this.repeat[page] = this.repeat[page] ? this.repeat[page] + 1 : 1;
             this.repeatIndex.push(this.repeat[page]);
           });
@@ -316,15 +318,22 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       }
     }
 
-    let suraOrders = this.pageAyas[this._pages[this._pageIndex]].map(e => e.sura).filter((e, i, v) => v.indexOf(e) === i);
-    let suras = suraOrders.map(e => this.quranService.getSura(e));
+    this.calcPagesMetadata();
+  }
 
-    let suraNames = suras.map(e => e.name);
-
-    let suraName = (this.pageAyas[this._pages[this._pageIndex]][0].bismillah === true) ? suraNames[0] : (suraNames[1] ? suraNames[1] : suraNames[0]);
-    let suraOrder = (this.pageAyas[this._pages[this._pageIndex]][0].bismillah === true) ? suraOrders[0] : (suraOrders[1] ? suraOrders[1] : suraOrders[0]);
-    this.suraName = suraName;
-    this.suraOrder = suraOrder;
+  private calcPagesMetadata() {
+    if(!this.pageAyas || !Object.keys(this.pageAyas).length){
+      this.getQuran();
+      setTimeout(()=>this.calcPagesMetadata(),100);
+    }
+    else {
+      let suras = this.suraNumbers.map(e => this.quranService.getSura(e));
+      let suraNames = suras.map(e => e.name);
+      let suraName = (this.pageAyas[this._pages[this._pageIndex]][0].bismillah === true) ? suraNames[0] : (suraNames[1] ? suraNames[1] : suraNames[0]);
+      let suraOrder = (this.pageAyas[this._pages[this._pageIndex]][0].bismillah === true) ? this.suraNumbers[0] : (this.suraNumbers[1] ? this.suraNumbers[1] : this.suraNumbers[0]);
+      this.suraName = suraName;
+      this.suraOrder = suraOrder;
+    }
   }
 
   private pageIndexPlus(layer) {
