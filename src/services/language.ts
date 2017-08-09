@@ -305,7 +305,7 @@ const translations = {
     fa:"در حالت خودکار صفحاتی که از آن‌‌ها رد می‌شوید به عنوان صفحات «خوانده شده» علامت می‌خورند.",
     ar:'في الوضع التلقائي سيتم وضع علامة على الصفحات على أنها "مقروء" بمجرد التمرير لهم',
   },
-  'Note: In manual mode you should comeb back to the khatm page and mark the pages as "read" yourself':{
+  'Note: In manual mode you should come back to the khatm page and mark the pages as "read" yourself':{
     fa:"در حالت دستی باید خودتان به صفحه ختم برگردید و صفحات خوانده شده را علامت بزنید.",
     ar:'قي الوضع اليدوي يجب أن تعود إلى صفحة الختم و تضع علامة علی الصفحات بأنها"مقروء" نفسك'
   },
