@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import { NavController } from 'ionic-angular';
 import {Vibration} from "@ionic-native/vibration";
 
@@ -14,7 +14,7 @@ export class HomePage implements OnInit{
   khatmPages: number[] = [];
 
   constructor(public navCtrl: NavController, private khatmService: KhatmService,
-              private vibration: Vibration) {}
+              private vibration: Vibration, private changeDetectorRef: ChangeDetectorRef) {}
 
   ngOnInit(){
     this.khatmService.activeKhatm.subscribe(
@@ -40,14 +40,17 @@ export class HomePage implements OnInit{
                 }
               });
               this.khatmPages = this.khatmPagesInfo.map(el => el.page_number);
+              this.changeDetectorRef.detectChanges();
             })
             .catch(err => {
               this.khatmPages = [];
+              this.changeDetectorRef.detectChanges();
               console.log(err);
             })
         }
         else
           this.khatmPages = [];
+          this.changeDetectorRef.detectChanges();
       },
       (err) => {
         console.log(err);
@@ -60,8 +63,8 @@ export class HomePage implements OnInit{
       this.vibration.vibrate(100);
       // this.khatmService.updateKhatmDetails(this.khatm.khid, true);
       this.khatmService.commitPages(this.khatm.khid, [this.khatmPagesInfo[page_index]], true);
-      // if(page_index >= this.khatmPagesInfo.length - 1)
-      //   this.khatmService.start_stop_Khatm(this.khatm);
+      if(page_index >= this.khatmPagesInfo.length - 1)
+        this.khatmService.start_stop_Khatm(this.khatm);
     }
   }
 }

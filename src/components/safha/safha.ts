@@ -86,6 +86,10 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   @Input()
+  get selectedPages(): number[] {
+    return this._pages;
+  }
+
   set selectedPages(pages: number[]) {
     if (pages === null || !pages.length) {
       this._pages = [];
@@ -119,10 +123,6 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       this.to = null;
       this.scrollLock = false;
     }, 300);
-  }
-
-  get selectedPages(): number[] {
-    return this._pages;
   }
 
   @Output() pageIsRead = new EventEmitter<number>();
