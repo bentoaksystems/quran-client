@@ -246,7 +246,7 @@
         </ion-item>
         <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null"
                   [color]="stylingService.conditionalColoring.background">
-          <ion-label style="font-size: 0.8em;">{{ls.translate('Number of Pages you Read')}}</ion-label>
+          <ion-label style="font-size: 0.8em; overflow: visible;">{{ls.translate('Number of Pages you Read')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.you_read)}}</ion-label>
         </ion-item>
         <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
