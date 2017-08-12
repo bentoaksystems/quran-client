@@ -128,16 +128,14 @@ export class Hashia implements OnInit {
 @Component({
   selector: 'sura-list',
   template: `
-    <ion-content #content>
-      <ion-list>
-        <button ion-item detail-none icon-start [id]="'item' + sura.number" *ngFor="let sura of suras" (click)="changeSura(sura)"
-                [color]="stylingService.conditionalColoring.backgroundLighter"
-                style="font-family: 'quran'; font-size: 1.2em; text-align: right;">
-          {{sura.numberAr}}. {{sura.name}}
-          <ion-icon name="checkmark" *ngIf="selectedSura === sura.number"></ion-icon>
-        </button>
-      </ion-list>
-    </ion-content>
+    <ion-list>
+      <button ion-item detail-none icon-start id="item{{sura.number}}" *ngFor="let sura of suras" (click)="changeSura(sura)"
+              [color]="stylingService.conditionalColoring.backgroundLighter"
+              style="font-family: 'quran'; font-size: 1.2em; text-align: right;">
+        {{sura.numberAr}}. {{sura.name}}
+        <ion-icon name="checkmark" *ngIf="selectedSura === sura.number"></ion-icon>
+      </button>
+    </ion-list>
   `
 })
 export class SuraList implements OnInit{
@@ -152,19 +150,11 @@ export class SuraList implements OnInit{
 
   ngOnInit(){
     this.storage.get('selected_sura')
-      .then(res => {
-        this.selectedSura = (res) ? res : 1;
-        this.scrollToItem(this.selectedSura);
-      })
+      .then(res => this.selectedSura = (res) ? res : 1)
       .catch(err => this.selectedSura = 1);
 
     this.suras = this.params.get('suras');
     this.disabled = this.params.get('disabled');
-  }
-
-  scrollToItem(itemNumber){
-    let yOffset = document.getElementById('item' + itemNumber).offsetTop;
-    this.content.scrollTo(0, yOffset);
   }
 
   changeSura(sura){
