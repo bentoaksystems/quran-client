@@ -60,6 +60,8 @@ export class HomePage implements OnInit{
       this.vibration.vibrate(100);
       // this.khatmService.updateKhatmDetails(this.khatm.khid, true);
       this.khatmService.commitPages(this.khatm.khid, [this.khatmPagesInfo[page_index]], true);
+      // if(page_index >= this.khatmPagesInfo.length - 1)
+      //   this.khatmService.start_stop_Khatm(this.khatm);
     }
   }
 }

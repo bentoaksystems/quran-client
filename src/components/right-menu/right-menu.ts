@@ -69,7 +69,7 @@ export class RightMenuComponent implements OnInit{
     if(this.authService.isLoggedIn.getValue()){
       isPresent = true;
       waiting_loading = this.loadingCtrl.create({
-        content: this.ls.translate('Please wait until we get your khatms...'),
+        content: this.ls.translate('Please wait until your khatms are loaded ...'),
         cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
       });
       waiting_loading.present();
@@ -107,7 +107,7 @@ export class RightMenuComponent implements OnInit{
 
   sync(){
     let waiting_loading = this.loadingCtrl.create({
-      content: this.ls.translate('Please wait until we get your khatms...'),
+      content: this.ls.translate('please wait until your khatms are loaded ...'),
       cssClass: ((this.stylingService.nightMode) ? 'night_mode' : 'day_mode') + ' waiting'
     });
     waiting_loading.present();
