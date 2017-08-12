@@ -4,8 +4,6 @@
 import {Injectable} from "@angular/core";
 import {BehaviorSubject} from "rxjs";
 import {Storage} from '@ionic/storage';
-import * as moment from 'moment-timezone';
-
 import {HttpService} from "./http.service";
 
 @Injectable()
