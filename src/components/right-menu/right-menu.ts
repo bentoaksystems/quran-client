@@ -18,6 +18,7 @@ export class RightMenuComponent implements OnInit{
   @Input() isLoggedIn: boolean;
   @Output() switchView = new EventEmitter<any>();
   khatms: any = [];
+  notJoinKhatms: any = [];
 
   constructor(private authService: AuthService, private ls:LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
@@ -93,6 +94,19 @@ export class RightMenuComponent implements OnInit{
             waiting_loading.dismiss();
         }
     );
+
+    this.khatmService.notJoinKhatms.subscribe(
+      (data) => {
+        this.notJoinKhatms = [];
+        if(data !== null)
+          for(let item of data)
+            this.notJoinKhatms.push(item);
+      },
+      (err) => {
+        console.log(err.message);
+        this.msgService.showMessage('error', err.message);
+      }
+    )
   }
 
   logout(){

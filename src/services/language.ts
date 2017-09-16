@@ -425,6 +425,14 @@ const translations = {
     fa: 'هیچ ختمی یافت نشد',
     ar: 'لم وُجد ختمٌ',
   },
+  "recently seen khatms": {
+    fa: 'ختم های اخیراً دیده شده',
+    ar: 'شهدت مؤخرا القرآن',
+  },
+  "(not join)": {
+    fa: '(عضو نشده)',
+    ar: '(لا الانضمام)',
+  },
 };
 
 const directionRTL = {

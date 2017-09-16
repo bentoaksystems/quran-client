@@ -27,11 +27,11 @@
           <ion-icon name="add" [color]="stylingService.conditionalColoring.text"></ion-icon>
         </button>
       </ion-list-header>
-          <ion-label style="text-align: center" *ngIf="khatms.length === 0"
+      <ion-label style="text-align: center" *ngIf="khatms.length === 0"
                [color]="stylingService.conditionalColoring.text">
             {{ls.translate('No khatm is found')}}
           </ion-label>
-          <button *ngFor="let khatm of khatms" ion-item
+      <button *ngFor="let khatm of khatms" ion-item
                   detail-none
                   [color]="stylingService.conditionalColoring.background"
                   (press)="start_stop_khatm(khatm)" (tap)="openPage('khatm', khatm)"
@@ -43,6 +43,26 @@
                                              !stylingService.nightMode}">
               <ion-label [color]="stylingService.conditionalColoring.text">
                 {{khatm.khatm_name}}
+        </ion-label>
+      </button>
+    </ion-list>
+    <br/>
+    <br/>
+    <ion-list *ngIf="isLoggedIn && notJoinKhatms.length > 0">
+      <ion-list-header [color]="stylingService.conditionalColoring.backgroundLighter">
+        <h1 [ngStyle]="{'color': stylingService.conditionalColoring.text}">
+          {{ls.translate('Recently seen khatms')}}
+        </h1>
+        <h2>
+          {{ls.translate('(Not Join)')}}
+        </h2>
+      </ion-list-header>
+      <button *ngFor="let khatm of notJoinKhatms" ion-item
+              detail-none
+              [color]="stylingService.conditionalColoring.background"
+              (click)="openPage('khatm', khatm)">
+        <ion-label [color]="stylingService.conditionalColoring.text">
+          {{khatm.khatm_name}}
         </ion-label>
       </button>
     </ion-list>

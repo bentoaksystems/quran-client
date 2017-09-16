@@ -657,6 +657,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             {
               text: this.ls.translate('Uninterested To Join'),
               handler: () => {
+                this.khatmService.saveNotJoinSeenKhatms(this.khatm.khatm_name, this.khatm.share_link);
                 this.khatmService.loadKhatms();
                 this.navCtrl.pop();
               }

@@ -9,6 +9,7 @@ import {HttpService} from "./http.service";
 @Injectable()
 export class KhatmService {
   khatms: BehaviorSubject<any> = new BehaviorSubject([]);
+  notJoinKhatms: BehaviorSubject<any> = new BehaviorSubject([]);
   activeKhatm: BehaviorSubject<any> = new BehaviorSubject(null);
   isAutomaticCommit: boolean = true;
 
@@ -195,5 +196,34 @@ export class KhatmService {
     khatm.you_read = (readPage) ? parseInt(khatm.you_read) + 1 : parseInt(khatm.you_read) - 1;
     khatm.you_unread = (!readPage) ? parseInt(khatm.you_unread) + 1 : parseInt(khatm.you_unread) - 1;
     khatm.read_pages = (readPage) ? parseInt(khatm.read_pages) + 1 : parseInt(khatm.read_pages) - 1;
+  }
+
+  saveNotJoinSeenKhatms(khatm_name, khatm_sharelink){
+    return new Promise((resolve, reject) => {
+      let data: any;
+      this.storage.get('not_join_khatms')
+        .then(res => {
+          data = (res === null) ? [] : res.slice(1, res.length);
+          data.push({khatm_name: khatm_name, share_link: khatm_sharelink});
+          return this.storage.set('not_join_khatms', data);
+        })
+        .then(res => {
+          this.notJoinKhatms.next(data);
+          resolve();
+        })
+        .catch(err => {
+          reject('Cannot save this seen khatm');
+        });
+    });
+  }
+
+  getNotJoinSeenKhatms(){
+    this.storage.get('not_join_khatms')
+      .then(res => {
+        this.notJoinKhatms.next(res);
+      })
+      .catch(err => {
+        console.log(err);
+      })
   }
 }
