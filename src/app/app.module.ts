@@ -33,6 +33,9 @@ import {KhatmService} from "../services/khatm.service";
 import {CommitmentPage} from "../pages/commitment/commitment";
 import {BookmarkService} from "../services/bookmark";
 import {NativeAudio} from "@ionic-native/native-audio";
+import {SocketService} from "../services/socket.service";
+import {NotificationService} from "../services/notification.service";
+import {Push} from "@ionic-native/push";
 
 @NgModule({
   declarations: [
@@ -88,6 +91,9 @@ import {NativeAudio} from "@ionic-native/native-audio";
     Network,
     Vibration,
     NativeAudio,
+    SocketService,
+    NotificationService,
+    Push,
   ]
 })
 export class AppModule {
