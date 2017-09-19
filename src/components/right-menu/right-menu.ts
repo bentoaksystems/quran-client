@@ -9,6 +9,7 @@ import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {MsgService} from "../../services/msg.service";
 import {StylingService} from "../../services/styling";
+import {PageName} from "../../enum/page.enum";
 
 @Component({
   selector: 'right-menu',
@@ -19,6 +20,7 @@ export class RightMenuComponent implements OnInit{
   @Output() switchView = new EventEmitter<any>();
   khatms: any = [];
   notJoinKhatms: any = [];
+  PN = PageName;
 
   constructor(private authService: AuthService, private ls:LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
@@ -28,11 +30,11 @@ export class RightMenuComponent implements OnInit{
     var target;
     var params;
 
-    if(desPage === 'register'){
+    if(desPage === PageName.Registration){
       target = Registration;
       params = {fromButton: fromButton};
     }
-    else if(desPage === 'khatm') {
+    else if(desPage === PageName.Khatm) {
       target = CreateKhatmPage;
 
       if(viewKhatm !== null){
