@@ -433,6 +433,54 @@ const translations = {
     fa: '(عضو نشده)',
     ar: '(لا الانضمام)',
   },
+  "my profile": {
+    fa: 'پروفایل من',
+    ar: '',
+  },
+  "my email": {
+    fa: 'ایمیل من',
+    ar: '',
+  },
+  "my display name": {
+    fa: 'نام نمایشی من',
+    ar: '',
+  },
+  "please wait ...": {
+    fa: 'لطفاً صبر کنید ...',
+    ar: 'أرجو الإنتظار ...',
+  },
+  "you are not join to any khatm": {
+    fa: 'شما در هیج ختمی عضو نشده اید',
+    ar: 'أنت لا تنضم إلى أي القرآن',
+  },
+  "you are not create any khatm": {
+    fa: 'شما هیچ ختمی نساخته اید',
+    ar: 'أنت لا تنشئ أي القرآن',
+  },
+  "i created": {
+    fa: 'من ساختم',
+    ar: 'صنعت'
+  },
+  "i joined": {
+    fa: 'من عضو شدم',
+    ar: 'أنا انضممت',
+  },
+  "statistical data": {
+    fa: 'اطلاعات آماری',
+    ar: 'البيانات الإحصائية',
+  },
+  "all pages": {
+    fa: 'تمام صفحات',
+    ar: 'كل الصفحات',
+  },
+  "unread pages": {
+    fa: 'صفحات خوانده نشده',
+    ar: 'صفحات غير مقروءة',
+  },
+  "(expired khatms)": {
+    fa: 'ختم های منقضی',
+    ar: 'انتهت القرآن',
+  },
 };
 
 const directionRTL = {

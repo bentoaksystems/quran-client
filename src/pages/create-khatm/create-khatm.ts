@@ -47,6 +47,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   isMember: boolean = false;
   isCommit: boolean = false;
   isAutomaticCommit: boolean = false;
+  isExpiredKhatm: boolean = false;
 
   constructor(public navCtrl: NavController, private navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
@@ -74,6 +75,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       this.navBar.setElementClass('persian', false);
 
     let link = this.navParams.get('link');
+    this.isExpiredKhatm = (this.navParams.get('isExpired') ? this.navParams.get('isExpired') : false);
 
     if(link === undefined || link === null){
       this.isNew = this.navParams.get('isNew');
@@ -147,7 +149,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
               authAlert.dismiss();
             if(!waitingIsShown)
               waiting_loading.present();
-            this.khatmService.getKhatm(link)
+            this.khatmService.getKhatm(link, this.isExpiredKhatm)
               .then(res => {
                 this.khatm = res;
 

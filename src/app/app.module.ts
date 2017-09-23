@@ -36,6 +36,7 @@ import {NativeAudio} from "@ionic-native/native-audio";
 import {SocketService} from "../services/socket.service";
 import {NotificationService} from "../services/notification.service";
 import {Push} from "@ionic-native/push";
+import {ProfilePage} from "../pages/profile/profile";
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import {Push} from "@ionic-native/push";
     CommitmentPage,
     SuraList,
     JuzList,
+    ProfilePage,
   ],
   imports: [
     BrowserModule,
@@ -70,6 +72,7 @@ import {Push} from "@ionic-native/push";
     CommitmentPage,
     SuraList,
     JuzList,
+    ProfilePage,
   ],
   providers: [
     StatusBar,

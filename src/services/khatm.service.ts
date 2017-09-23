@@ -78,8 +78,8 @@ export class KhatmService {
     });
   }
 
-  getKhatm(khatm_link){
-    return this.httpService.getKhatm(khatm_link);
+  getKhatm(khatm_link, isExpired: boolean = false){
+    return this.httpService.getKhatm(khatm_link, isExpired);
   }
 
   storeKhatmPages(khatm_id, pages, action) {

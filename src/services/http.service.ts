@@ -300,7 +300,7 @@ export class HttpService{
     });
   }
 
-  getKhatm(share_link){
+  getKhatm(share_link, isExpired){
     return new Promise((resolve, reject) => {
       if(this.network.type === 'none'){
         this.storage.get('khatms')
@@ -313,12 +313,12 @@ export class HttpService{
           })
       }
       else{
-        this.getData('khatm/link/' + share_link, true).subscribe(
+        this.getData('khatm/link/' + share_link + '/' + isExpired, true).subscribe(
           (res) => {
             let data = res.json();
             let mDate = moment(new Date());
 
-            if (moment(data[0].end_date).diff(mDate, 'days') >= 0)
+            if (moment(data[0].end_date).diff(mDate, 'days') >= 0 || isExpired)
               resolve(data[0]);
             else
               reject('expired');

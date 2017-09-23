@@ -10,6 +10,7 @@ import {KhatmService} from "../../services/khatm.service";
 import {MsgService} from "../../services/msg.service";
 import {StylingService} from "../../services/styling";
 import {PageName} from "../../enum/page.enum";
+import {ProfilePage} from "../../pages/profile/profile";
 
 @Component({
   selector: 'right-menu',
@@ -51,6 +52,9 @@ export class RightMenuComponent implements OnInit{
           isMember: true,
         }
       }
+    }
+    else if(desPage === PageName.profile){
+      target = ProfilePage;
     }
     else
       target = HomePage;

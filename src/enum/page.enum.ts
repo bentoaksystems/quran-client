@@ -5,5 +5,6 @@ export enum PageName{
   Khatm = 0,
   Registration = 1,
   Commitment = 2,
-  Home = 3
+  Home = 3,
+  profile = 4,
 }

@@ -5,13 +5,15 @@ import {Injectable} from "@angular/core";
 import {BehaviorSubject} from "rxjs";
 import {Storage} from '@ionic/storage';
 import {HttpService} from "./http.service";
+import {KhatmService} from "./khatm.service";
 
 @Injectable()
 export class AuthService {
   isLoggedIn : BehaviorSubject<boolean> = new BehaviorSubject(false);
   user: BehaviorSubject<any> = new BehaviorSubject(null);
 
-  constructor(private storage: Storage, private httpService: HttpService) {
+  constructor(private storage: Storage, private httpService: HttpService,
+              private khatmService: KhatmService) {
     this.user.subscribe(
       (data) => {
         if(data === null || data.email === null || data.token === null)
@@ -78,6 +80,7 @@ export class AuthService {
 
   logout(){
     this.removeUser();
+    this.khatmService.clearStorage();
     this.isLoggedIn.next(false);
   }
 

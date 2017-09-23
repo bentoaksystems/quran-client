@@ -1,0 +1,88 @@
+<span [ngStyle]="{'direction': ls.direction()}">
+<ion-header>
+  <ion-navbar [color]="stylingService.conditionalColoring.backgroundLighter">
+    <ion-title>{{ls.translate('My Profile')}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding [class]="stylingService.nightMode ? 'night_background' : 'normal_background'">
+  <ion-list *ngIf="personData !== null">
+    <ion-item [color]="stylingService.conditionalColoring.background">
+      <h2>{{ls.translate('My Email')}}</h2>
+      <p>{{personData.email}}</p>
+    </ion-item>
+    <ion-item [color]="stylingService.conditionalColoring.background">
+      <h2>{{ls.translate('My Display Name')}}</h2>
+      <p>{{personData.display_name}}</p>
+    </ion-item>
+  </ion-list>
+  <br/>
+  <br/>
+  <h4>{{ls.translate('Statistical Data')}}</h4>
+  <h6>{{ls.translate('(Expired khatms)')}}</h6>
+
+  <div *ngIf="khatmError !== null && khatmData !== null">{{ls.translate(khatmError)}}</div>
+  <div *ngIf="khatmError === null && khatmData === null">
+
+  </div>
+  <div *ngIf="khatmError === null && khatmData !== null">
+    <ion-segment [(ngModel)]="which_stat" style="direction: ltr !important;">
+      <ion-segment-button value="created">
+        {{ls.translate('I Created')}}
+      </ion-segment-button>
+      <ion-segment-button value="joined">
+        {{ls.translate('I Joined')}}
+      </ion-segment-button>
+    </ion-segment>
+
+    <div [ngSwitch]="which_stat">
+      <ion-list *ngSwitchCase="'created'">
+        <div *ngIf="khatmData.created.length === 0">{{ls.translate('You are not create any khatm')}}</div>
+        <div *ngFor="let khatm of khatmData.created">
+          <ion-list-header>
+            <a (click)="gotoKhatm(khatm.share_link)">{{khatm.khatm_name}}</a>
+          </ion-list-header>
+          <ion-item>
+            <ion-label>{{ls.translate('All Pages')}}</ion-label>
+            <ion-label [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.all_pages)}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>{{ls.translate('Read Pages')}}</ion-label>
+            <ion-label
+              [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.read_pages)}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label style="overflow: visible;">{{ls.translate('Participants Number')}}</ion-label>
+            <ion-label
+              [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.participants_number)}}</ion-label>
+          </ion-item>
+        </div>
+      </ion-list>
+      <ion-list *ngSwitchCase="'joined'">
+        <div *ngIf="khatmData.joined.length === 0">{{ls.translate('You are not join to any khatm')}}</div>
+        <div *ngFor="let khatm of khatmData.joined">
+          <ion-list-header>
+            <a (click)="gotoKhatm(khatm.share_link)">{{khatm.khatm_name}}</a>
+          </ion-list-header>
+          <ion-item>
+            <ion-label>{{ls.translate('Read Pages')}}</ion-label>
+            <ion-label
+              [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.read_pages)}}</ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-label>{{ls.translate('Unread Pages')}}</ion-label>
+            <ion-label
+              [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.unread_pages)}}</ion-label>
+          </ion-item>
+        </div>
+      </ion-list>
+    </div>
+  </div>
+
+  <div style="margin-bottom: 60px; margin-top: 30px;">
+    <button ion-button block (click)="logout()">
+      {{ls.translate('Logout')}}
+    </button>
+  </div>
+</ion-content>
+</span>

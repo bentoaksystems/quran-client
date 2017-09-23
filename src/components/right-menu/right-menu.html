@@ -15,6 +15,11 @@
         </ion-col>
       </ion-row>
     </ion-grid>
+    <ion-grid *ngIf="isLoggedIn">
+      <button ion-button full clear (click)="openPage(PN.profile)">
+        {{ls.translate('My Profile')}}
+      </button>
+    </ion-grid>
     <ion-list *ngIf="isLoggedIn">
       <ion-list-header [color]="stylingService.conditionalColoring.backgroundLighter">
         <h1 [ngStyle]="{'color': stylingService.conditionalColoring.text}">
