@@ -76,6 +76,19 @@ export class ProfilePage implements OnInit{
         this.checkLoading(getPersonResult, getStatResult);
       }
     );
+
+    this.stylingService.nightMode$.subscribe(
+      (data) => {
+        if(data) {
+          this.navBar.setElementClass('night_mode', true);
+          this.navBar.setElementClass('day_mode', false);
+        }
+        else{
+          this.navBar.setElementClass('night_mode', false);
+          this.navBar.setElementClass('day_mode', true);
+        }
+      }
+    );
   }
 
   checkLoading(personResult, statResult){
@@ -85,6 +98,7 @@ export class ProfilePage implements OnInit{
 
   logout(){
     this.authService.logout();
+    this.navCtrl.popToRoot();
   }
 
   oppositeDirection(){

@@ -32,6 +32,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   suraNumber: number = 1;
   suras = [];
   repeats: number = 1;
+  everyday: boolean = false;
+  page_per_day: number = 3;
   currentDate = new Date();
   startDate;
   startDateDisplay: string;
@@ -48,6 +50,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   isCommit: boolean = false;
   isAutomaticCommit: boolean = false;
   isExpiredKhatm: boolean = false;
+  isJoinedEverydayKhatm: boolean = false;
 
   constructor(public navCtrl: NavController, private navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
@@ -90,6 +93,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         this.khatmService.getKhatm(tempShareLink)
           .then(res => {
             this.khatm = res;
+            this.isJoinedEverydayKhatm = this.khatm.join_khid ? this.khatm.join_khid : false;
+
+            console.log(this.khatm);
 
             // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
             // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
@@ -251,12 +257,16 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     //Check validation
     if(this.name === null || this.name === '')
       this.msgService.showMessage('warn', this.ls.translate('The khatm should have a name'));
+    else if(this.repeats === null || this.repeats === 0)
+      this.msgService.showMessage('warn', this.ls.translate('The repeats must be greater than 0'));
     else if(this.endDate === null)
       this.msgService.showMessage('warn', this.ls.translate('The end date field cannot be left blank'));
     else if(this.endDate < this.startDate)
       this.msgService.showMessage('warn', this.ls.translate('The start date cannot be later than end date'));
     else if(this.range === 'sura' && (this.suraNumber === null || this.suraNumber === 0))
       this.msgService.showMessage('warn', this.ls.translate('Please choose sura'));
+    else if(this.everyday && (this.page_per_day === null || this.page_per_day === undefined || this.page_per_day <= 0))
+      this.msgService.showMessage('warn', this.ls.translate('The page per day must be greater than 0'));
     else {
       this.isSubmitted = true;
 
@@ -294,7 +304,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       end_date: this.endDate,
       timezone:  moment.tz(moment.tz.guess()).format('z'),
       specific_sura: (this.range === 'whole') ? null : this.suraNumber,
-      repeats: this.repeats
+      repeats: this.repeats,
+      is_everyday: this.everyday,
+      page_per_day: this.page_per_day
     };
 
     this.khatmService.createKhatm(khatmData)
@@ -322,6 +334,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     else if(this.repeats < 0)
       this.submitDisability = true;
     else if(this.endDate === undefined || this.endDate === null || (this.endDate < this.startDate))
+      this.submitDisability = true;
+    else if(this.everyday && (this.page_per_day === null || this.page_per_day === undefined || this.page_per_day <= 0))
       this.submitDisability = true;
     else
       this.submitDisability = false;
@@ -378,7 +392,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       }
       else if(currentFocus === 'duration'){
         if(this.duration !== null && this.duration !== '') {
-          if (this.duration > (365 * 10)) {
+          if (this.duration > (365 * 10) && ((this.everyday && this.page_per_day) || (!this.everyday))) {
             this.duration = null;
             this.msgService.showMessage('warn', this.ls.translate('The duration cannot be greater than 10 years'));
             this.submitDisability = true;
@@ -712,5 +726,51 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       this.msgService.showMessage('inform', this.ls.translate('In automatic mode the pages will be marked as "read" once you scroll them up'), true);
     else
       this.msgService.showMessage('inform', this.ls.translate('In manual mode you should come back to the khatm page and mark the pages as "read" yourself'), true);
+  }
+
+  changeEveryday(newVal){
+    if(newVal !== null && newVal !== undefined){
+      this.everyday = newVal;
+      if(this.everyday) {
+        this.msgService.showMessage('inform', this.ls.translate('The duration and end date are calculated based on one member. It\'s change when member number increases'), true);
+        this.updateDuration();
+      }
+      else{
+        this.duration = null;
+        this.endDate = null;
+      }
+    }
+    else if(this.everyday && this.page_per_day > 0 && this.page_per_day){
+      this.updateDuration();
+    }
+  }
+
+  updateDuration(){
+    this.duration = Math.ceil((this.repeats * 604) / this.page_per_day);
+    this.changeDuration('duration', this.duration);
+  }
+
+  joinEverydayKhatm(shouldJoin: boolean){
+    if(!shouldJoin){
+      this.alertCtrl.create({
+        title: this.ls.translate('Disjoint confirmation'),
+        message: this.ls.translate('Are you sure to disjoint this khatm?'),
+        buttons: [
+          {
+            text: this.ls.translate('No'),
+            role: 'cancel'
+          },
+          {
+            text: this.ls.translate('Yes'),
+            handler: () => {
+              this.isJoinedEverydayKhatm = shouldJoin;
+            }
+          }
+        ]
+      }).present();
+    }
+    else{
+      this.isJoinedEverydayKhatm = shouldJoin;
+    }
   }
 }
