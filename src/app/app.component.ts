@@ -42,8 +42,8 @@ export class MyApp {
         (match) => {
           let urlParts = match.$link.url.split('/');
 
-          if(urlParts[3] === 'khatm')
-            this.navChild.push(CreateKhatmPage, {link: urlParts[4]});
+          if(urlParts[2] === 'khatm')
+            this.navChild.push(CreateKhatmPage, {link: urlParts[3]});
         },
         (nomatch) => {
           this.msgService.showMessage('error', 'Cannot find your requested page');
