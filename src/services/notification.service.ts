@@ -8,6 +8,7 @@ import {AlertController} from "ionic-angular";
 import {LanguageService} from "./language";
 import {HttpService} from "./http.service";
 import {MsgService} from "./msg.service";
+import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 
 @Injectable()
 export class NotificationService{
@@ -54,19 +55,26 @@ export class NotificationService{
         let confirmAlert = this.alertCtrl.create({
           title: this.ls.translate('Remind Notification'),
           message: this.ls.translate(data.message),
-          buttons: [{
-            text: 'OK',
-            role: 'cancel'
-          }]
+          buttons: [
+            {
+              text: this.ls.translate('OK'),
+              role: 'cancel'
+            },
+            {
+              text: this.ls.translate('See Khatm'),
+              handler: () => {
+                nav.push(CreateKhatmPage, {link: data.share_link});
+              }
+            }
+          ]
         });
 
         confirmAlert.present();
       }
       else{
         //if user Not using app and push notification comes
-        //TODO: our login on click of push notification directly
         //TODO: redirect user to khatm page
-        nav.push('DetailsPage', {message: data.message});
+        nav.push(CreateKhatmPage, {link: data.share_link});
         console.log('Push notification clicked');
       }
     });
