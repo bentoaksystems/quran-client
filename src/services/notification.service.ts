@@ -48,12 +48,11 @@ export class NotificationService{
     });
 
     pushObject.on('notification').subscribe((data: any) => {
-      console.log('message: ' + data.message);
       //if user using app and push notification comes
       if(data.additionalData.foreground){
         //if application open, show popup
         let confirmAlert = this.alertCtrl.create({
-          title: this.ls.translate('Remind Notification'),
+          title: this.ls.translate(data.title),
           message: this.ls.translate(data.message),
           buttons: [
             {
@@ -63,7 +62,7 @@ export class NotificationService{
             {
               text: this.ls.translate('See Khatm'),
               handler: () => {
-                nav.push(CreateKhatmPage, {link: data.share_link});
+                nav.push(CreateKhatmPage, {link: data.additionalData.share_link});
               }
             }
           ]
@@ -73,16 +72,11 @@ export class NotificationService{
       }
       else{
         //if user Not using app and push notification comes
-        //TODO: redirect user to khatm page
-        nav.push(CreateKhatmPage, {link: data.share_link});
+        nav.push(CreateKhatmPage, {link: data.additionalData.share_link});
         console.log('Push notification clicked');
       }
     });
 
     pushObject.on('error').subscribe(err => console.error('Error with push plugin: ' + err));
-  }
-
-  register(){
-
   }
 }
