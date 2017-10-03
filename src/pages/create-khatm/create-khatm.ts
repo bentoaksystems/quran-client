@@ -164,6 +164,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
                 else{
                   this.khatm = res;
 
+                  this.isJoinedEverydayKhatm = this.khatm.join_khid ? this.khatm.join_khid : false;
                   this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
                   this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
 
