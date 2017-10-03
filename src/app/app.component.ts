@@ -60,7 +60,6 @@ export class MyApp {
       this.authService.user.subscribe(
         (u) => {
           if(u !== null && u.token !== null && u.token !== undefined){
-            this.khatmService.saveNotJoinSeenKhatms('T_test', '2a10MsndgkpvF2PiF24XIDoulCOZg9cS9uLsCYXVMrQxwhYdl8oeG');
             this.khatmService.loadKhatms();
             this.khatmService.getNotJoinSeenKhatms();
           }

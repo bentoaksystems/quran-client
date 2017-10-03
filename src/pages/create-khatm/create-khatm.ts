@@ -609,8 +609,10 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             return this.khatmService.getKhatmPages(this.khatm.khid);
           })
           .then(res => {
-            if(this.khatm.you_unread === null)
+            if(this.khatm.you_unread === null && (this.khatm.you_read === null || this.khatm.you_read == 0))
               return this.khatmService.saveNotJoinSeenKhatms(this.khatm.khatm_name, this.khatm.share_link);
+            else if(this.khatm.you_unread === null && (this.khatm.you_read !== null || this.khatm.you_read != 0))
+              return Promise.resolve();
             else
               return this.khatmService.deleteNotJoinSeenKhatms(this.khatm.share_link);
           })
