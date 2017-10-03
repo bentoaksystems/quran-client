@@ -39,7 +39,7 @@
       <button *ngFor="let khatm of khatms" ion-item
                   detail-none
                   [color]="stylingService.conditionalColoring.background"
-                  (press)="start_stop_khatm(khatm)" (tap)="openPage(PN.Khatm, khatm)"
+                  (press)="start_stop_khatm(khatm)" (tap)="openPage(PN.Khatm, khatm, true)"
                   [ngClass]="{active_night: khatmService.activeKhatm.getValue() !== null &&
                                             khatmService.activeKhatm.getValue().khid === khatm.khid &&
                                             stylingService.nightMode,
@@ -65,7 +65,7 @@
       <button *ngFor="let khatm of notJoinKhatms" ion-item
               detail-none
               [color]="stylingService.conditionalColoring.background"
-              (click)="openPage(PN.Khatm, khatm)">
+              (click)="openPage(PN.Khatm, khatm, false)">
         <ion-label [color]="stylingService.conditionalColoring.text">
           {{khatm.khatm_name}}
         </ion-label>

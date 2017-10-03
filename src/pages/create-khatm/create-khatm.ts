@@ -157,26 +157,32 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
               waiting_loading.present();
             this.khatmService.getKhatm(link, this.isExpiredKhatm)
               .then(res => {
-                this.khatm = res;
+                if(res === null || res === undefined){
+                  waiting_loading.dismiss();
+                  this.msgService.showMessage('inform', this.ls.translate('Cannot get khatm details. Maybe this khatm is expired'));
+                }
+                else{
+                  this.khatm = res;
 
-                this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
-                this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+                  this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
+                  this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
 
-                let mDate = moment(this.currentDate);
-                if (moment(this.khatm.start_date) > mDate)
-                  this.khatmIsStarted = false;
-                else
-                  this.khatmIsStarted = true;
+                  let mDate = moment(this.currentDate);
+                  if (moment(this.khatm.start_date) > mDate)
+                    this.khatmIsStarted = false;
+                  else
+                    this.khatmIsStarted = true;
 
-                this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
-                if (this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
-                  this.rest_days++;
+                  this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
+                  if (this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
+                    this.rest_days++;
 
-                this.isMember = (this.khatm.you_read !== null && this.khatm.you_unread !== null);
+                  this.isMember = (this.khatm.you_read !== null && this.khatm.you_unread !== null);
 
-                this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
+                  this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
 
-                waiting_loading.dismiss();
+                  waiting_loading.dismiss();
+                }
               })
               .catch(err => {
                 if (err === 'expired')
@@ -601,6 +607,12 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             }
 
             return this.khatmService.getKhatmPages(this.khatm.khid);
+          })
+          .then(res => {
+            if(this.khatm.you_unread === null)
+              return this.khatmService.saveNotJoinSeenKhatms(this.khatm.khatm_name, this.khatm.share_link);
+            else
+              return this.khatmService.deleteNotJoinSeenKhatms(this.khatm.share_link);
           })
           .then(res => {
             //Stop loading controller

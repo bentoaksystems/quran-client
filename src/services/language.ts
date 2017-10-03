@@ -481,6 +481,10 @@ const translations = {
     fa: 'ختم های منقضی',
     ar: 'انتهت القرآن',
   },
+  "cannot get khatm details. maybe this khatm is expired": {
+    fa: 'قادر به دریافت اطلاعات ختم نیستیم. شاید این ختم منقضی شده باشد.',
+    ar: 'لا يمكن الحصول على تفاصيل القرآن. ربما هذا القرآن منتهية الصلاحية',
+  },
 };
 
 const directionRTL = {

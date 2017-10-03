@@ -27,13 +27,13 @@ export class RightMenuComponent implements OnInit{
               private khatmService: KhatmService, private msgService: MsgService,
               private stylingService: StylingService, private loadingCtrl: LoadingController) {}
 
-  openPage(desPage, viewKhatm = null, fromButton = null){
+  openPage(desPage, viewKhatm = null, extraData = null){
     var target;
     var params;
 
     if(desPage === PageName.Registration){
       target = Registration;
-      params = {fromButton: fromButton};
+      params = {fromButton: extraData};
     }
     else if(desPage === PageName.Khatm) {
       target = CreateKhatmPage;
@@ -42,14 +42,14 @@ export class RightMenuComponent implements OnInit{
         params = {
           isNew: false,
           khatm: viewKhatm.share_link,
-          isMember: true,
+          isMember: extraData,
         }
       }
       else {
         params = {
           isNew: true,
           khatm: null,
-          isMember: true,
+          isMember: extraData,
         }
       }
     }
@@ -133,6 +133,7 @@ export class RightMenuComponent implements OnInit{
     waiting_loading.present();
 
     this.khatmService.loadKhatms();
+    this.khatmService.getNotJoinSeenKhatms();
 
     waiting_loading.dismiss();
   }

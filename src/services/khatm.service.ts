@@ -217,6 +217,27 @@ export class KhatmService {
     });
   }
 
+  deleteNotJoinSeenKhatms(khatm_share_link){
+    return new Promise((resolve, reject) => {
+      let data: any = null;
+      this.storage.get('not_join_khatms')
+        .then(res => {
+          data = [];
+          if(res !== null && res !== undefined && res.length > 0)
+            data = res.filter(t => t.share_link !== khatm_share_link);
+
+          return this.storage.set('not_join_khatms', data);
+        })
+        .then(res => {
+          this.notJoinKhatms.next(data);
+          resolve();
+        })
+        .catch(err => {
+          reject('Cannot delete this khatm from seen khatms');
+        });
+    });
+  }
+
   getNotJoinSeenKhatms(){
     this.storage.get('not_join_khatms')
       .then(res => {
