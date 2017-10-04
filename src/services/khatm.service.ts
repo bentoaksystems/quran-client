@@ -198,6 +198,42 @@ export class KhatmService {
     khatm.read_pages = (readPage) ? parseInt(khatm.read_pages) + 1 : parseInt(khatm.read_pages) - 1;
   }
 
+  getFreePages(khatm_id){
+    return this.httpService.getData('khatm/commitment/free/' + khatm_id, true).toPromise();
+  }
+
+  selfAssignPage(khatm_id, commitment_ids, shouldGet, isMember): any{
+    return new Promise((resolve, reject) => {
+      this.httpService.postData('khatm/commitment/getpage', {
+        cids: commitment_ids,
+        shouldget: shouldGet
+      }, true).subscribe(
+        (res) => {
+          let data = res.json();
+
+          if (data === null)
+            resolve(null);
+          else {
+            let numberOfFinal = data.length;
+            let type = shouldGet ? 'add' : 'delete';
+
+            if(!isMember)
+              resolve(numberOfFinal);
+            else
+            //Save/Update page numbers
+              this.storeKhatmPages(khatm_id, data, type)
+                .then((re) => this.updateKhatmCommtiments(khatm_id, numberOfFinal))
+                .then((r) => resolve(data))
+                .catch((er) => reject(er));
+          }}
+        ,
+        (err) => {
+          console.log(err);
+          reject(err);
+        });
+    });
+  }
+
   saveNotJoinSeenKhatms(khatm_name, khatm_sharelink){
     return new Promise((resolve, reject) => {
       let data: any;

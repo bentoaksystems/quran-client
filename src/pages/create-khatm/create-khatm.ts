@@ -95,8 +95,6 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             this.khatm = res;
             this.isJoinedEverydayKhatm = this.khatm.join_khid ? this.khatm.join_khid : false;
 
-            console.log(this.khatm);
-
             // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
             // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
             this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
@@ -639,7 +637,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   goToCommitment(isSelect){
-    this.navCtrl.push(CommitmentPage, {khatm: this.khatm, isSelect: isSelect});
+    this.navCtrl.push(CommitmentPage, {khatm: this.khatm, isSelect: isSelect, isMember: this.isMember});
   }
 
   start_stop_Khatm(action){
@@ -767,22 +765,34 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
 
   joinEverydayKhatm(shouldJoin: boolean){
     if(!shouldJoin){
-      this.alertCtrl.create({
-        title: this.ls.translate('Disjoint confirmation'),
-        message: this.ls.translate('Are you sure to disjoint this khatm?'),
-        buttons: [
-          {
-            text: this.ls.translate('No'),
-            role: 'cancel'
-          },
-          {
-            text: this.ls.translate('Yes'),
-            handler: () => {
-              this.isJoinedEverydayKhatm = shouldJoin;
+      if(parseInt(this.khatm.you_unread) > 0)
+        this.alertCtrl.create({
+          title: this.ls.translate('Commitments Alert'),
+          message: this.ls.translate('You have some page to read. Cannot disjoint from this khatm'),
+          buttons: [
+            {
+              text: this.ls.translate('OK'),
+              role: 'cancel'
+            },
+          ]
+        }).present();
+      else
+        this.alertCtrl.create({
+          title: this.ls.translate('Disjoint confirmation'),
+          message: this.ls.translate('Are you sure to disjoint this khatm?'),
+          buttons: [
+            {
+              text: this.ls.translate('No'),
+              role: 'cancel'
+            },
+            {
+              text: this.ls.translate('Yes'),
+              handler: () => {
+                this.isJoinedEverydayKhatm = shouldJoin;
+              }
             }
-          }
-        ]
-      }).present();
+          ]
+        }).present();
     }
     else{
       this.isJoinedEverydayKhatm = shouldJoin;

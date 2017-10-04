@@ -153,12 +153,11 @@
                        #commitPageInput
                        (ngModelChange)="limitClick($event)"></ion-input>
           </ion-col>
-          <ion-col col-6 *ngIf="khatm.you_read !== null && khatm.you_unread !== null && !isChangingCommitments">
+          <ion-col col-6 *ngIf="!isChangingCommitments">
             <button ion-button block
-                    *ngIf="khatm.you_unread !== null && khatm.you_unread > 0"
                     [color]="stylingService.conditionalColoring.primary"
-                    [disabled]="isChangingCommitments || (khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid)"
-                    (click)="goToCommitment(false)">{{ls.translate('Committed Pages')}}</button>
+                    [disabled]="isChangingCommitments"
+                    (click)="goToCommitment(true)">{{ls.translate('Choose Pages')}}</button>
           </ion-col>
           <ion-col col-3 *ngIf="isChangingCommitments">
             <button ion-button block
@@ -175,8 +174,17 @@
             </button>
           </ion-col>
         </ion-row>
+        <ion-row *ngIf="khatm.you_read !== null && khatm.you_unread !== null">
+          <ion-col col-12>
+            <button ion-button block
+                    *ngIf="khatm.you_unread !== null && khatm.you_unread > 0"
+                    [color]="stylingService.conditionalColoring.primary"
+                    [disabled]="isChangingCommitments || (khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid)"
+                    (click)="goToCommitment(false)">{{ls.translate('Committed Pages')}}</button>
+          </ion-col>
+        </ion-row>
         <ion-row
-          *ngIf="khatmIsStarted && !isExpiredKhatm && !khatm.is_everyday && khatm.you_read !== null && khatm.you_unread !== null && khatm.you_unread > 0">
+          *ngIf="khatmIsStarted && !isExpiredKhatm && khatm.you_read !== null && khatm.you_unread !== null && khatm.you_unread > 0">
           <ion-col col-6>
             <button ion-button block (click)="start_stop_Khatm('start')"
                     [color]="stylingService.conditionalColoring.primary"
@@ -211,11 +219,6 @@
           </ion-col>
         </ion-row>
         <ion-row *ngIf="!isExpiredKhatm && khatm.is_everyday && isJoinedEverydayKhatm">
-          <ion-col col-12>
-            <button ion-button block (click)="goToCommitment(false)">
-              <ion-label>{{ls.translate('Committed Pages')}}</ion-label>
-            </button>
-          </ion-col>
           <ion-col col-12 *ngIf="khatm.owner_email !== authService.user.getValue().email">
             <button ion-button block (click)="joinEverydayKhatm(false)">
               <ion-label>{{ls.translate('Disjoint')}}</ion-label>
