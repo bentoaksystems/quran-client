@@ -6,6 +6,7 @@ import {BehaviorSubject} from "rxjs";
 import {Storage} from '@ionic/storage';
 import {HttpService} from "./http.service";
 import {KhatmService} from "./khatm.service";
+import {MsgService} from "./msg.service";
 
 @Injectable()
 export class AuthService {
@@ -13,13 +14,15 @@ export class AuthService {
   user: BehaviorSubject<any> = new BehaviorSubject(null);
 
   constructor(private storage: Storage, private httpService: HttpService,
-              private khatmService: KhatmService) {
+              private khatmService: KhatmService, private msgService: MsgService) {
     this.user.subscribe(
       (data) => {
         if(data === null || data.email === null || data.token === null)
           this.isLoggedIn.next(false);
-        else
+        else{
+          this.sendDeviceToken();
           this.isLoggedIn.next(true);
+        }
       },
       (err) => this.isLoggedIn.next(false)
     );
@@ -79,9 +82,15 @@ export class AuthService {
   }
 
   logout(){
-    this.removeUser();
-    this.khatmService.clearStorage();
-    this.isLoggedIn.next(false);
+    this.deleteDeviceToken()
+      .then(res => {
+      this.removeUser();
+      this.khatmService.clearStorage();
+      this.isLoggedIn.next(false);
+      })
+      .catch(err => {
+        this.msgService.showMessage('error', 'Cannot logout you. Please try again', true);
+      });
   }
 
   register(userEmail, userName, isRegistration: boolean){
@@ -156,5 +165,43 @@ export class AuthService {
           }
         );
     });
+  }
+
+  storeDeviceToken(token){
+    return this.storage.set('device-token', token);
+  }
+
+  getDeviceToken(): any{
+    return this.storage.get('device-token');
+  }
+
+  sendDeviceToken(): any{
+    return new Promise((resolve, reject) => {
+      this.getDeviceToken()
+        .then(res => {
+          this.httpService.postData('notification/token/add', {token: res}, true).subscribe(
+            (data) => resolve(data.json()),
+            (err) => reject(err)
+          );
+        })
+        .catch(err => {
+          reject(err);
+        })
+    });
+  }
+
+  deleteDeviceToken(): any{
+    return new Promise((resolve, reject) => {
+      this.getDeviceToken()
+        .then(res => {
+          this.httpService.postData('notification/token/del', {token: res}, true).subscribe(
+            (data) => resolve(data.json()),
+            (err) => reject(err)
+          );
+        })
+        .catch(err => {
+          reject(err);
+        })
+    })
   }
 }

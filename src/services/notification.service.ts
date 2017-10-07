@@ -6,14 +6,14 @@ import {Push, PushObject, PushOptions} from '@ionic-native/push';
 import {AlertController} from "ionic-angular";
 
 import {LanguageService} from "./language";
-import {HttpService} from "./http.service";
 import {MsgService} from "./msg.service";
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
+import {AuthService} from "./auth.service";
 
 @Injectable()
 export class NotificationService{
   constructor(private push: Push, private alertCtrl: AlertController,
-              private ls: LanguageService, private httpService: HttpService,
+              private ls: LanguageService, private authService: AuthService,
               private msgService: MsgService){}
 
   initPushNotification(platform, nav){
@@ -41,10 +41,9 @@ export class NotificationService{
 
     pushObject.on('registration').subscribe((data: any) => {
       console.log('Device token: ' + data.registrationId);
-      this.httpService.postData('notification/token', {token: data.registrationId}, true).subscribe(
-        (data) => this.msgService.showMessage('inform', data.json(), true),
-        (err) => this.msgService.showMessage('error', err, true)
-      );
+      this.authService.storeDeviceToken(data.registrationId)
+        .then(res => console.log('Store device token on local storage. ' + res))
+        .catch(err => console.log('Cannot store device token on local storage. ' + err));
     });
 
     pushObject.on('notification').subscribe((data: any) => {
