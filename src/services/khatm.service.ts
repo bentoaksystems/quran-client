@@ -240,6 +240,11 @@ export class KhatmService {
       let data: any;
       this.storage.get('not_join_khatms')
         .then(res => {
+          if(res && res.findIndex(t => t.share_link === khatm_sharelink) !== -1){
+            data = res;
+            return Promise.resolve();
+          }
+
           data = (res === null) ? [] : (res.length > 2 ? res.slice(1, res.length) : res);
           data.push({khatm_name: khatm_name, share_link: khatm_sharelink, end_date: khatm_endDate});
           return this.storage.set('not_join_khatms', data);
@@ -281,11 +286,11 @@ export class KhatmService {
       .then(res => {
         let currentDate = moment(new Date());
         let result = [];
-        let shouldDelete = res;
+        let shouldDelete = [];
 
-        if(res)
+        if(res !== null && res !== undefined)
           for(let item of res){
-            if(res.end_date >= currentDate)
+            if(moment(item.end_date) >= currentDate)
               result.push(item);
             else{
               shouldDelete.push(item);
@@ -294,9 +299,8 @@ export class KhatmService {
 
         this.notJoinKhatms.next(result);
 
-        if(res)
-          for(let item of shouldDelete)
-            this.deleteNotJoinSeenKhatms(item.share_link, false);
+        for(let item of shouldDelete)
+          this.deleteNotJoinSeenKhatms(item.share_link, false);
       })
       .catch(err => {
         console.log(err);
