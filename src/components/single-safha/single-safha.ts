@@ -71,16 +71,20 @@ export class SingleSafhaComponent implements OnInit, OnChanges, AfterViewChecked
       this._pages = [];
       for (let i = 1; i < 605; i++)this._pages.push(i);
       if (this.khatmActive) {
-        this.currentIndex = this.bookmarkService.pageNumber - 1;
+        this.currentIndex = this.bookmarkService.pageNumber ? this.bookmarkService.pageNumber - 1 : 0;
       }
       this.khatmActive = false;
     }
     else {
+      this._pages = pages;
+      this.currentIndex = 0;
       this.khatmActive = true;
       this.scrollPage.scrollTo(0, 0, 0);
-
     }
-    this.getQuran().then(() =>this.goToPage()).catch(err => console.log('Error in getting quran', err));
+    this.getQuran().then(() =>{
+      this.scrollDirectionTemp = this.scrollDirection.bottom;
+      this.goToPage();
+    }).catch(err => console.log('Error in getting quran', err));
   }
   ayas;
   repeat: any = {};
@@ -281,6 +285,9 @@ export class SingleSafhaComponent implements OnInit, OnChanges, AfterViewChecked
       let suraOrder = (this.pageAyas[this.page][0].bismillah === true) ? this.suraNumbers[0] : (this.suraNumbers[1] ? this.suraNumbers[1] : this.suraNumbers[0]);
       this.suraName = suraName;
       this.suraOrder = suraOrder;
+
+      if(!this.khatmActive)
+        this.bookmarkService.setPageNumber(this.quranPage);
     }
   }
 

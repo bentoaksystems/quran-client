@@ -315,12 +315,17 @@ export class HttpService{
         this.getData('khatm/link/' + share_link + '/' + isExpired, true).subscribe(
           (res) => {
             let data = res.json();
-            let mDate = moment(new Date());
 
-            if (moment(data[0].end_date).diff(mDate, 'days') >= 0 || isExpired)
-              resolve(data[0]);
+            if(data.length > 0){
+              let mDate = moment(new Date());
+
+              if (moment(data[0].end_date).diff(mDate, 'days') >= 0 && !isExpired)
+                resolve(data[0]);
+              else
+                reject('expired');
+            }
             else
-              reject('expired');
+              resolve(null);
           },
           (err) => reject(err)
         );

@@ -156,7 +156,7 @@
           <ion-col col-6 *ngIf="!isChangingCommitments">
             <button ion-button block
                     [color]="stylingService.conditionalColoring.primary"
-                    [disabled]="isChangingCommitments"
+                    [disabled]="isChangingCommitments || (khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid)"
                     (click)="goToCommitment(true)">{{ls.translate('Choose Pages')}}</button>
           </ion-col>
           <ion-col col-3 *ngIf="isChangingCommitments">

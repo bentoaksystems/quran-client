@@ -92,6 +92,14 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
 
         this.khatmService.getKhatm(tempShareLink)
           .then(res => {
+            if(res === null || res === undefined){
+              waiting_loading.dismiss();
+              this.khatm = null;
+              this.msgService.showMessage('inform', this.ls.translate('Cannot get khatm details. Maybe this khatm is expired'));
+              this.khatmService.deleteNotJoinSeenKhatms(tempShareLink);
+              return;
+            }
+
             this.khatm = res;
             this.isJoinedEverydayKhatm = this.khatm.join_khid ? this.khatm.join_khid : false;
 
@@ -671,7 +679,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   checkOnLeft(){
-    if((this.isChangingCommitments && !this.isCommit) || (!this.isMember && !this.isChangingCommitments && !this.isCommit)){
+    if(this.khatm && ((this.isChangingCommitments && !this.isCommit) || (!this.isMember && !this.isChangingCommitments && !this.isCommit))){
       if(this.isMember){
         this.undoPageChange();
         this.navCtrl.pop();
