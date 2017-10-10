@@ -25,6 +25,8 @@ const zeroPad = num => {
   templateUrl: 'single-safha.html'
 })
 export class SingleSafhaComponent implements OnInit, OnChanges, AfterViewChecked{
+  private playing: boolean = false;
+  private preloaded: any = {};
   scrollLock: boolean = false;
   scrollDirectionTemp = null;
   scrollDirection = ScrollDirection;
@@ -149,11 +151,12 @@ export class SingleSafhaComponent implements OnInit, OnChanges, AfterViewChecked
 
     this.quranService.page$
       .subscribe(p => {
+        this.scrollDirectionTemp = this.scrollDirection.bottom;
         this.quranPage = p;
-        // this.currentIndex = p - 1;
       });
 
     let bp = this.bookmarkService.pageNumber$.subscribe(p => {
+      this.scrollDirectionTemp = this.scrollDirection.bottom;
       this.quranPage = p;
       bp.unsubscribe();
     });
@@ -176,7 +179,10 @@ export class SingleSafhaComponent implements OnInit, OnChanges, AfterViewChecked
     if(this.scrollDirectionTemp === this.scrollDirection.top)
       this.scrollPage.scrollTo(0, this.border.nativeElement.offsetHeight - 550, 0);
     else if(this.scrollDirectionTemp === this.scrollDirection.bottom)
-      this.scrollPage.scrollTo(0, 100, 0);
+      if(this.currentIndex === 0)
+        this.scrollPage.scrollTo(0, 0, 0);
+      else
+        this.scrollPage.scrollTo(0, 85, 0);
 
     this.scrollDirectionTemp = null;
   }
@@ -206,6 +212,59 @@ export class SingleSafhaComponent implements OnInit, OnChanges, AfterViewChecked
 
   menuToggle() {
     this.msg.dismiss();
+  }
+
+  onAyaSelected(e){
+    if (e.selected) {
+      this.selectedAya.aya = e.aya.aya;
+      this.selectedAya.sura = e.aya.sura;
+      let bs = this.bookmarkService.scrollLocation$.subscribe(s => {
+        this.scrollPage.scrollTo(0, s, 0);
+        bs.unsubscribe();
+      });
+    }
+    else if (e.selected === false && this.selectedAya.aya === e.aya.aya && this.selectedAya.sura === e.aya.sura) {
+      this.selectedAya.aya = null;
+      this.selectedAya.sura = null;
+    }
+    else if (e.playStop) {
+      if (this.playing) {
+        this.playing = false;
+      }
+      else {
+        this.playing = true;
+        this.play(e.aya);
+      }
+    }
+  }
+
+  private play(e, curAyaIndex = this.ayas.findIndex(r => r.sura === this.selectedAya.sura && r.aya === this.selectedAya.aya)) {
+    if (this.playing) {
+      if (!e.aya) {//for Bismillah
+        e.aya = 1;
+        e.sura = 1;
+      }
+      let id = `${zeroPad(e.sura)}${zeroPad(e.aya)}.mp3`;
+      let alink = `/assets/recitation/${id}`;
+      let play = () => this.audio.play(id, () => {
+        if (curAyaIndex + 1 < this.ayas.length) {
+          let nextAya = this.ayas[curAyaIndex + 1];
+          this.selectedAya = {sura: nextAya.sura, aya: nextAya.aya, substrIndex: null};
+          this.play(nextAya, curAyaIndex + 1);
+        }
+      });
+
+      if (this.preloaded[id])
+        play();
+      else
+        this.audio.preloadComplex(id, alink, 1, 1, 0)
+          .then(() => {
+            play();
+            this.preloaded[id] = true;
+          })
+          .catch(err => console.log(err));
+
+    }
   }
 
   private registerBorder(){

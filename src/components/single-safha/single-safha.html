@@ -35,7 +35,7 @@
     </ion-infinite-scroll-content>
   </ion-infinite-scroll>
 
-  <div style="height: 30px; background-color: green;" *ngIf="currentIndex > 0">&nbsp;</div>
+  <div style="height: 30px;" [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8'" *ngIf="currentIndex > 0">&nbsp;</div>
 
   <div *ngIf="repeat[page]>1" [ngClass]="currentIndex?'repeatCounter':'repeatCounterFirst'">
     {{repeatIndex[currentIndex]}} / {{repeat[page]}}
@@ -51,10 +51,10 @@
     </div>
   </div>
 
-  <div style="height: 30px; background-color: green;" *ngIf="currentIndex < 604 && currentIndex < selectedPages.length - 1">&nbsp;</div>
+  <div style="height: 30px;" [style.background-color]="stylingService.nightMode ? '#131313' : '#fbfaf8'" *ngIf="currentIndex < 604 && currentIndex < selectedPages.length - 1">&nbsp;</div>
 
   <div *ngIf="notScrollable" [ngStyle]="{height:notScrollable+'px'}">&nbsp;</div>
-  <ion-infinite-scroll (ionInfinite)="nextPage(scrollDirection.bottom, $event)" position="bottom" threshold="10px">
+  <ion-infinite-scroll (ionInfinite)="nextPage(scrollDirection.bottom, $event)" *ngIf="currentIndex < 603 || currentIndex < selectedPages.length - 1" position="bottom" threshold="10px">
     <ion-infinite-scroll-content loadingSpinner="bubbles"
                                  style="height: 50px !important;"
                                  loadingText="{{ls.translate('Loading next page...')}}"></ion-infinite-scroll-content>
