@@ -1,0 +1,63 @@
+<div class="pageInfo" [ngStyle]="{'top': (platform.is('ios')?20:0)+ 'px'}">
+  <table class="outer-table">
+    <tr class="outer-row"
+        [ngStyle]="{'background':stylingService.nightMode?'#131313':'#fbfaf8','color':!stylingService.nightMode?'black':'white'}">
+      <td class="tdBack">
+        <ion-buttons start>
+          <button ion-button [color]="!stylingService.nightMode?'light':'dark'" icon-only menuToggle="right"
+                  (click)="menuToggle()">
+            <ion-icon name="menu" [color]="!stylingService.nightMode?'normal_primary':'night_primary'"></ion-icon>
+          </button>
+        </ion-buttons>
+      </td>
+      <td style="width:70%">
+        <hashia [suraname]="suraName?suraName:''" [pagenumber]="quranPage"
+                [suraorder]="suraOrder?suraOrder:NaN" [disabled]="khatmActive"></hashia>
+      </td>
+      <td class="tdBack">
+        <ion-buttons end>
+          <button ion-button [color]="!stylingService.nightMode?'light':'dark'" icon-only menuToggle="left"
+                  (click)="menuToggle()">
+            <ion-icon name="settings" [color]="!stylingService.nightMode?'normal_primary':'night_primary'"></ion-icon>
+          </button>
+        </ion-buttons>
+      </td>
+  </table>
+</div>
+<ion-content class="overflowContainer"
+             [ngStyle]="{'width':width,'height':height-50+'px','top':(platform.is('ios')?70:50)+ 'px','background':stylingService.nightMode? '#131313':'#fbfaf8','border':this.khatmActive?'solid green 2px':null}"
+             #scrollPage>
+  <ion-infinite-scroll (ionInfinite)="nextPage(scrollDirection.top, $event)" position="top" *ngIf="currentIndex > 0" threshold="-10px">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"
+                                 style="height: 50px !important;"
+                                 loadingText="{{ls.translate('Loading previous page...')}}">
+
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+  <div style="height: 30px; background-color: green;" *ngIf="currentIndex > 0">&nbsp;</div>
+
+  <div *ngIf="repeat[page]>1" [ngClass]="currentIndex?'repeatCounter':'repeatCounterFirst'">
+    {{repeatIndex[currentIndex]}} / {{repeat[page]}}
+  </div>
+  <div [class.border-day]="!stylingService.nightMode" [class.border-night]="stylingService.nightMode"
+       [ngStyle]="{'width':(width-10)+'px','font-size':zoom+'%'}" #border>
+
+    <div class="internal quran" [ngClass]="[fontFamily+'Font']"
+         [ngStyle]="{'margin':margin + 'px','font-family':fontFamily}">
+      <aya *ngFor="let aya of pageAyas[page]" [value]="aya" [fontFamily]="fontFamily" [margin]="margin"
+           (onselect)="onAyaSelected($event)" [selected]="aya.sura===selectedAya.sura && aya.aya==selectedAya.aya"
+           [playing]="playing"></aya>
+    </div>
+  </div>
+
+  <div style="height: 30px; background-color: green;" *ngIf="currentIndex < 604 && currentIndex < selectedPages.length - 1">&nbsp;</div>
+
+  <div *ngIf="notScrollable" [ngStyle]="{height:notScrollable+'px'}">&nbsp;</div>
+  <ion-infinite-scroll (ionInfinite)="nextPage(scrollDirection.bottom, $event)" position="bottom" threshold="10px">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"
+                                 style="height: 50px !important;"
+                                 loadingText="{{ls.translate('Loading next page...')}}"></ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+</ion-content>
+

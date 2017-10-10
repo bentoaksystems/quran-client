@@ -180,7 +180,8 @@ export class AuthService {
       this.getDeviceToken()
         .then(res => {
           this.httpService.postData('notification/token/add', {token: res}, true).subscribe(
-            (data) => resolve(data.json()),
+            // (data) => resolve(data.json()),
+            (data) => resolve('Done'),
             (err) => reject(err)
           );
         })

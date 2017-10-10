@@ -1,0 +1,121 @@
+single-safha {
+  .overflowContainer{
+    padding: 0px;
+    border: 1px inset antiquewhite;
+  }
+  div.internal{
+    letter-spacing: 0px;
+    line-height: 130%;
+  }
+
+  div.tapper {
+    position:fixed;
+    top: 50px;
+    z-index:100;
+    pointer-events:none;
+  }
+
+  div.clear{
+    backgroud-color:rgba(0,0,0,0);
+    color:transparent;
+  }
+
+  div.explain{
+    background-color: rgba(32, 32, 32, 0.2);
+    color: white;
+    padding: 150px 30px 150px 30px;
+    font-size: 20px;
+  }
+  span{
+    padding:0px;
+    margin:0px;
+    border:0;
+    display: inline;
+  }
+  .bismillah{
+    width:100% !important;
+  }
+  .quran{
+    font-family: quran;
+    text-align: justify;
+    direction: rtl;
+    font-size:300%
+  }
+
+  .pageInfo{
+    position: absolute;
+    height: 48px;
+    width: 100%;
+    padding-top: -2px;
+    direction: rtl;
+    border: none;
+  }
+
+  .outer-table {
+    height: 100%;
+    width: 100%;
+    border: none;
+  }
+  .outer-row {
+    height: 100%;
+    width: 100%;
+    border: none;
+  }
+
+  .tdBack{
+    width: 15%;
+    height: 48px;
+  }
+  .quranFont{
+    line-height: 170% !important;
+  }
+  .quran-uthmanicFont{
+    line-height: 150% !important;
+  }
+  .quran-uthmanic-boldFont{
+    line-height: 168% !important;
+  }
+  .qalamFont{
+    line-height: 179% !important;
+  }
+  .me-quranFont{
+    line-height:218% !important;
+  }
+
+  hr.khatmActive {
+    background: green;
+    width: 100%;
+    height: 3px;
+    margin:20px 0px 20px 0px;
+  }
+  hr.regular{
+    background: grey;
+    width: 100%;
+    height: 1px;
+    margin:20px 0px 20px 0px;
+  }
+  .repeatCounterFirst{
+    position: relative;
+    top: 0px;
+    text-align: center;
+    width: 50px;
+    font-weight: bold;
+    padding: 5px;
+    border-radius: 0px 0px 5px 0px;
+    color: white;
+    background: green;
+    margin: 0px;
+  }
+  .repeatCounter{
+    position: relative;
+    top: -20px;
+    text-align: center;
+    width: 50px;
+    font-weight: bold;
+    padding: 5px;
+    border-radius: 0px 0px 5px 0px;
+    color: white;
+    background: green;
+    margin: 0px 0px -25px 0px;
+  }
+}

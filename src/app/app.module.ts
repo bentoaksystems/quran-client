@@ -37,6 +37,7 @@ import {SocketService} from "../services/socket.service";
 import {NotificationService} from "../services/notification.service";
 import {Push} from "@ionic-native/push";
 import {ProfilePage} from "../pages/profile/profile";
+import { SingleSafhaComponent } from '../components/single-safha/single-safha';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import {ProfilePage} from "../pages/profile/profile";
     SuraList,
     JuzList,
     ProfilePage,
+    SingleSafhaComponent,
   ],
   imports: [
     BrowserModule,

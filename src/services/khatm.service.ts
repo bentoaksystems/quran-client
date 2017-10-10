@@ -5,6 +5,7 @@ import {Injectable} from "@angular/core";
 import {BehaviorSubject} from "rxjs";
 import {Storage} from '@ionic/storage';
 import {HttpService} from "./http.service";
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class KhatmService {
@@ -234,13 +235,13 @@ export class KhatmService {
     });
   }
 
-  saveNotJoinSeenKhatms(khatm_name, khatm_sharelink){
+  saveNotJoinSeenKhatms(khatm_name, khatm_sharelink, khatm_endDate){
     return new Promise((resolve, reject) => {
       let data: any;
       this.storage.get('not_join_khatms')
         .then(res => {
-          data = (res === null) ? [] : res.slice(1, res.length);
-          data.push({khatm_name: khatm_name, share_link: khatm_sharelink});
+          data = (res === null) ? [] : (res.length > 2 ? res.slice(1, res.length) : res);
+          data.push({khatm_name: khatm_name, share_link: khatm_sharelink, end_date: khatm_endDate});
           return this.storage.set('not_join_khatms', data);
         })
         .then(res => {
@@ -253,7 +254,7 @@ export class KhatmService {
     });
   }
 
-  deleteNotJoinSeenKhatms(khatm_share_link){
+  deleteNotJoinSeenKhatms(khatm_share_link, shouldUpdateList = true){
     return new Promise((resolve, reject) => {
       let data: any = null;
       this.storage.get('not_join_khatms')
@@ -265,7 +266,8 @@ export class KhatmService {
           return this.storage.set('not_join_khatms', data);
         })
         .then(res => {
-          this.notJoinKhatms.next(data);
+          if(shouldUpdateList)
+            this.notJoinKhatms.next(data);
           resolve();
         })
         .catch(err => {
@@ -277,7 +279,24 @@ export class KhatmService {
   getNotJoinSeenKhatms(){
     this.storage.get('not_join_khatms')
       .then(res => {
-        this.notJoinKhatms.next(res);
+        let currentDate = moment(new Date());
+        let result = [];
+        let shouldDelete = res;
+
+        if(res)
+          for(let item of res){
+            if(res.end_date >= currentDate)
+              result.push(item);
+            else{
+              shouldDelete.push(item);
+            }
+          }
+
+        this.notJoinKhatms.next(result);
+
+        if(res)
+          for(let item of shouldDelete)
+            this.deleteNotJoinSeenKhatms(item.share_link, false);
       })
       .catch(err => {
         console.log(err);

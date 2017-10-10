@@ -608,8 +608,10 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             return this.khatmService.getKhatmPages(this.khatm.khid);
           })
           .then(res => {
-            if(this.khatm.you_unread === null && (this.khatm.you_read === null || this.khatm.you_read == 0))
-              return this.khatmService.saveNotJoinSeenKhatms(this.khatm.khatm_name, this.khatm.share_link);
+            if(this.khatm.owner_email.toLowerCase() === this.authService.user.getValue().email.toLowerCase())
+              return Promise.resolve();
+            else if(this.khatm.you_unread === null && (this.khatm.you_read === null || this.khatm.you_read == 0))
+              return this.khatmService.saveNotJoinSeenKhatms(this.khatm.khatm_name, this.khatm.share_link, this.khatm.end_date);
             else if(this.khatm.you_unread === null && (this.khatm.you_read !== null || this.khatm.you_read != 0))
               return Promise.resolve();
             else
@@ -674,6 +676,10 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         this.undoPageChange();
         this.navCtrl.pop();
       }
+      else if(this.khatm.owner_email.toLowerCase() === this.authService.user.getValue().email.toLowerCase()){
+        this.khatmService.loadKhatms();
+        this.navCtrl.pop();
+      }
       else{
         this.alertCtrl.create({
           title: this.ls.translate('Confirm Commit Pages'),
@@ -686,7 +692,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             {
               text: this.ls.translate('Uninterested To Join'),
               handler: () => {
-                this.khatmService.saveNotJoinSeenKhatms(this.khatm.khatm_name, this.khatm.share_link);
+                this.khatmService.saveNotJoinSeenKhatms(this.khatm.khatm_name, this.khatm.share_link, this.khatm.end_date);
                 this.khatmService.loadKhatms();
                 this.navCtrl.pop();
               }
