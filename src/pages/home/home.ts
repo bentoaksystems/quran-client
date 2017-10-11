@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import { NavController } from 'ionic-angular';
+import {NavController, Platform} from 'ionic-angular';
 import {Vibration} from "@ionic-native/vibration";
 
 import {KhatmService} from "../../services/khatm.service";
@@ -12,9 +12,13 @@ export class HomePage implements OnInit{
   khatm: any = null;
   khatmPagesInfo: any = [];
   khatmPages: number[] = [];
+  public isIOS = false;
 
   constructor(public navCtrl: NavController, private khatmService: KhatmService,
-              private vibration: Vibration, private changeDetectorRef: ChangeDetectorRef) {}
+              private vibration: Vibration, private changeDetectorRef: ChangeDetectorRef,
+              private platform: Platform) {
+    this.isIOS = this.platform.is('ios');
+  }
 
   ngOnInit(){
     this.khatmService.activeKhatm.subscribe(
