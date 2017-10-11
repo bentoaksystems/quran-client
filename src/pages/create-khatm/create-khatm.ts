@@ -391,7 +391,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         }
 
         if(this.duration !== null && this.duration !== '')
-          this.startDate = this.castDate(this.getDate(this.startDate, this.duration, null));
+          this.endDate = this.castDate(this.getDate(this.startDate, this.duration, null));
       }
       else if(currentFocus === 'end'){
         if(this.isFirstLess(endDate, startDate)){
@@ -679,7 +679,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   checkOnLeft(){
-    if(this.khatm && ((this.isChangingCommitments && !this.isCommit) || (!this.isMember && !this.isChangingCommitments && !this.isCommit))){
+    if(this.khatm && ((this.everyday && !this.isJoinedEverydayKhatm) || (this.isChangingCommitments && !this.isCommit) || (!this.isMember && !this.isChangingCommitments && !this.isCommit))){
       if(this.isMember){
         this.undoPageChange();
         this.navCtrl.pop();
@@ -770,6 +770,10 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     else if(this.everyday && this.page_per_day > 0 && this.page_per_day){
       this.updateDuration();
     }
+    else if(this.page_per_day < 1){
+      this.page_per_day = 1;
+      this.updateDuration();
+    }
   }
 
   updateDuration(){
@@ -802,14 +806,36 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             {
               text: this.ls.translate('Yes'),
               handler: () => {
-                this.isJoinedEverydayKhatm = shouldJoin;
+                this.khatmService.joinEverydayKhatm(this.khatm.khid, shouldJoin).subscribe(
+                  (data) => {
+                    this.msgService.showMessage('inform', this.ls.translate('You disjoint from this khatm now'));
+                    this.isJoinedEverydayKhatm = shouldJoin;
+                    this.isMember = shouldJoin;
+                  },
+                  (err) => {
+                    this.msgService.showMessage('error', this.ls.translate('Cannot disjoint you from khatm. Please try again'), true);
+                    this.isJoinedEverydayKhatm = !shouldJoin;
+                    this.isMember = !shouldJoin;
+                  }
+                );
               }
             }
           ]
         }).present();
     }
     else{
-      this.isJoinedEverydayKhatm = shouldJoin;
+      this.khatmService.joinEverydayKhatm(this.khatm.khid, shouldJoin).subscribe(
+        (data) => {
+          this.msgService.showMessage('inform', this.ls.translate('You join to this khatm now'));
+          this.isJoinedEverydayKhatm = shouldJoin;
+          this.isMember = shouldJoin;
+        },
+        (err) => {
+          this.msgService.showMessage('error', this.ls.translate('Cannot join you to this khatm. Please try again'), true);
+          this.isMember = !shouldJoin;
+          this.isJoinedEverydayKhatm = !shouldJoin;
+        }
+      )
     }
   }
 }

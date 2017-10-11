@@ -302,22 +302,20 @@ export class SingleSafhaComponent implements OnInit, OnChanges, AfterViewChecked
       this.scrollDirectionTemp = this.scrollDirection.top;
     }
     else{
-      this.currentIndex++;
       this.scrollDirectionTemp = this.scrollDirection.bottom;
 
       if(this.khatmActive)
         this.pageIsRead.emit(this.currentIndex);
 
-      if(this.khatmActive && this.currentIndex === this.selectedPages.length - 1)
-        this.pageIsRead.emit(this.currentIndex);
+      this.currentIndex++;
     }
 
-    this.goToPage();
-
-    if(this.currentIndex > 604 || this.currentIndex >= this.selectedPages.length - 1)
+    if(this.currentIndex > 603 || this.currentIndex > this.selectedPages.length - 1)
       infiniteScroll.enable(false);
-    else
+    else{
       infiniteScroll.enable(true);
+      this.goToPage();
+    }
 
     this.registerBorder();
 
