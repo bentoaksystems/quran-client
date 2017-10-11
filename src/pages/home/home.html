@@ -1,1 +1,2 @@
-<single-safha [selectedPages]="khatmPages" (pageIsRead)="readPage($event)"></single-safha>
+<single-safha *ngIf="isIOS" [selectedPages]="khatmPages" (pageIsRead)="readPage($event)"></single-safha>
+<safha *ngIf="!isIOS" [selectedPages]="khatmPages" (pageIsRead)="readPage($event)">></safha>
