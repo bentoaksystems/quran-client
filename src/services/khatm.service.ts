@@ -306,4 +306,8 @@ export class KhatmService {
         console.log(err);
       })
   }
+
+  joinEverydayKhatm(khatm_id, shouldJoin){
+    return this.httpService.postData('khatm/everyday/join', {khid: khatm_id, should_join: shouldJoin}, true);
+  }
 }

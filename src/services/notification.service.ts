@@ -25,7 +25,6 @@ export class NotificationService{
 
     const options: PushOptions = {
       android: {
-        senderID: '284209242898',
         sound: true,
         vibrate: true
       },

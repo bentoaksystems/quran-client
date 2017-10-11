@@ -549,6 +549,22 @@ const translations = {
     fa: 'باگذاری صفحه بعد...',
     ar: 'تحميل الصفحة التالية...',
   },
+  "you disjoint from this khatm now": {
+    fa: 'شما از عضویت این ختم خارج شدید',
+    ar: 'أنت الآن فصل من هذا القرآن',
+  },
+  "cannot do disjoint you from khatm. please try again": {
+    fa: 'قادر به خارج کردن شما از عضویت ختم نیستیم. لطفاً دوباره تلاش کنید',
+    ar: 'لا تستطيع أن تفكك من القرآن. حاول مرة اخرى',
+  },
+  "you join to this khatm now": {
+    fa: 'شما عضو این ختم شدید',
+    ar: 'أنت تنضم إلى هذا القرآن الآن',
+  },
+  "cannot join you to this khatm. please try again": {
+    fa: 'قادر به عضو کردن شما به ختم نسیتیم. لطفاً دوباره تلاش کنید',
+    ar: 'لا يمكن أن ينضم إليكم هذا القرآن. حاول مرة اخرى',
+  },
 };
 
 const directionRTL = {
