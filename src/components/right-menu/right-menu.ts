@@ -9,6 +9,8 @@ import {LanguageService} from "../../services/language";
 import {KhatmService} from "../../services/khatm.service";
 import {MsgService} from "../../services/msg.service";
 import {StylingService} from "../../services/styling";
+import {PageName} from "../../enum/page.enum";
+import {ProfilePage} from "../../pages/profile/profile";
 
 @Component({
   selector: 'right-menu',
@@ -18,36 +20,41 @@ export class RightMenuComponent implements OnInit{
   @Input() isLoggedIn: boolean;
   @Output() switchView = new EventEmitter<any>();
   khatms: any = [];
+  notJoinKhatms: any = [];
+  PN = PageName;
 
   constructor(private authService: AuthService, private ls:LanguageService,
               private khatmService: KhatmService, private msgService: MsgService,
               private stylingService: StylingService, private loadingCtrl: LoadingController) {}
 
-  openPage(desPage, viewKhatm = null, fromButton = null){
+  openPage(desPage, viewKhatm = null, extraData = null){
     var target;
     var params;
 
-    if(desPage === 'register'){
+    if(desPage === PageName.Registration){
       target = Registration;
-      params = {fromButton: fromButton};
+      params = {fromButton: extraData};
     }
-    else if(desPage === 'khatm') {
+    else if(desPage === PageName.Khatm) {
       target = CreateKhatmPage;
 
       if(viewKhatm !== null){
         params = {
           isNew: false,
           khatm: viewKhatm.share_link,
-          isMember: true,
+          isMember: extraData,
         }
       }
       else {
         params = {
           isNew: true,
           khatm: null,
-          isMember: true,
+          isMember: extraData,
         }
       }
+    }
+    else if(desPage === PageName.profile){
+      target = ProfilePage;
     }
     else
       target = HomePage;
@@ -93,6 +100,19 @@ export class RightMenuComponent implements OnInit{
             waiting_loading.dismiss();
         }
     );
+
+    this.khatmService.notJoinKhatms.subscribe(
+      (data) => {
+        this.notJoinKhatms = [];
+        if(data !== null)
+          for(let item of data)
+            this.notJoinKhatms.push(item);
+      },
+      (err) => {
+        console.log(err.message);
+        this.msgService.showMessage('error', err.message);
+      }
+    )
   }
 
   logout(){
@@ -113,6 +133,7 @@ export class RightMenuComponent implements OnInit{
     waiting_loading.present();
 
     this.khatmService.loadKhatms();
+    this.khatmService.getNotJoinSeenKhatms();
 
     waiting_loading.dismiss();
   }

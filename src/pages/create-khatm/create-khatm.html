@@ -40,10 +40,24 @@
         <!--<ion-option *ngFor="let sura of suras" [value]="sura.number">{{sura.name}}</ion-option>-->
         <!--</ion-select>-->
         <!--</ion-item>-->
+      <ion-item-divider [style.background-color]="stylingService.nightMode ? '#323232' : '#fcf7ef'">
+        <ion-label [color]="stylingService.conditionalColoring.text">
+          {{ls.translate('Repeat Specification')}}
+        </ion-label>
+      </ion-item-divider>
       <ion-item [color]="stylingService.conditionalColoring.background">
         <ion-label>{{ls.translate('Repeat')}}</ion-label>
         <ion-input type="number" min="1" [(ngModel)]="repeats"
-                   [ngClass]="[oppositeDirection()]"></ion-input>
+                   [ngClass]="[oppositeDirection()]" (ngModelChange)="changeEveryday()"></ion-input>
+      </ion-item>
+      <ion-item [color]="stylingService.conditionalColoring.background">
+        <ion-label>{{ls.translate('Must Read Quran Everyday')}}</ion-label>
+        <ion-checkbox [ngModel]="everyday" [color]="stylingService.conditionalColoring.primary" (ngModelChange)="changeEveryday($event)"></ion-checkbox>
+      </ion-item>
+      <ion-item *ngIf="everyday">
+        <ion-label>{{ls.translate('Page per Day')}}</ion-label>
+        <ion-input type="number" [(ngModel)]="page_per_day"
+                   [ngClass]="[oppositeDirection()]" (ngModelChange)="changeEveryday()" min="1"></ion-input>
       </ion-item>
       <ion-item-divider [style.background-color]="stylingService.nightMode ? '#323232' : '#fcf7ef'">
         <ion-label [color]="stylingService.conditionalColoring.text">
@@ -62,12 +76,14 @@
         <ion-input type="number" min="1" [(ngModel)]="duration"
                    [ngClass]="[oppositeDirection()]"
                    (blur)="setDuration()"
+                   [disabled]="everyday"
                    (ngModelChange)="changeDuration('duration', null)"></ion-input>
       </ion-item>
       <ion-item [color]="stylingService.conditionalColoring.background">
         <ion-label>{{ls.translate('End Date')}}</ion-label>
         <ion-datetime [min]="currentDate.getFullYear()"
                       [max]="currentDate.getFullYear() + 10"
+                      [disabled]="everyday"
                       displayFormat="DD/MMM/YYYY" [(ngModel)]="endDate"
                       (ngModelChange)="changeDuration('end', $event)"></ion-datetime>
       </ion-item>
@@ -123,7 +139,7 @@
     </div>
     <div *ngIf="!isNew && khatm !== null">
       <ion-grid>
-        <ion-row *ngIf="khatmIsStarted">
+        <ion-row *ngIf="khatmIsStarted && !isExpiredKhatm && !khatm.is_everyday">
           <ion-col col-6>
             <ion-input [color]="stylingService.conditionalColoring.background"
                        [style.color]="stylingService.nightMode ? '#898f8d' : '#494949' "
@@ -137,12 +153,11 @@
                        #commitPageInput
                        (ngModelChange)="limitClick($event)"></ion-input>
           </ion-col>
-          <ion-col col-6 *ngIf="khatm.you_read !== null && khatm.you_unread !== null && !isChangingCommitments">
+          <ion-col col-6 *ngIf="!isChangingCommitments">
             <button ion-button block
-                    *ngIf="khatm.you_unread !== null && khatm.you_unread > 0"
                     [color]="stylingService.conditionalColoring.primary"
                     [disabled]="isChangingCommitments || (khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid)"
-                    (click)="goToCommitment(false)">{{ls.translate('Committed Pages')}}</button>
+                    (click)="goToCommitment(true)">{{ls.translate('Choose Pages')}}</button>
           </ion-col>
           <ion-col col-3 *ngIf="isChangingCommitments">
             <button ion-button block
@@ -159,7 +174,17 @@
             </button>
           </ion-col>
         </ion-row>
-        <ion-row *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null && khatm.you_unread > 0">
+        <ion-row *ngIf="khatm.you_read !== null && khatm.you_unread !== null">
+          <ion-col col-12>
+            <button ion-button block
+                    *ngIf="khatm.you_unread !== null && khatm.you_unread > 0"
+                    [color]="stylingService.conditionalColoring.primary"
+                    [disabled]="isChangingCommitments || (khatmService.activeKhatm.getValue() !== null && khatmService.activeKhatm.getValue().khid === khatm.khid)"
+                    (click)="goToCommitment(false)">{{ls.translate('Committed Pages')}}</button>
+          </ion-col>
+        </ion-row>
+        <ion-row
+          *ngIf="khatmIsStarted && !isExpiredKhatm && khatm.you_read !== null && khatm.you_unread !== null && khatm.you_unread > 0">
           <ion-col col-6>
             <button ion-button block (click)="start_stop_Khatm('start')"
                     [color]="stylingService.conditionalColoring.primary"
@@ -186,7 +211,24 @@
                           (ngModelChange)="toggleKhatmStatus()"></ion-toggle>
           </ion-col>
         </ion-row>
-        <ion-row *ngIf="khatmIsStarted">
+        <ion-row *ngIf="!isExpiredKhatm && khatm.is_everyday && !isJoinedEverydayKhatm">
+          <ion-col col-12>
+            <button ion-button block (click)="joinEverydayKhatm(true)">
+              <ion-label>{{ls.translate('Join')}}</ion-label>
+            </button>
+          </ion-col>
+        </ion-row>
+        <ion-row *ngIf="!isExpiredKhatm && khatm.is_everyday && isJoinedEverydayKhatm">
+          <ion-col col-12 *ngIf="khatm.owner_email !== authService.user.getValue().email">
+            <button ion-button block (click)="joinEverydayKhatm(false)">
+              <ion-label>{{ls.translate('Disjoint')}}</ion-label>
+            </button>
+          </ion-col>
+        </ion-row>
+        <div *ngIf="!isExpiredKhatm && khatm.is_everyday && !isJoinedEverydayKhatm" style="text-align: center; color: darkred;">
+          <ion-label>{{ls.translate('This khatm force you to read some pages everyday')}}</ion-label>
+        </div>
+        <ion-row *ngIf="khatmIsStarted && !isExpiredKhatm">
         <ion-col col6>
           <button ion-button block (click)="copyLink()"
                   [color]="stylingService.conditionalColoring.primary">{{ls.translate('Copy Link')}}</button>
@@ -228,6 +270,11 @@
           <p style="font-size: 0.8em;" *ngIf="khatm.description === null || khatm.description === ''"
              [ngStyle]="{'text-align': oppositeDirection()}">-</p>
         </ion-item>
+        <ion-item [color]="stylingService.conditionalColoring.background"
+                  *ngIf="khatm.is_everyday">
+          <ion-label style="font-size: 0.8em;">{{ls.translate('Page Per Day')}}</ion-label>
+          <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.page_per_day)}}</ion-label>
+        </ion-item>
         <ion-item [color]="stylingService.conditionalColoring.background">
           <ion-label style="font-size: 0.8em;">{{ls.translate('Read pages')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.read_pages)}}</ion-label>
@@ -237,19 +284,21 @@
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.participatings)}}</ion-label>
         </ion-item>
         <ion-item [color]="stylingService.conditionalColoring.background">
-          <ion-label style="font-size: 0.8em;">{{ls.translate('End Date')}}</ion-label>
+          <ion-label *ngIf="!khatm.is_everyday" style="font-size: 0.8em;">{{ls.translate('End Date')}}</ion-label>
+          <ion-label *ngIf="khatm.is_everyday" style="font-size: 0.8em;">{{ls.translate('Maximum End Date')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(endDateDisplay)}}</ion-label>
         </ion-item>
-        <ion-item [color]="stylingService.conditionalColoring.background">
+        <ion-item [color]="stylingService.conditionalColoring.background" *ngIf="!isExpiredKhatm && !khatm.is_everyday">
           <ion-label style="font-size: 0.8em;">{{ls.translate('Remaining Days')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(rest_days)}}</ion-label>
         </ion-item>
         <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null"
                   [color]="stylingService.conditionalColoring.background">
-          <ion-label style="font-size: 0.8em; overflow: visible;">{{ls.translate('Number of Pages you Read')}}</ion-label>
+          <ion-label
+            style="font-size: 0.8em; overflow: visible;">{{ls.translate('Number of Pages you Read')}}</ion-label>
           <ion-label style="font-size: 0.8em;" [ngStyle]="{'text-align': oppositeDirection()}">{{ls.convertDigits(khatm.you_read)}}</ion-label>
         </ion-item>
-        <ion-item *ngIf="khatmIsStarted && khatm.you_read !== null && khatm.you_unread !== null"
+        <ion-item *ngIf="khatmIsStarted && !khatm.is_everyday && khatm.you_read !== null && khatm.you_unread !== null"
                   [color]="stylingService.conditionalColoring.background">
           <ion-label
             style="overflow: visible; font-size: 0.8em">{{ls.translate('remainder of your committed pages')}}</ion-label>

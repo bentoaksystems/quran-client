@@ -32,6 +32,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   suraNumber: number = 1;
   suras = [];
   repeats: number = 1;
+  everyday: boolean = false;
+  page_per_day: number = 3;
   currentDate = new Date();
   startDate;
   startDateDisplay: string;
@@ -47,6 +49,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   isMember: boolean = false;
   isCommit: boolean = false;
   isAutomaticCommit: boolean = false;
+  isExpiredKhatm: boolean = false;
+  isJoinedEverydayKhatm: boolean = false;
 
   constructor(public navCtrl: NavController, private navParams: NavParams,
               private quranService: QuranService, private ls: LanguageService,
@@ -74,6 +78,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       this.navBar.setElementClass('persian', false);
 
     let link = this.navParams.get('link');
+    this.isExpiredKhatm = (this.navParams.get('isExpired') ? this.navParams.get('isExpired') : false);
 
     if(link === undefined || link === null){
       this.isNew = this.navParams.get('isNew');
@@ -87,7 +92,16 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
 
         this.khatmService.getKhatm(tempShareLink)
           .then(res => {
+            if(res === null || res === undefined){
+              waiting_loading.dismiss();
+              this.khatm = null;
+              this.msgService.showMessage('inform', this.ls.translate('Cannot get khatm details. Maybe this khatm is expired'));
+              this.khatmService.deleteNotJoinSeenKhatms(tempShareLink);
+              return;
+            }
+
             this.khatm = res;
+            this.isJoinedEverydayKhatm = this.khatm.join_khid ? this.khatm.join_khid : false;
 
             // this.endDate = moment(this.khatm.end_date).format('YYYY-MMM-DD');
             // this.startDate = moment(this.khatm.start_date).format('YYYY-MMM-DD');
@@ -147,28 +161,35 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
               authAlert.dismiss();
             if(!waitingIsShown)
               waiting_loading.present();
-            this.khatmService.getKhatm(link)
+            this.khatmService.getKhatm(link, this.isExpiredKhatm)
               .then(res => {
-                this.khatm = res;
+                if(res === null || res === undefined){
+                  waiting_loading.dismiss();
+                  this.msgService.showMessage('inform', this.ls.translate('Cannot get khatm details. Maybe this khatm is expired'));
+                }
+                else{
+                  this.khatm = res;
 
-                this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
-                this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
+                  this.isJoinedEverydayKhatm = this.khatm.join_khid ? this.khatm.join_khid : false;
+                  this.startDateDisplay = this.ls.convertDate(this.khatm.start_date);
+                  this.endDateDisplay = this.ls.convertDate(this.khatm.end_date);
 
-                let mDate = moment(this.currentDate);
-                if (moment(this.khatm.start_date) > mDate)
-                  this.khatmIsStarted = false;
-                else
-                  this.khatmIsStarted = true;
+                  let mDate = moment(this.currentDate);
+                  if (moment(this.khatm.start_date) > mDate)
+                    this.khatmIsStarted = false;
+                  else
+                    this.khatmIsStarted = true;
 
-                this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
-                if (this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
-                  this.rest_days++;
+                  this.rest_days = moment(this.khatm.end_date).diff(mDate, 'days');
+                  if (this.rest_days !== 0 || parseInt(mDate.format('D')) !== parseInt(moment(this.khatm.end_date).format('D')))
+                    this.rest_days++;
 
-                this.isMember = (this.khatm.you_read !== null && this.khatm.you_unread !== null);
+                  this.isMember = (this.khatm.you_read !== null && this.khatm.you_unread !== null);
 
-                this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
+                  this.isAutomaticCommit = this.khatmService.isAutomaticCommit;
 
-                waiting_loading.dismiss();
+                  waiting_loading.dismiss();
+                }
               })
               .catch(err => {
                 if (err === 'expired')
@@ -249,12 +270,16 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     //Check validation
     if(this.name === null || this.name === '')
       this.msgService.showMessage('warn', this.ls.translate('The khatm should have a name'));
+    else if(this.repeats === null || this.repeats === 0)
+      this.msgService.showMessage('warn', this.ls.translate('The repeats must be greater than 0'));
     else if(this.endDate === null)
       this.msgService.showMessage('warn', this.ls.translate('The end date field cannot be left blank'));
     else if(this.endDate < this.startDate)
       this.msgService.showMessage('warn', this.ls.translate('The start date cannot be later than end date'));
     else if(this.range === 'sura' && (this.suraNumber === null || this.suraNumber === 0))
       this.msgService.showMessage('warn', this.ls.translate('Please choose sura'));
+    else if(this.everyday && (this.page_per_day === null || this.page_per_day === undefined || this.page_per_day <= 0))
+      this.msgService.showMessage('warn', this.ls.translate('The page per day must be greater than 0'));
     else {
       this.isSubmitted = true;
 
@@ -292,7 +317,9 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       end_date: this.endDate,
       timezone:  moment.tz(moment.tz.guess()).format('z'),
       specific_sura: (this.range === 'whole') ? null : this.suraNumber,
-      repeats: this.repeats
+      repeats: this.repeats,
+      is_everyday: this.everyday,
+      page_per_day: this.page_per_day
     };
 
     this.khatmService.createKhatm(khatmData)
@@ -320,6 +347,8 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
     else if(this.repeats < 0)
       this.submitDisability = true;
     else if(this.endDate === undefined || this.endDate === null || (this.endDate < this.startDate))
+      this.submitDisability = true;
+    else if(this.everyday && (this.page_per_day === null || this.page_per_day === undefined || this.page_per_day <= 0))
       this.submitDisability = true;
     else
       this.submitDisability = false;
@@ -362,7 +391,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
         }
 
         if(this.duration !== null && this.duration !== '')
-          this.startDate = this.castDate(this.getDate(this.startDate, this.duration, null));
+          this.endDate = this.castDate(this.getDate(this.startDate, this.duration, null));
       }
       else if(currentFocus === 'end'){
         if(this.isFirstLess(endDate, startDate)){
@@ -376,7 +405,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       }
       else if(currentFocus === 'duration'){
         if(this.duration !== null && this.duration !== '') {
-          if (this.duration > (365 * 10)) {
+          if (this.duration > (365 * 10) && ((this.everyday && this.page_per_day) || (!this.everyday))) {
             this.duration = null;
             this.msgService.showMessage('warn', this.ls.translate('The duration cannot be greater than 10 years'));
             this.submitDisability = true;
@@ -587,6 +616,16 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             return this.khatmService.getKhatmPages(this.khatm.khid);
           })
           .then(res => {
+            if(this.khatm.owner_email.toLowerCase() === this.authService.user.getValue().email.toLowerCase())
+              return Promise.resolve();
+            else if(this.khatm.you_unread === null && (this.khatm.you_read === null || this.khatm.you_read == 0))
+              return this.khatmService.saveNotJoinSeenKhatms(this.khatm.khatm_name, this.khatm.share_link, this.khatm.end_date);
+            else if(this.khatm.you_unread === null && (this.khatm.you_read !== null || this.khatm.you_read != 0))
+              return Promise.resolve();
+            else
+              return this.khatmService.deleteNotJoinSeenKhatms(this.khatm.share_link);
+          })
+          .then(res => {
             //Stop loading controller
             loading.dismiss();
             this.isChangingCommitments = false;
@@ -608,7 +647,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   goToCommitment(isSelect){
-    this.navCtrl.push(CommitmentPage, {khatm: this.khatm, isSelect: isSelect});
+    this.navCtrl.push(CommitmentPage, {khatm: this.khatm, isSelect: isSelect, isMember: this.isMember});
   }
 
   start_stop_Khatm(action){
@@ -640,9 +679,13 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
   }
 
   checkOnLeft(){
-    if((this.isChangingCommitments && !this.isCommit) || (!this.isMember && !this.isChangingCommitments && !this.isCommit)){
+    if(this.khatm && ((this.everyday && !this.isJoinedEverydayKhatm) || (this.isChangingCommitments && !this.isCommit) || (!this.isMember && !this.isChangingCommitments && !this.isCommit))){
       if(this.isMember){
         this.undoPageChange();
+        this.navCtrl.pop();
+      }
+      else if(this.khatm.owner_email.toLowerCase() === this.authService.user.getValue().email.toLowerCase()){
+        this.khatmService.loadKhatms();
         this.navCtrl.pop();
       }
       else{
@@ -657,6 +700,7 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
             {
               text: this.ls.translate('Uninterested To Join'),
               handler: () => {
+                this.khatmService.saveNotJoinSeenKhatms(this.khatm.khatm_name, this.khatm.share_link, this.khatm.end_date);
                 this.khatmService.loadKhatms();
                 this.navCtrl.pop();
               }
@@ -709,5 +753,89 @@ export class CreateKhatmPage implements OnInit, AfterViewInit{
       this.msgService.showMessage('inform', this.ls.translate('In automatic mode the pages will be marked as "read" once you scroll them up'), true);
     else
       this.msgService.showMessage('inform', this.ls.translate('In manual mode you should come back to the khatm page and mark the pages as "read" yourself'), true);
+  }
+
+  changeEveryday(newVal){
+    if(newVal !== null && newVal !== undefined){
+      this.everyday = newVal;
+      if(this.everyday) {
+        this.msgService.showMessage('inform', this.ls.translate('The duration and end date are calculated based on one member. It\'s change when member number increases'), true);
+        this.updateDuration();
+      }
+      else{
+        this.duration = null;
+        this.endDate = null;
+      }
+    }
+    else if(this.everyday && this.page_per_day > 0 && this.page_per_day){
+      this.updateDuration();
+    }
+    else if(this.page_per_day < 1){
+      this.page_per_day = 1;
+      this.updateDuration();
+    }
+  }
+
+  updateDuration(){
+    this.duration = Math.ceil((this.repeats * 604) / this.page_per_day);
+    this.changeDuration('duration', this.duration);
+  }
+
+  joinEverydayKhatm(shouldJoin: boolean){
+    if(!shouldJoin){
+      if(parseInt(this.khatm.you_unread) > 0)
+        this.alertCtrl.create({
+          title: this.ls.translate('Commitments Alert'),
+          message: this.ls.translate('You have some page to read. Cannot disjoint from this khatm'),
+          buttons: [
+            {
+              text: this.ls.translate('OK'),
+              role: 'cancel'
+            },
+          ]
+        }).present();
+      else
+        this.alertCtrl.create({
+          title: this.ls.translate('Disjoint confirmation'),
+          message: this.ls.translate('Are you sure to disjoint this khatm?'),
+          buttons: [
+            {
+              text: this.ls.translate('No'),
+              role: 'cancel'
+            },
+            {
+              text: this.ls.translate('Yes'),
+              handler: () => {
+                this.khatmService.joinEverydayKhatm(this.khatm.khid, shouldJoin).subscribe(
+                  (data) => {
+                    this.msgService.showMessage('inform', this.ls.translate('You disjoint from this khatm now'));
+                    this.isJoinedEverydayKhatm = shouldJoin;
+                    this.isMember = shouldJoin;
+                  },
+                  (err) => {
+                    this.msgService.showMessage('error', this.ls.translate('Cannot disjoint you from khatm. Please try again'), true);
+                    this.isJoinedEverydayKhatm = !shouldJoin;
+                    this.isMember = !shouldJoin;
+                  }
+                );
+              }
+            }
+          ]
+        }).present();
+    }
+    else{
+      this.khatmService.joinEverydayKhatm(this.khatm.khid, shouldJoin).subscribe(
+        (data) => {
+          this.msgService.showMessage('inform', this.ls.translate('You join to this khatm now'));
+          this.isJoinedEverydayKhatm = shouldJoin;
+          this.isMember = shouldJoin;
+        },
+        (err) => {
+          this.msgService.showMessage('error', this.ls.translate('Cannot join you to this khatm. Please try again'), true);
+          this.isMember = !shouldJoin;
+          this.isJoinedEverydayKhatm = !shouldJoin;
+        }
+      )
+    }
   }
 }

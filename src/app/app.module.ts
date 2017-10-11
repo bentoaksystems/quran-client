@@ -33,6 +33,11 @@ import {KhatmService} from "../services/khatm.service";
 import {CommitmentPage} from "../pages/commitment/commitment";
 import {BookmarkService} from "../services/bookmark";
 import {NativeAudio} from "@ionic-native/native-audio";
+import {SocketService} from "../services/socket.service";
+import {NotificationService} from "../services/notification.service";
+import {Push} from "@ionic-native/push";
+import {ProfilePage} from "../pages/profile/profile";
+import { SingleSafhaComponent } from '../components/single-safha/single-safha';
 
 @NgModule({
   declarations: [
@@ -51,6 +56,8 @@ import {NativeAudio} from "@ionic-native/native-audio";
     CommitmentPage,
     SuraList,
     JuzList,
+    ProfilePage,
+    SingleSafhaComponent,
   ],
   imports: [
     BrowserModule,
@@ -67,6 +74,7 @@ import {NativeAudio} from "@ionic-native/native-audio";
     CommitmentPage,
     SuraList,
     JuzList,
+    ProfilePage,
   ],
   providers: [
     StatusBar,
@@ -88,6 +96,9 @@ import {NativeAudio} from "@ionic-native/native-audio";
     Network,
     Vibration,
     NativeAudio,
+    SocketService,
+    NotificationService,
+    Push,
   ]
 })
 export class AppModule {

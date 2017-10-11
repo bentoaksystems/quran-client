@@ -10,6 +10,7 @@ import {LanguageService} from "../services/language";
 import {CreateKhatmPage} from "../pages/create-khatm/create-khatm";
 import {KhatmService} from "../services/khatm.service";
 import {MsgService} from "../services/msg.service";
+import {NotificationService} from "../services/notification.service";
 
 @Component({
   templateUrl: 'app.html'
@@ -24,7 +25,7 @@ export class MyApp {
   constructor(private platform: Platform, private statusBar: StatusBar, private splashScreen: SplashScreen,
               private authService: AuthService, private ls:LanguageService,
               private deeplinks: Deeplinks, private khatmService: KhatmService,
-              private msgService: MsgService) {
+              private msgService: MsgService, private notification: NotificationService) {
     this.platform.ready().then(() => {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
@@ -50,12 +51,17 @@ export class MyApp {
       );
 
       this.authService.isLoggedIn.subscribe(
-        (data) => this.isLoggedIn = data);
+        (data) => {
+          if(data)
+            this.notification.initPushNotification(this.platform, this.navChild);
+          this.isLoggedIn = data;
+        });
 
       this.authService.user.subscribe(
         (u) => {
           if(u !== null && u.token !== null && u.token !== undefined){
             this.khatmService.loadKhatms();
+            this.khatmService.getNotJoinSeenKhatms();
           }
         }
       )

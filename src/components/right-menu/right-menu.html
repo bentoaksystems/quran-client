@@ -3,17 +3,22 @@
     <ion-grid *ngIf="!isLoggedIn">
       <ion-row>
         <ion-col col-6>
-          <button [color]="stylingService.conditionalColoring.primary" ion-button menuClose block (click)="openPage('register', null, 'register')">{{ls.translate('Register')}}</button>
+          <button [color]="stylingService.conditionalColoring.primary" ion-button menuClose block (click)="openPage(PN.Registration, null, 'register')">{{ls.translate('Register')}}</button>
           <!--<button [color]="stylingService.conditionalColoring.primary" ion-button menuClose *ngIf="isLoggedIn" block (click)="sync()">-->
             <!--<i class="fa fa-refresh" aria-hidden="true"></i>-->
           <!--</button>-->
           <!--<button [color]="stylingService.conditionalColoring.primary" ion-button menuClose *ngIf="isLoggedIn" block (click)="logout()">{{ls.translate('Logout')}}</button>-->
         </ion-col>
         <ion-col col-6>
-          <button [color]="stylingService.conditionalColoring.primary" ion-button menuClose block (click)="openPage('register', null, 'signIn')">{{ls.translate('Sign in')}}</button>
+          <button [color]="stylingService.conditionalColoring.primary" ion-button menuClose block (click)="openPage(PN.Registration, null, 'signIn')">{{ls.translate('Sign in')}}</button>
           <!--<button [color]="stylingService.conditionalColoring.primary" ion-button menuClose *ngIf="isLoggedIn" block (click)="openPage('khatm')">{{ls.translate('Create Khatm')}}</button>-->
         </ion-col>
       </ion-row>
+    </ion-grid>
+    <ion-grid *ngIf="isLoggedIn">
+      <button ion-button full clear (click)="openPage(PN.profile)">
+        {{ls.translate('My Profile')}}
+      </button>
     </ion-grid>
     <ion-list *ngIf="isLoggedIn">
       <ion-list-header [color]="stylingService.conditionalColoring.backgroundLighter">
@@ -23,18 +28,18 @@
         <button ion-button icon-only clear item-end (click)="sync()" class="khatm-title">
           <ion-icon name="refresh" [color]="stylingService.conditionalColoring.text"></ion-icon>
         </button>
-        <button ion-button icon-only clear item-end khatm-title (click)="openPage('khatm')" class="khatm-title">
+        <button ion-button icon-only clear item-end khatm-title (click)="openPage(PN.Khatm)" class="khatm-title">
           <ion-icon name="add" [color]="stylingService.conditionalColoring.text"></ion-icon>
         </button>
       </ion-list-header>
-          <ion-label style="text-align: center" *ngIf="khatms.length === 0"
+      <ion-label style="text-align: center" *ngIf="khatms.length === 0"
                [color]="stylingService.conditionalColoring.text">
             {{ls.translate('No khatm is found')}}
           </ion-label>
-          <button *ngFor="let khatm of khatms" ion-item
+      <button *ngFor="let khatm of khatms" ion-item
                   detail-none
                   [color]="stylingService.conditionalColoring.background"
-                  (press)="start_stop_khatm(khatm)" (tap)="openPage('khatm', khatm)"
+                  (press)="start_stop_khatm(khatm)" (tap)="openPage(PN.Khatm, khatm, true)"
                   [ngClass]="{active_night: khatmService.activeKhatm.getValue() !== null &&
                                             khatmService.activeKhatm.getValue().khid === khatm.khid &&
                                             stylingService.nightMode,
@@ -43,6 +48,26 @@
                                              !stylingService.nightMode}">
               <ion-label [color]="stylingService.conditionalColoring.text">
                 {{khatm.khatm_name}}
+        </ion-label>
+      </button>
+    </ion-list>
+    <br/>
+    <br/>
+    <ion-list *ngIf="isLoggedIn && notJoinKhatms.length > 0">
+      <ion-list-header [color]="stylingService.conditionalColoring.backgroundLighter">
+        <h1 [ngStyle]="{'color': stylingService.conditionalColoring.text}">
+          {{ls.translate('Recently seen khatms')}}
+        </h1>
+        <h2>
+          {{ls.translate('(Not Join)')}}
+        </h2>
+      </ion-list-header>
+      <button *ngFor="let khatm of notJoinKhatms" ion-item
+              detail-none
+              [color]="stylingService.conditionalColoring.background"
+              (click)="openPage(PN.Khatm, khatm, false)">
+        <ion-label [color]="stylingService.conditionalColoring.text">
+          {{khatm.khatm_name}}
         </ion-label>
       </button>
     </ion-list>

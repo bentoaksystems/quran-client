@@ -5,10 +5,12 @@ import {Injectable} from "@angular/core";
 import {BehaviorSubject} from "rxjs";
 import {Storage} from '@ionic/storage';
 import {HttpService} from "./http.service";
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class KhatmService {
   khatms: BehaviorSubject<any> = new BehaviorSubject([]);
+  notJoinKhatms: BehaviorSubject<any> = new BehaviorSubject([]);
   activeKhatm: BehaviorSubject<any> = new BehaviorSubject(null);
   isAutomaticCommit: boolean = true;
 
@@ -77,8 +79,8 @@ export class KhatmService {
     });
   }
 
-  getKhatm(khatm_link){
-    return this.httpService.getKhatm(khatm_link);
+  getKhatm(khatm_link, isExpired: boolean = false){
+    return this.httpService.getKhatm(khatm_link, isExpired);
   }
 
   storeKhatmPages(khatm_id, pages, action) {
@@ -195,5 +197,117 @@ export class KhatmService {
     khatm.you_read = (readPage) ? parseInt(khatm.you_read) + 1 : parseInt(khatm.you_read) - 1;
     khatm.you_unread = (!readPage) ? parseInt(khatm.you_unread) + 1 : parseInt(khatm.you_unread) - 1;
     khatm.read_pages = (readPage) ? parseInt(khatm.read_pages) + 1 : parseInt(khatm.read_pages) - 1;
+  }
+
+  getFreePages(khatm_id){
+    return this.httpService.getData('khatm/commitment/free/' + khatm_id, true).toPromise();
+  }
+
+  selfAssignPage(khatm_id, commitment_ids, shouldGet, isMember): any{
+    return new Promise((resolve, reject) => {
+      this.httpService.postData('khatm/commitment/getpage', {
+        cids: commitment_ids,
+        shouldget: shouldGet
+      }, true).subscribe(
+        (res) => {
+          let data = res.json();
+
+          if (data === null)
+            resolve(null);
+          else {
+            let numberOfFinal = data.length;
+            let type = shouldGet ? 'add' : 'delete';
+
+            if(!isMember)
+              resolve(numberOfFinal);
+            else
+            //Save/Update page numbers
+              this.storeKhatmPages(khatm_id, data, type)
+                .then((re) => this.updateKhatmCommtiments(khatm_id, numberOfFinal))
+                .then((r) => resolve(data))
+                .catch((er) => reject(er));
+          }}
+        ,
+        (err) => {
+          console.log(err);
+          reject(err);
+        });
+    });
+  }
+
+  saveNotJoinSeenKhatms(khatm_name, khatm_sharelink, khatm_endDate){
+    return new Promise((resolve, reject) => {
+      let data: any;
+      this.storage.get('not_join_khatms')
+        .then(res => {
+          if(res && res.findIndex(t => t.share_link === khatm_sharelink) !== -1){
+            data = res;
+            return Promise.resolve();
+          }
+
+          data = (res === null) ? [] : (res.length > 2 ? res.slice(1, res.length) : res);
+          data.push({khatm_name: khatm_name, share_link: khatm_sharelink, end_date: khatm_endDate});
+          return this.storage.set('not_join_khatms', data);
+        })
+        .then(res => {
+          this.notJoinKhatms.next(data);
+          resolve();
+        })
+        .catch(err => {
+          reject('Cannot save this seen khatm');
+        });
+    });
+  }
+
+  deleteNotJoinSeenKhatms(khatm_share_link, shouldUpdateList = true){
+    return new Promise((resolve, reject) => {
+      let data: any = null;
+      this.storage.get('not_join_khatms')
+        .then(res => {
+          data = [];
+          if(res !== null && res !== undefined && res.length > 0)
+            data = res.filter(t => t.share_link !== khatm_share_link);
+
+          return this.storage.set('not_join_khatms', data);
+        })
+        .then(res => {
+          if(shouldUpdateList)
+            this.notJoinKhatms.next(data);
+          resolve();
+        })
+        .catch(err => {
+          reject('Cannot delete this khatm from seen khatms');
+        });
+    });
+  }
+
+  getNotJoinSeenKhatms(){
+    this.storage.get('not_join_khatms')
+      .then(res => {
+        let currentDate = moment(new Date());
+        let result = [];
+        let shouldDelete = [];
+
+        if(res !== null && res !== undefined)
+          for(let item of res){
+            if(moment(item.end_date) >= currentDate)
+              result.push(item);
+            else{
+              shouldDelete.push(item);
+            }
+          }
+
+        this.notJoinKhatms.next(result);
+
+        for(let item of shouldDelete)
+          this.deleteNotJoinSeenKhatms(item.share_link, false);
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
+
+  joinEverydayKhatm(khatm_id, shouldJoin){
+    return this.httpService.postData('khatm/everyday/join', {khid: khatm_id, should_join: shouldJoin}, true);
   }
 }
