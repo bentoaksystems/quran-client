@@ -13,8 +13,6 @@ import {BookmarkService} from "../../services/bookmark";
 import {QuranReference} from "../../services/quran-data";
 import {MsgService} from "../../services/msg.service";
 import {NativeAudio} from "@ionic-native/native-audio";
-import {LanguageService} from "../../services/language";
-import {ScrollDirection} from "../../enum/scroll.direction.enum";
 
 const fonts = ['quran', 'quran-uthmanic', 'quran-uthmanic-bold', 'qalam', 'me-quran'];
 const zeroPad = num => {
@@ -27,10 +25,6 @@ const zeroPad = num => {
   templateUrl: 'safha.html',
 })
 export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
-  direction = null;
-  scrollDirection = ScrollDirection;
-  currentIndex = 0;
-  currentPage: any = null;
   private to: any;
   repeatIndex: any[] = [];
   selectedAya: QuranReference = {aya: null, sura: null, substrIndex: null};
@@ -69,8 +63,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   private suraNumbers: any = [];
 
   get quranPage(): any {
-    // return this._pages[this._pageIndex];
-    return this._pages[this.currentIndex];
+    return this._pages[this._pageIndex];
   }
 
   set quranPage(p: any) {
@@ -84,7 +77,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       let ind = this._pages.findIndex(r => r === p);
       if (ind !== -1) {
         this._pageIndex = ind;
-        this.specifyPage([0]);
+        this.specifyPage([0, 1]);
         this.scrollToSuraTop(this.quranService.suraNumber);
         this.bookmarkService.setPageNumber(p);
         this.bookmarkService.setScrollLocation(0);
@@ -107,7 +100,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
         this.layerHeights = {};
         this.layerElements = [];
         this._pageIndex = this.bookmarkService.pageNumber - 1;
-        this.specifyPage([0]);
+        this.specifyPage([0, 1]);
       }
       this.khatmActive = false;
     }
@@ -118,7 +111,6 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       this.lockScroll();
       this.scrollPage.scrollTo(0, 0, 0);
       this.getQuran();
-      this.specifyPage([0]);
     }
   }
 
@@ -143,8 +135,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
               private screenOrientation: ScreenOrientation,
               private bookmarkService: BookmarkService,
               private msg: MsgService,
-              private audio: NativeAudio,
-              private ls: LanguageService) {
+              private audio: NativeAudio) {
     if (!this._pages.length)
       this.selectedPages = [];
 
@@ -183,7 +174,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
           this.lockScroll();
           this.zoom = 100 * Math.pow(1.125, zoom);
           this.removeTopPages = true;
-          this.specifyPage([0]);
+          this.specifyPage([0, 1]);
         }
       );
 
@@ -204,7 +195,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
               this.removeTopPages = true;
               this.fontFamily = tempFont;
               this.stylingService.fontFamily = tempFont;
-              this.specifyPage([0]);
+              this.specifyPage([0, 1]);
             }
           }
         }
@@ -289,7 +280,6 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
           this.selectedPages.forEach(page => {
             let ayas = this.quranService.applySectionFilter('page', this.ayas, page);
             this.pageAyas[page] = ayas;
-            this.suraNumbers = this.pageAyas[this._pages[this._pageIndex]].map(e => e.sura).filter((e, i, v) => v.indexOf(e) === i);
             this.repeat[page] = this.repeat[page] ? this.repeat[page] + 1 : 1;
             this.repeatIndex.push(this.repeat[page]);
           });
@@ -299,7 +289,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       );
   }
 
-  specifyPage(pages = [-1, 0]) {
+  specifyPage(pages = [-1, 0, 1]) {
     let range = [];
     pages.forEach(i => range.push(this.pageIndexPlus(i)));
     range.forEach(p => {
@@ -336,6 +326,7 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       setTimeout(()=>this.calcPagesMetadata(),100);
     }
     else {
+      this.suraNumbers = this.pageAyas[this._pages[this._pageIndex]].map(e => e.sura).filter((e, i, v) => v.indexOf(e) === i);
       let suras = this.suraNumbers.map(e => this.quranService.getSura(e));
       let suraNames = suras.map(e => e.name);
       let suraName = (this.pageAyas[this._pages[this._pageIndex]][0].bismillah === true) ? suraNames[0] : (suraNames[1] ? suraNames[1] : suraNames[0]);
@@ -379,28 +370,14 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
 
   ngAfterViewChecked() {
     this.layerHeights = {};
-    // if (this.removeTopPages) {
-    //   this.scrollLock = false;
-    //   this.removeTopPages = false;
-    // }
+    if (this.removeTopPages) {
+      this.scrollLock = false;
+      this.removeTopPages = false;
+    }
     this.layerElements.forEach(e => {
-      this.layerHeights[e.id] = e.offsetHeight - 40;
+      this.layerHeights[e.id] = e.offsetHeight + 25;
     });
-
-    if(this.direction === this.scrollDirection.top)
-      this.scrollPage.scrollToBottom(500);
-    else if(this.direction === this.scrollDirection.bottom)
-      this.scrollPage.scrollToTop(500);
-
-
-    // if(this.direction === this.scrollDirection.top)
-    //   this.scrollPage.scrollTo(0, this.layerHeights[0], 0);
-    // else if(this.direction === this.scrollDirection.bottom)
-    //   this.scrollPage.scrollTo(0, 50, 0);
-
-    this.direction = null;
-
-    // this.layerIndices = this.layerElements.map(e => +e.id).sort((x, y) => x - y).map(r => r + '');
+    this.layerIndices = this.layerElements.map(e => +e.id).sort((x, y) => x - y).map(r => r + '');
   }
 
   pinch(e) {
@@ -412,38 +389,36 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   onScroll(e) {
-    // console.log(e);
+    if (!this.scrollLock) {
+      let i = '', sumLayerHeights = 0;
+      if (!this.layerElements.length) {
+        this.registerBorders();
+      }
+      let found = this.layerIndices.some(key => {
+        i = key;
+        sumLayerHeights += this.layerHeights[key];
+        return sumLayerHeights > e.scrollTop;
+      });
 
-    // if (!this.scrollLock) {
-    //   let i = '', sumLayerHeights = 0;
-    //   if (!this.layerElements.length) {
-    //     this.registerBorders();
-    //   }
-    //   let found = this.layerIndices.some(key => {
-    //     i = key;
-    //     sumLayerHeights += this.layerHeights[key];
-    //     return sumLayerHeights > e.scrollTop;
-    //   });
-    //
-    //   if (!this.khatmActive) {
-    //     this.bookmarkService.setScrollLocation(e.scrollTop - (sumLayerHeights - this.layerHeights[i] + 25));
-    //   }
-    //
-    //   if (found && i && +i !== this._pageIndex) {
-    //     this.zone.run(() => {
-    //       if (this.khatmActive && +i >= this._pageIndex)
-    //         this.pageIsRead.emit(this._pageIndex);
-    //       this._pageIndex = +i;
-    //       if (!this.khatmActive) {
-    //         this.bookmarkService.setPageNumber(this.quranPage);
-    //       }
-    //       this.specifyPage();
-    //     });
-    //   }
-    //   if(this.khatmActive && !found && i && +i === this.selectedPages.length - 1) {
-    //     this.pageIsRead.emit(this._pageIndex);
-    //   }
-    // }
+      if (!this.khatmActive) {
+        this.bookmarkService.setScrollLocation(e.scrollTop - (sumLayerHeights - this.layerHeights[i] + 25));
+      }
+
+      if (found && i && +i !== this._pageIndex) {
+        this.zone.run(() => {
+          if (this.khatmActive && +i >= this._pageIndex)
+            this.pageIsRead.emit(this._pageIndex);
+          this._pageIndex = +i;
+          if (!this.khatmActive) {
+            this.bookmarkService.setPageNumber(this.quranPage);
+          }
+          this.specifyPage();
+        });
+      }
+      if(this.khatmActive && !found && i && +i === this.selectedPages.length - 1) {
+        this.pageIsRead.emit(this._pageIndex);
+      }
+    }
   }
 
   menuToggle() {
@@ -461,33 +436,5 @@ export class Safha implements OnInit, AfterViewInit, AfterViewChecked {
       })
     }
     this.scrollPage.scrollTo(0, 0, 0);
-  }
-
-  loadingPages(sd, infiniteScroll){
-    console.log(infiniteScroll);
-
-    if(sd === this.scrollDirection.top){
-      this.shownPages[--this.currentIndex] = true;
-      this.shownPages[this.currentIndex + 1] = false;
-
-      this.direction = this.scrollDirection.top;
-    }
-    else if(sd === this.scrollDirection.bottom){
-      if(this.khatmActive)
-        this.pageIsRead.emit(this.currentIndex);
-
-      if(this.khatmActive && this.currentIndex === this.selectedPages.length - 1)
-        this.pageIsRead.emit(this.currentIndex);
-
-      this.shownPages[++this.currentIndex] = true;
-      this.shownPages[this.currentIndex - 1] = false;
-
-      this.direction = this.scrollDirection.bottom;
-
-      if(this.currentIndex > 604 || this.currentIndex === this.selectedPages.length - 1)
-        infiniteScroll.enable(false);
-    }
-
-    infiniteScroll.complete();
   }
 }
